@@ -1,22 +1,24 @@
 # Halaqa - حلقة
 
-> A web application for sheikhs to test students' Quran memorization using the Naqza system during weekly Halaqa sessions.
-> 
-> **Source**: مصحف ليبيا برواية قالون عن نافع (Libyan Mushaf - Qalun narration from Nafi')
+Arabic-first, phone-first platform for Sheikhs to manage students, run weekly Halaqa tests, and track progress using the Naqza/Juz system.
+
+Source: مصحف ليبيا برواية قالون عن نافع (Libyan Mushaf — Qalun narration)
 
 ---
 
 ## 📖 What is This?
 
-This app helps **sheikhs/teachers** randomly select **Thumuns** (eighths) from specified **Naqzas** to test students' Quran memorization. Each **Naqza** consists of 3 **Hizbs**, making it easier to organize testing for different student levels.
+The app allows a Sheikh to manage a roster of students (numbers 1–30), run weekly tests by randomizing Thumuns from a specific Naqza or Juz, record results (Fatha prompts and Taradud), and automatically handle Naqza progression on pass. Entire UI is Arabic (RTL), mobile-first, with dark mode.
 
-### Key Features
-✅ Random Thumun selection from any Naqza (1-20)  
-✅ Option to select single Juz for younger students  
-✅ Full Arabic interface with RTL support  
-✅ Display Thumun name, Surah, page number, and Hizb  
-✅ Simple, clean, distraction-free design  
-✅ Future: Student tracking and progress management  
+### Phase 2 Highlights
+- Authentication (register/login/JWT)
+- Students CRUD (name, notes, number 1–30 unique; number editable)
+- Test UI (student-facing): randomize within Naqza or Juz, anti immediate repeat
+- Scoring policy (Option D + bounds): pass if Fatha ≤ 3; 4th = fail; Taradud counted only; passed scores clamped 60–100; failed 0–59; grade bands
+- Immediate progression on pass; Sunday fail stays same Naqza
+- Per-student history + weekly overview
+- Unified Arabic styling, drawer with icons, RTL, dark mode, high contrast
+- Canonical labels everywhere: “n - اسم النقزة/اسم الجزء/اسم الثمن”
 
 ---
 
@@ -27,339 +29,155 @@ The Quran is divided into:
 ├── 30 Juz (أجزاء)
 │   ├── 60 Hizb (أحزاب) - 2 per Juz
 │   │   ├── 120 Quarters (أرباع) - 2 per Hizb
-│   │   │   └── 480 Thumun (أثمان) - 8 per Hizb (2 per Quarter)
+│   │   │   └── 480 Thumun (أثمان) - 8 per Hizب (2 per Quarter)
 │   │   │
 │   │   └── 20 Naqza (نقزات) - 3 Hizb per Naqza
 ```
 
-**Example:**
-- **Naqza 1** = Hizb 1, 2, 3 (Juz 1-2)
-- **Naqza 2** = Hizb 4, 5, 6 (Juz 2-3)
-- ... and so on
-
 ---
 
-## 🚀 Getting Started
-
-### Current Status: **Phase 1 Completed (MVP)**
-
-We have completed:
-1. ✅ Phase 1 MVP (randomizer, RTL UI, mobile/desktop)
-2. ✅ Dark mode and accessibility controls (A-/A+, high contrast)
-3. ✅ Data wired (480 thumuns), no immediate repeats, empty-state
-4. ✅ Repo and CI/CD ready: `halaqa` → GitHub Actions → CyberPanel
-
-### Next Steps:
-
-**Phase 1:** Build the core random selection tool ✅  
-**Phase 2:** Add student tracking and management (planned)
-
----
-
-## 📁 Project Structure (key parts)
+## 📁 Monorepo Layout
 
 ```
 QuranTester/
-├── README.md                          # Project overview & deploy
-├── PROJECT_DOCUMENTATION.md           # Complete project specs
-├── THUMUN_DATA_SUMMARY.md            # Data reference (480 thumuns)
-├── quran-thumun-data.json            # Quran divisions data (complete names; pages optional)
-├── فهرس الاثمان والأحزاب والنقزات.pdf # Source PDF (index reference)
-└── فهرس الاثمان والأحزاب والنقزات/   # Exported JPEG images
-    ├── ...Page_01.jpg
-    ├── ...Page_02.jpg
-    └── ... (25 pages total)
+├── quran-tester-app/                 # Frontend (React + Vite)
+│   └── public/quran-thumun-data.json # Canonical Quran division data (480 ثمن)
+└── server/                           # Backend (Node.js + Express + PostgreSQL)
+    └── src/db/migrations/            # SQL migrations
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🔧 Local Development
 
-### Phase 1 (MVP)
-- **Frontend**: React 18 + Vite
-- **Styling**: CSS (RTL, dark mode, high contrast)
-- **Data**: Static JSON file (480 thumuns)
-- **Deployment**: GitHub Actions → CyberPanel (OpenLiteSpeed)
+Prereqs: Node 20+, Docker (for Postgres), pnpm/npm, Git.
 
-### Phase 2 (Future)
-- **Backend**: Node.js + Express
-- **Database**: PostgreSQL
-- **Auth**: JWT authentication
-- **Hosting**: Your Ubuntu VPS with CyberPanel
-
----
-
-## 📝 Documentation Files
-
-### 1. **PROJECT_DOCUMENTATION.md**
-Complete technical specifications including:
-- Full Quran structure breakdown
-- Phase 1 & 2 feature lists
-- Database schema (future)
-- UI/UX guidelines
-- Deployment plan
-
-### 2. **THUMUN_DATA_SUMMARY.md**
-Data reference guide including:
-- All 20 Naqza distributions (24 thumuns per Naqza; total 480)
-- Surah coverage details
-- Sample Thumun data
-- Data extraction status
-- Quality checklist
-
-### 3. **quran-thumun-data.json**
-JSON data file containing all 480 Thumuns with:
-- Thumun names (Arabic opening words)
-- Surah names and numbers
-- Page numbers (Mushaf Madani)
-- Hizb, Juz, and Naqza assignments
-
----
-
-## 🎯 How It Works (Phase 1)
-
-### User Flow:
-```
-1. Sheikh opens the app
-   ↓
-2. Selects Naqza (1-20) or Juz (1-30)
-   ↓
-3. Clicks "اختر ثُمُناً عشوائياً" (Random Thumun)
-   ↓
-4. App displays:
-   - الثُمُن الأول من [THUMUN_NAME]
-   - من سورة [SURAH_NAME]
-   - الحزب [HIZB_NUMBER]
-   ↓
-5. Sheikh asks student to recite from that point
-   ↓
-6. Click again for another random selection
-```
-
----
-
-## 🔮 Future Features (Phase 2)
-
-Once Phase 1 is validated, we'll add:
-
-- 👤 **Student Profiles**: Add/manage students
-- 📊 **Halaqa Tracking**: Record test sessions
-- 📈 **Progress Reports**: View student history
-- ✅ **Mistake Tracking**: Max 3 mistakes per test
-- 🔐 **Sheikh Login**: Secure authentication
-- 📱 **Free Mode**: Works without login
-
----
-
-## 📋 Current Tasks
-
-### Phase 1 (MVP): Completed ✅
-- Randomizer with no-immediate-repeats
-- Arabic-first RTL UI (mobile/desktop)
-- Dark mode, font scaling, high contrast
-- Data wiring (480 thumuns)
-- Repo & CI/CD to VPS
-
-### Phase 2 (Planned):
-- Student profiles and test session tracking
-- History/reporting
-- Optional: precise page mapping per index
-
----
-
-## 🤝 Data Extraction Help Needed
-
-**Current Status**: 480/480 thumuns named (pages optional in Phase 1)
-
-We need to complete the `quran-thumun-data.json` file with all 240 Thumuns.
-
-**Options:**
-1. **Manual Entry**: Most accurate, ~8-10 hours
-2. **OCR Tool**: Faster but needs verification, ~4-6 hours  
-3. **API Integration**: Use existing Quran API, ~2-3 hours
-
-See `THUMUN_DATA_SUMMARY.md` for detailed guidance.
-
----
-
-## 🎨 Design Principles
-
-1. **Arabic-First**: Everything in Arabic, RTL layout
-2. **Simplicity**: Clean, distraction-free interface
-3. **Accessibility**: Large text, high contrast
-4. **Speed**: Fast random selection, no delays
-5. **Offline-Ready**: Works without internet (Phase 1)
-
----
-
-## 📱 Target Devices
-
-- **Primary**: Desktop/Laptop (Sheikh's main device)
-- **Secondary**: Tablet (iPad, Android tablets)
-- **Supported**: Mobile phones
-
----
-
-## 🌐 Deployment (VPS + CyberPanel)
-
-This app is a static SPA (Vite build). No PM2 or PHP is required.
-
-### 1) Create site in CyberPanel
-- Create Website → use your subdomain (e.g., `halaqa.example.com`).
-- Issue SSL. PHP version can be any 8.1+; it is not used.
-- Document root (example): `/home/<cp_user>/public_html/halaqa`
-
-### 2) SPA routing (.htaccess)
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-RewriteRule ^ index.html [L]
-```
-
-### 3) Zero‑downtime layout
-```
-/home/deploy/halaqa_releases/<timestamp>/   # uploaded build
-/home/deploy/halaqa_current -> halaqa_releases/<timestamp>
-/home/<cp_user>/public_html/halaqa -> /home/deploy/halaqa_current
-```
-
-Initialize once on the VPS (replace `<cp_user>`):
+### Backend
 ```bash
-sudo adduser deploy --disabled-password || true
+cd server
+cp .env.example .env      # Set DATABASE_URL, JWT_SECRET, PORT=4000
+docker compose up -d      # start local PostgreSQL
+npm i
+npm run migrate           # run SQL migrations
+npm run seed              # optional sample data
+npm run dev               # http://localhost:4000/health
+```
+
+### Frontend
+```bash
+cd quran-tester-app
+cp .env.example .env      # VITE_API_URL=http://localhost:4000
+npm i
+npm run dev               # http://localhost:5173
+```
+
+---
+
+## 🔌 API (summary)
+
+Base URL: `http://localhost:4000` (prod behind reverse proxy)
+
+- `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
+- `GET/POST/PATCH/DELETE /students`
+- `POST /sessions` (record test)
+- `GET /sessions/student/:id` (history)
+- `GET /sessions/weekly` (current week overview)
+
+Authentication: Bearer JWT (set in `Authorization` header).
+
+---
+
+## 🧠 Scoring Rules (Option D)
+
+- Pass/fail is decided only by Fatha: pass if Fatha ≤ 3; fail if Fatha ≥ 4
+- When passed: score = 100 − tiered Fatha penalty − mild hesitation penalty, clamped [60, 100]
+  - Fatha penalty: 0→0, 1→10, 2→20, 3→30
+  - Hesitation penalty: 1 per hesitation beyond 3, capped at 10
+- When failed: score clamped to [0, 59] (severity considers Fatha beyond 4 and hesitation)
+- Grade bands: ≥90 ممتاز, ≥80 جيد جدًا, ≥70 جيد, ≥60 مقبول, else راسب
+
+---
+
+## 🌐 Production Deployment (VPS + CyberPanel)
+
+We now deploy both frontend (static SPA) and backend API (Node/Express + PostgreSQL). GitHub Actions builds and uploads both artifacts via rsync, runs DB migrations, and (re)starts PM2.
+
+### 1) GitHub Secrets (Repository → Settings → Secrets and variables → Actions)
+
+- `VPS_HOST` — your server host/IP
+- `VPS_USER` — SSH user (e.g., deploy)
+- `VPS_SSH_KEY` — private key (PEM) whose public part is in `~/.ssh/authorized_keys`
+- `VPS_FRONT_PATH` — e.g., `/home/deploy/halaqa`
+- `VPS_API_PATH` — e.g., `/home/deploy/halaqa_api`
+- `DATABASE_URL` — Postgres connection string
+- `JWT_SECRET` — strong secret
+- `NODE_ENV` — `production`
+
+### 2) One‑time VPS Prep
+
+```bash
+# Node + PM2
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm i -g pm2
+
+# Release layout
 sudo mkdir -p /home/deploy/halaqa_releases /home/deploy/halaqa_current
+sudo mkdir -p /home/deploy/halaqa_api_releases /home/deploy/halaqa_api_current
 sudo chown -R deploy:deploy /home/deploy
-sudo rm -rf /home/<cp_user>/public_html/halaqa
-sudo ln -s /home/deploy/halaqa_current /home/<cp_user>/public_html/halaqa
+
+# Web root symlink via CyberPanel docroot to .../halaqa_current
 ```
 
-### 4) GitHub Actions – build & upload artifact
-Add `.github/workflows/deploy.yml` and set repo Secrets: `VPS_HOST`, `VPS_USER=deploy`, `VPS_SSH_KEY`, `VPS_PATH=/home/deploy/halaqa`.
-```yaml
-name: Deploy Halaqa
-on:
-  push:
-    branches: [ main ]
+### 3) Reverse Proxy (example; use subdomain or `/api` prefix)
 
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Install
-        working-directory: quran-tester-app
-        run: npm ci
-      - name: Build
-        working-directory: quran-tester-app
-        run: npm run build
-      - name: Prepare artifact
-        run: |
-          mkdir artifact
-          cp -r quran-tester-app/dist/* artifact/
-      - name: Upload via SSH (rsync)
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add - <<< "$VPS_SSH_KEY"
-          RELEASE_DIR="${VPS_PATH}_releases/$(date +%Y%m%d%H%M%S)"
-          ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST "mkdir -p $RELEASE_DIR"
-          rsync -az --delete artifact/ $VPS_USER@$VPS_HOST:$RELEASE_DIR/
-          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_PATH}_current && ln -s $RELEASE_DIR ${VPS_PATH}_current"
+Proxy `/api` to `127.0.0.1:4000` or serve API on `api.example.com`.
+
+```nginx
+location /api/ {
+  proxy_pass http://127.0.0.1:4000/;
+  proxy_set_header Host $host;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
 ```
 
-This provides push→build→upload→atomic swap with no downtime.
+Set frontend `.env` (`VITE_API_URL`) to the public API base (e.g., `https://halaqa.example.com/api`).
+
+### 4) GitHub Actions Workflow
+
+Workflow path: `.github/workflows/deploy.yml`
+
+It:
+- Builds frontend (Vite)
+- Uploads `artifact_frontend` to `${VPS_FRONT_PATH}_releases/<ts>` and flips `_current`
+- Uploads backend to `${VPS_API_PATH}_releases/<ts>`
+- Installs backend deps, writes `.env`, runs migrations, flips `_current`
+- Starts/restarts PM2 app `halaqa-api`
 
 ---
 
-## 🔧 Development Setup
+## 🧭 UI Notes
 
-```bash
-# Clone repository
-git clone https://github.com/Jawad18750/halaqa.git
-cd halaqa
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
+- Entirely Arabic, RTL layout, IBM Plex Sans Arabic
+- Mobile‑first layout; dark mode + high contrast modes
+- Off‑canvas drawer contains navigation + icons
+- Long text uses smart clamping with “عرض المزيد/عرض أقل”
 
 ---
 
-## 📖 Terminology Guide
+## 🗂️ Data Source
 
-| Arabic | English | Count | Description |
-|--------|---------|-------|-------------|
-| جزء | Juz | 30 | Main division |
-| حزب | Hizb | 60 | Half a Juz |
-| ربع | Quarter | 120 | Quarter mark |
-| ثُمُن | Thumun | 480 | Eighth mark |
-| نقزة | Naqza | 20 | Three Hizbs |
-| حلقة | Halaqa | - | Study circle/test session |
-| سورة | Surah | 114 | Quran chapter |
-| صفحة | Sahifa/Page | 604 | Mushaf page |
+Canonical file for divisions and labels:
+`quran-tester-app/public/quran-thumun-data.json` (480 ثُمُن with ids, names, surah, hizb, quarter, juz, naqza).
 
 ---
 
-## 🤲 Purpose
+## License
 
-This app is built to:
-- ✅ Make Quran memorization testing easier for teachers
-- ✅ Ensure fair, random selection of test portions
-- ✅ Track student progress over time
-- ✅ Support traditional Halaqa teaching methods
-- ✅ Preserve the Naqza system of Quran division
+Private project (© 2025). All rights reserved.
 
 ---
 
-## 📞 Contact
-
-**Project**: Halaqa - حلقة  
-**Purpose**: Sheikh's weekly Halaqa testing  
-**Schedule**: Every Saturday  
-**Source**: مصحف ليبيا برواية قالون عن نافع  
-**Status**: Data Extraction In Progress (60/480 Thumuns completed)
-
----
-
-## 📄 License
-
-Private project - not yet open source.
-
----
-
-## 🎯 Next Action
-
-👉 **Before we start building:**
-
-Please review:
-1. `PROJECT_DOCUMENTATION.md` - Full specifications
-2. `THUMUN_DATA_SUMMARY.md` - Data reference
-3. Confirm the design approach matches your Sheikh's needs
-
-Then we'll proceed with:
-1. Completing the Thumun data extraction
-2. Building the Phase 1 MVP
-3. Testing with real users
-
----
-
-**Last Updated**: September 30, 2025  
-**Version**: 0.1.0 (Planning Phase)  
-**Ready to Build**: Pending data completion and review
-
----
-
-بارك الله فيك (May Allah bless you)
+**Last Updated**: October 2, 2025  
+**Version**: 0.2.0 (Phase 2)
 
