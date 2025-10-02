@@ -1,0 +1,48 @@
+name: Deploy Halaqa
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        working-directory: quran-tester-app
+        run: npm ci
+
+      - name: Build
+        working-directory: quran-tester-app
+        run: npm run build
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p artifact
+          cp -r quran-tester-app/dist/* artifact/
+          cat > artifact/.htaccess << 'EOF'
+          RewriteEngine On
+          RewriteCond %{REQUEST_FILENAME} -f [OR]
+          RewriteCond %{REQUEST_FILENAME} -d
+          RewriteRule ^ - [L]
+          RewriteRule ^ index.html [L]
+          EOF
+
+      - name: Upload via SSH (rsync)
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "$VPS_SSH_KEY"
+          RELEASE_DIR="${VPS_PATH}_releases/$(date +%Y%m%d%H%M%S)"
+          ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST "mkdir -p $RELEASE_DIR"
+          rsync -az --delete artifact/ $VPS_USER@$VPS_HOST:$RELEASE_DIR/
+          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_PATH}_current && ln -s $RELEASE_DIR ${VPS_PATH}_current"
