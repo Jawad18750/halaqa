@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 20
 
-      # Frontend build
+      # Frontend
       - name: Install (frontend)
         working-directory: quran-tester-app
         run: npm ci
@@ -22,12 +22,11 @@ jobs:
         working-directory: quran-tester-app
         run: npm run build
 
-      # Prepare artifacts
       - name: Prepare artifacts
         run: |
           mkdir -p artifact_frontend
           cp -r quran-tester-app/dist/* artifact_frontend/
-          # SPA fallback
+          # SPA fallback for CyberPanel/OpenLiteSpeed
           cat > artifact_frontend/.htaccess << 'EOF'
           RewriteEngine On
           RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -39,19 +38,17 @@ jobs:
           mkdir -p artifact_server
           rsync -a server/ artifact_server/ --exclude node_modules --exclude .env
 
-      # SSH setup
       - name: Setup SSH
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
-          eval "$(ssh-agent -s)"
-          ssh-add - <<< "$VPS_SSH_KEY"
           mkdir -p ~/.ssh
-          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          echo "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
 
-      # Upload and activate
-      - name: Upload via SSH (frontend + backend)
+      - name: Upload and activate (frontend + backend)
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
@@ -66,35 +63,29 @@ jobs:
           API_RELEASE="${VPS_API_PATH}_releases/${TS}"
 
           # Create release dirs
-          ssh $VPS_USER@$VPS_HOST "mkdir -p $FRONT_RELEASE $API_RELEASE"
+          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "mkdir -p \"$FRONT_RELEASE\" \"$API_RELEASE\""
 
           # Upload frontend
-          rsync -az artifact_frontend/ $VPS_USER@$VPS_HOST:$FRONT_RELEASE/
-          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_FRONT_PATH}_current && ln -s $FRONT_RELEASE ${VPS_FRONT_PATH}_current"
+          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key" artifact_frontend/ "$VPS_USER@$VPS_HOST:$FRONT_RELEASE/"
+          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "ln -sfn \"$FRONT_RELEASE\" \"${VPS_FRONT_PATH}_current\""
 
           # Upload backend
-          rsync -az artifact_server/ $VPS_USER@$VPS_HOST:$API_RELEASE/
+          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key" artifact_server/ "$VPS_USER@$VPS_HOST:$API_RELEASE/"
 
           # Install deps, write .env, migrate, and (re)start PM2
-          ssh $VPS_USER@$VPS_HOST "
-            cd $API_RELEASE && \
-            command -v node >/dev/null 2>&1 || exit 1; \
-            npm ci --omit=dev && \
-            # Write .env (idempotent)
+          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" bash -lc "
+            set -e
+            cd \"$API_RELEASE\"
+            npm ci --omit=dev
             cat > .env << EOF
             NODE_ENV=$NODE_ENV
             PORT=4000
             DATABASE_URL=$DATABASE_URL
             JWT_SECRET=$JWT_SECRET
             EOF
-            # Run migrations (and optional seed)
-            node src/db/migrate.js && \
-            # node src/db/seed.js || true
-            # Symlink current
-            rm -rf ${VPS_API_PATH}_current && ln -s $API_RELEASE ${VPS_API_PATH}_current && \
-            # Ensure pm2 exists
-            (command -v pm2 >/dev/null 2>&1 || npm i -g pm2) && \
-            # Start or restart API
-            (pm2 start ${VPS_API_PATH}_current/src/index.js --name halaqa-api --update-env || pm2 restart halaqa-api --update-env) && \
+            npm run migrate
+            ln -sfn \"$API_RELEASE\" \"${VPS_API_PATH}_current\"
+            command -v pm2 >/dev/null 2>&1 || npm i -g pm2
+            (pm2 start \"${VPS_API_PATH}_current/src/index.js\" --name halaqa-api --update-env || pm2 restart halaqa-api --update-env)
             pm2 save
           "
