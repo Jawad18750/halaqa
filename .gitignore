@@ -1,0 +1,34 @@
+# Node
+node_modules/
+npm-debug.log*
+pnpm-lock.yaml
+package-lock.json
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Build artifacts
+quran-tester-app/dist/
+quran-tester-app/.vite/
+
+# Python / OCR / temp
+__pycache__/
+*.pyc
+ocr_output_pages/
+ocr_output_snips/
+pdf_extracted.txt
+
+# Virtual env
+.venv/
+
+# Generated data/helpers
+thumuns.from_excel.json
+quran-thumun-data.demo-backup.*.json
+
+# Images not needed in repo root
+quran.png
+quran-white.png
+
