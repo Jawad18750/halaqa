@@ -203,27 +203,90 @@ See `THUMUN_DATA_SUMMARY.md` for detailed guidance.
 
 ---
 
-## 🌐 Deployment
+## 🌐 Deployment (VPS + CyberPanel)
 
-### Phase 1 (No Backend)
-- **Frontend**: Vercel or Netlify (free)
-- **Domain**: Your available domain
-- **SSL**: Automatic via hosting provider
+This app is a static SPA (Vite build). No PM2 or PHP is required.
 
-### Phase 2 (With Backend)
-- **Frontend**: Vercel/Netlify
-- **Backend**: Your Ubuntu VPS with CyberPanel
-- **Database**: PostgreSQL on VPS or managed (Supabase)
-- **SSL**: Let's Encrypt via CyberPanel
+### 1) Create site in CyberPanel
+- Create Website → use your subdomain (e.g., `halaqa.example.com`).
+- Issue SSL. PHP version can be any 8.1+; it is not used.
+- Document root (example): `/home/<cp_user>/public_html/halaqa`
+
+### 2) SPA routing (.htaccess)
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^ index.html [L]
+```
+
+### 3) Zero‑downtime layout
+```
+/home/deploy/halaqa_releases/<timestamp>/   # uploaded build
+/home/deploy/halaqa_current -> halaqa_releases/<timestamp>
+/home/<cp_user>/public_html/halaqa -> /home/deploy/halaqa_current
+```
+
+Initialize once on the VPS (replace `<cp_user>`):
+```bash
+sudo adduser deploy --disabled-password || true
+sudo mkdir -p /home/deploy/halaqa_releases /home/deploy/halaqa_current
+sudo chown -R deploy:deploy /home/deploy
+sudo rm -rf /home/<cp_user>/public_html/halaqa
+sudo ln -s /home/deploy/halaqa_current /home/<cp_user>/public_html/halaqa
+```
+
+### 4) GitHub Actions – build & upload artifact
+Add `.github/workflows/deploy.yml` and set repo Secrets: `VPS_HOST`, `VPS_USER=deploy`, `VPS_SSH_KEY`, `VPS_PATH=/home/deploy/halaqa`.
+```yaml
+name: Deploy Halaqa
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Install
+        working-directory: quran-tester-app
+        run: npm ci
+      - name: Build
+        working-directory: quran-tester-app
+        run: npm run build
+      - name: Prepare artifact
+        run: |
+          mkdir artifact
+          cp -r quran-tester-app/dist/* artifact/
+      - name: Upload via SSH (rsync)
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "$VPS_SSH_KEY"
+          RELEASE_DIR="${VPS_PATH}_releases/$(date +%Y%m%d%H%M%S)"
+          ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST "mkdir -p $RELEASE_DIR"
+          rsync -az --delete artifact/ $VPS_USER@$VPS_HOST:$RELEASE_DIR/
+          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_PATH}_current && ln -s $RELEASE_DIR ${VPS_PATH}_current"
+```
+
+This provides push→build→upload→atomic swap with no downtime.
 
 ---
 
-## 🔧 Development Setup (Future)
+## 🔧 Development Setup
 
 ```bash
 # Clone repository
-git clone <your-repo-url>
-cd QuranTester
+git clone https://github.com/Jawad18750/halaqa.git
+cd halaqa
 
 # Install dependencies
 npm install
