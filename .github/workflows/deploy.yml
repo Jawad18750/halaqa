@@ -8,23 +8,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install
+      # Frontend build
+      - name: Install (frontend)
         working-directory: quran-tester-app
         run: npm ci
 
-      - name: Build
+      - name: Build (frontend)
         working-directory: quran-tester-app
         run: npm run build
 
-      - name: Prepare artifact
+      # Prepare artifacts
+      - name: Prepare artifacts
         run: |
-          mkdir -p artifact
-          cp -r quran-tester-app/dist/* artifact/
-          cat > artifact/.htaccess << 'EOF'
+          mkdir -p artifact_frontend
+          cp -r quran-tester-app/dist/* artifact_frontend/
+          # SPA fallback
+          cat > artifact_frontend/.htaccess << 'EOF'
           RewriteEngine On
           RewriteCond %{REQUEST_FILENAME} -f [OR]
           RewriteCond %{REQUEST_FILENAME} -d
@@ -32,6 +36,10 @@ jobs:
           RewriteRule ^ index.html [L]
           EOF
 
+          mkdir -p artifact_server
+          rsync -a server/ artifact_server/ --exclude node_modules --exclude .env
+
+      # SSH setup
       - name: Setup SSH
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -42,13 +50,51 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
 
-      - name: Upload via SSH (rsync)
+      # Upload and activate
+      - name: Upload via SSH (frontend + backend)
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
+          VPS_FRONT_PATH: ${{ secrets.VPS_FRONT_PATH }}
+          VPS_API_PATH: ${{ secrets.VPS_API_PATH }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
         run: |
-          RELEASE_DIR="${VPS_PATH}_releases/$(date +%Y%m%d%H%M%S)"
-          ssh $VPS_USER@$VPS_HOST "mkdir -p $RELEASE_DIR"
-          rsync -az --delete artifact/ $VPS_USER@$VPS_HOST:$RELEASE_DIR/
-          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_PATH}_current && ln -s $RELEASE_DIR ${VPS_PATH}_current"
+          TS=$(date +%Y%m%d%H%M%S)
+          FRONT_RELEASE="${VPS_FRONT_PATH}_releases/${TS}"
+          API_RELEASE="${VPS_API_PATH}_releases/${TS}"
+
+          # Create release dirs
+          ssh $VPS_USER@$VPS_HOST "mkdir -p $FRONT_RELEASE $API_RELEASE"
+
+          # Upload frontend
+          rsync -az artifact_frontend/ $VPS_USER@$VPS_HOST:$FRONT_RELEASE/
+          ssh $VPS_USER@$VPS_HOST "rm -rf ${VPS_FRONT_PATH}_current && ln -s $FRONT_RELEASE ${VPS_FRONT_PATH}_current"
+
+          # Upload backend
+          rsync -az artifact_server/ $VPS_USER@$VPS_HOST:$API_RELEASE/
+
+          # Install deps, write .env, migrate, and (re)start PM2
+          ssh $VPS_USER@$VPS_HOST "
+            cd $API_RELEASE && \
+            command -v node >/dev/null 2>&1 || exit 1; \
+            npm ci --omit=dev && \
+            # Write .env (idempotent)
+            cat > .env << EOF
+            NODE_ENV=$NODE_ENV
+            PORT=4000
+            DATABASE_URL=$DATABASE_URL
+            JWT_SECRET=$JWT_SECRET
+            EOF
+            # Run migrations (and optional seed)
+            node src/db/migrate.js && \
+            # node src/db/seed.js || true
+            # Symlink current
+            rm -rf ${VPS_API_PATH}_current && ln -s $API_RELEASE ${VPS_API_PATH}_current && \
+            # Ensure pm2 exists
+            (command -v pm2 >/dev/null 2>&1 || npm i -g pm2) && \
+            # Start or restart API
+            (pm2 start ${VPS_API_PATH}_current/src/index.js --name halaqa-api --update-env || pm2 restart halaqa-api --update-env) && \
+            pm2 save
+          "
