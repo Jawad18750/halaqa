@@ -7,19 +7,23 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Frontend
+      # ---------- Frontend (Vite) ----------
       - name: Install (frontend)
         working-directory: quran-tester-app
-        run: npm ci
+        run: npm install
 
       - name: Build (frontend)
         working-directory: quran-tester-app
+        env:
+          VITE_API_URL: https://halaqa.abdeljawad.com/api
         run: npm run build
 
       - name: Prepare artifacts
@@ -38,6 +42,7 @@ jobs:
           mkdir -p artifact_server
           rsync -a server/ artifact_server/ --exclude node_modules --exclude .env
 
+      # ---------- SSH ----------
       - name: Setup SSH
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -48,6 +53,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
 
+      # ---------- Upload + Activate ----------
       - name: Upload and activate (frontend + backend)
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -58,7 +64,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           NODE_ENV: ${{ secrets.NODE_ENV }}
         run: |
-          TS=$(date +%Y%m%d%H%M%S)
+          TS="$(date +%Y%m%d%H%M%S)"
           FRONT_RELEASE="${VPS_FRONT_PATH}_releases/${TS}"
           API_RELEASE="${VPS_API_PATH}_releases/${TS}"
 
@@ -72,11 +78,11 @@ jobs:
           # Upload backend
           rsync -az --delete -e "ssh -i ~/.ssh/deploy_key" artifact_server/ "$VPS_USER@$VPS_HOST:$API_RELEASE/"
 
-          # Install deps, write .env, migrate, and (re)start PM2
+          # Backend: deps, .env, migrate, PM2
           ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" bash -lc "
             set -e
             cd \"$API_RELEASE\"
-            npm ci --omit=dev
+            npm install --omit=dev
             cat > .env << EOF
             NODE_ENV=$NODE_ENV
             PORT=4000
