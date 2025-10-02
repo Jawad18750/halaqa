@@ -41,30 +41,30 @@ The Quran is divided into:
 
 ## 🚀 Getting Started
 
-### Current Status: **Planning & Documentation Phase**
+### Current Status: **Phase 1 Completed (MVP)**
 
 We have completed:
-1. ✅ Project documentation
-2. ✅ Data structure design
-3. ✅ PDF extraction (25 pages of Thumun divisions)
-4. ✅ Comprehensive planning
+1. ✅ Phase 1 MVP (randomizer, RTL UI, mobile/desktop)
+2. ✅ Dark mode and accessibility controls (A-/A+, high contrast)
+3. ✅ Data wired (480 thumuns), no immediate repeats, empty-state
+4. ✅ Repo and CI/CD ready: `halaqa` → GitHub Actions → CyberPanel
 
 ### Next Steps:
 
-**Phase 1:** Build the core random selection tool  
-**Phase 2:** Add student tracking and management
+**Phase 1:** Build the core random selection tool ✅  
+**Phase 2:** Add student tracking and management (planned)
 
 ---
 
-## 📁 Project Structure
+## 📁 Project Structure (key parts)
 
 ```
 QuranTester/
-├── README.md                          # This file
+├── README.md                          # Project overview & deploy
 ├── PROJECT_DOCUMENTATION.md           # Complete project specs
-├── THUMUN_DATA_SUMMARY.md            # Data extraction reference
-├── quran-thumun-data.json            # Quran divisions data (in progress)
-├── فهرس الاثمان والأحزاب والنقزات.pdf # Source PDF
+├── THUMUN_DATA_SUMMARY.md            # Data reference (480 thumuns)
+├── quran-thumun-data.json            # Quran divisions data (complete names; pages optional)
+├── فهرس الاثمان والأحزاب والنقزات.pdf # Source PDF (index reference)
 └── فهرس الاثمان والأحزاب والنقزات/   # Exported JPEG images
     ├── ...Page_01.jpg
     ├── ...Page_02.jpg
@@ -76,10 +76,10 @@ QuranTester/
 ## 🛠️ Tech Stack
 
 ### Phase 1 (MVP)
-- **Frontend**: React 18+ with Vite
-- **Styling**: CSS with RTL support
-- **Data**: Static JSON file
-- **Deployment**: Vercel/Netlify (free hosting)
+- **Frontend**: React 18 + Vite
+- **Styling**: CSS (RTL, dark mode, high contrast)
+- **Data**: Static JSON file (480 thumuns)
+- **Deployment**: GitHub Actions → CyberPanel (OpenLiteSpeed)
 
 ### Phase 2 (Future)
 - **Backend**: Node.js + Express
@@ -116,7 +116,7 @@ JSON data file containing all 480 Thumuns with:
 
 ---
 
-## 🎯 How It Will Work (Phase 1)
+## 🎯 How It Works (Phase 1)
 
 ### User Flow:
 ```
@@ -129,7 +129,6 @@ JSON data file containing all 480 Thumuns with:
 4. App displays:
    - الثُمُن الأول من [THUMUN_NAME]
    - من سورة [SURAH_NAME]
-   - صفحة [PAGE_NUMBER]
    - الحزب [HIZB_NUMBER]
    ↓
 5. Sheikh asks student to recite from that point
@@ -154,25 +153,23 @@ Once Phase 1 is validated, we'll add:
 
 ## 📋 Current Tasks
 
-### Immediate (Before Building):
-- [ ] Complete extraction of all 480 Thumuns to JSON
-- [ ] Verify data accuracy with Mushaf Madani
-- [ ] Review UI/UX design with Sheikh
+### Phase 1 (MVP): Completed ✅
+- Randomizer with no-immediate-repeats
+- Arabic-first RTL UI (mobile/desktop)
+- Dark mode, font scaling, high contrast
+- Data wiring (480 thumuns)
+- Repo & CI/CD to VPS
 
-### Phase 1 Development:
-- [ ] Initialize React + Vite project
-- [ ] Create Arabic RTL layout
-- [ ] Build Naqza/Juz selector
-- [ ] Implement random selection logic
-- [ ] Design Thumun display card
-- [ ] Test with real data
-- [ ] Deploy to production
+### Phase 2 (Planned):
+- Student profiles and test session tracking
+- History/reporting
+- Optional: precise page mapping per index
 
 ---
 
 ## 🤝 Data Extraction Help Needed
 
-**Current Status**: 60/480 Thumuns extracted
+**Current Status**: 480/480 thumuns named (pages optional in Phase 1)
 
 We need to complete the `quran-thumun-data.json` file with all 240 Thumuns.
 

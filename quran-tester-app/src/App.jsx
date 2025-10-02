@@ -1,7 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import Auth from './components/Auth'
+import Students from './components/Students'
+import TestView from './components/TestView'
+import StudentHistory from './components/StudentHistory'
+import WeeklyOverview from './components/WeeklyOverview'
+import Drawer from './components/Drawer'
+import Dashboard from './components/Dashboard'
+import About from './components/About'
+import Privacy from './components/Privacy'
+import { auth } from './api'
 
 function App() {
+  const [user, setUser] = useState(null)
+  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [view, setView] = useState('dashboard') // dashboard | students | test | studentHistory | weekly | about | privacy
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [thumuns, setThumuns] = useState([])
   const [naqza, setNaqza] = useState(1)
   const [juz, setJuz] = useState('')
@@ -31,6 +45,20 @@ function App() {
     document.documentElement.setAttribute('dir', 'rtl')
     document.documentElement.lang = 'ar'
   }, [])
+
+  useEffect(() => {
+    // try auto login
+    auth.me().then(({ user }) => setUser(user)).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    function onNavToHistory(e){
+      if (!selectedStudent) return
+      setView('studentHistory')
+    }
+    window.addEventListener('navigate-student-history', onNavToHistory)
+    return () => window.removeEventListener('navigate-student-history', onNavToHistory)
+  }, [selectedStudent])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -81,77 +109,101 @@ function App() {
   }
 
   return (
-    <div className="container" style={{
-      fontFamily: "'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Arial"
-    }}>
+    <>
+    <div className="container">
       <div className="brand" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
-        <img className="app-logo" src={theme === 'dark' ? '/quran-white.png' : '/quran.png'} alt="شعار التطبيق" width="56" height="56" style={{ borderRadius: 8 }} />
-        <h1 className="hero-title" style={{ marginBottom: 0 }}>اختبار القرآن الكريم</h1>
-      </div>
-
-      <button aria-label="تبديل الوضع" className="theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-        {theme === 'dark' ? <i className="fa-solid fa-sun"></i> : <i className="fa-solid fa-moon"></i>}
-      </button>
-
-      <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="controls">
-        <label>
-          النقزة:
-          <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} style={{ marginInlineStart: 8 }}>
-            {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
-              <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
-            ))}
-          </select>
-        </label>
-
-        <span className="or">أو</span>
-
-        <label>
-          الجزء:
-          <select value={juz} onChange={e => setJuz(e.target.value)} style={{ marginInlineStart: 8 }}>
-            <option value="">—</option>
-            {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
-              <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
-            ))}
-          </select>
-        </label>
-
-        <button className="primary-btn" onClick={pickRandom} disabled={loading || !filtered.length} style={{ padding: '10px 16px' }}>
-          اختر ثُمُناً عشوائياً
+        <button className="btn btn--ghost" onClick={() => setView('dashboard')} style={{ padding:0, border:'none', background:'transparent' }}>
+          <img className="app-logo" src={theme === 'dark' ? '/quran-white.png' : '/quran.png'} alt="شعار التطبيق" width="56" height="56" style={{ borderRadius: 8 }} />
+        </button>
+        <button className="btn btn--ghost" onClick={() => setView('dashboard')} style={{ padding:0, border:'none', background:'transparent' }}>
+          <h1 className="hero-title" style={{ marginBottom: 0 }}>اختبار القرآن الكريم</h1>
         </button>
       </div>
 
-      <div style={{ marginTop: 24, color: '#666' }}>
-        {loading ? 'جاري التحميل…' : `عدد الأثمان المتاحة: ${filtered.length}`}
-      </div>
+      <button aria-label="تبديل الوضع" className="theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} style={{ display: drawerOpen ? 'none' : undefined }}>
+        {theme === 'dark' ? <i className="fa-solid fa-sun"></i> : <i className="fa-solid fa-moon"></i>}
+      </button>
+      <button className="menu-toggle" onClick={() => setDrawerOpen(true)} aria-label="القائمة" style={{ display: drawerOpen ? 'none' : undefined }}>
+        ☰
+      </button>
 
-      {!loading && filtered.length === 0 && (
-        <div role="status" aria-live="polite" style={{ marginTop: 12, color: '#999', textAlign: 'center' }}>
-          لا توجد نتائج لهذا التحديد. غيّر النقزة أو الجزء.
+      {!user ? (
+        <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingInline: 16, minHeight: '70vh' }}>
+          {/* Free randomizer for guests */}
+          <div className="controls" style={{ maxWidth: 560, width: '100%' }}>
+            <label>
+              النقزة:
+              <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input">
+                {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
+                  <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
+                ))}
+              </select>
+            </label>
+            <span className="or">أو</span>
+            <label>
+              الجزء:
+              <select value={juz} onChange={e => setJuz(e.target.value)} className="input">
+                <option value="">—</option>
+                {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
+                  <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
+                ))}
+              </select>
+            </label>
+            <button className="btn btn--primary" style={{ gridColumn: '1 / -1', justifySelf:'center' }} onClick={pickRandom} disabled={loading || !filtered.length}>اختر ثُمُناً عشوائياً</button>
+          </div>
+          <div className="meta" style={{ marginTop: 8 }}>{loading ? 'جاري التحميل…' : `عدد الأثمان المتاحة: ${filtered.length}`}</div>
+          {current && (
+            <div className="card appear" style={{ marginTop: 16, maxWidth: 720 }}>
+              <div style={{ fontSize: 18, marginBottom: 8 }}>الثُمُن رقم {current.id}</div>
+              <div className="phrase">{current.name || '—'}</div>
+              <div className="info-grid">
+                <Info label="السورة" value={current.surah || '—'} />
+                <Info label="رقم السورة" value={current.surahNumber ?? '—'} />
+                <Info label="الحزب" value={current.hizb ?? '—'} />
+                <Info label="الربع" value={current.quarter ?? '—'} />
+                <Info label="الجزء" value={current.juz ?? '—'} />
+                <Info label="النقزة" value={current.naqza ?? '—'} />
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center' }}>
+          {view === 'dashboard' && (
+            <Dashboard />
+          )}
+          {view === 'students' && !selectedStudent && (
+            <Students onSelect={(s) => { setSelectedStudent(s); setView('test') }} />
+          )}
+          {view === 'test' && selectedStudent && (
+            <>
+              <div style={{ display:'flex', gap:8, marginBottom:8, justifyContent:'center' }}>
+                <button className="btn" onClick={() => { setSelectedStudent(null); setView('students') }}>
+                  ← الرجوع
+                </button>
+                <button className="btn" onClick={() => setView('studentHistory')}>
+                  <i className="fa-solid fa-clock-rotate-left" style={{ marginInlineStart:6 }}></i>
+                  سجل الطالب
+                </button>
+              </div>
+              <TestView student={selectedStudent} thumuns={thumuns} onDone={() => { setSelectedStudent(null); setView('students') }} />
+            </>
+          )}
+          {view === 'studentHistory' && selectedStudent && (
+            <StudentHistory student={selectedStudent} onBack={() => setView('test')} />
+          )}
+          {view === 'weekly' && (
+            <WeeklyOverview onBack={() => setView('students')} />
+          )}
+          {view === 'about' && (
+            <About onBack={() => setView('dashboard')} />
+          )}
+          {view === 'privacy' && (
+            <Privacy onBack={() => setView('dashboard')} />
+          )}
         </div>
       )}
-
-      {current && (
-        <div className="card appear" style={{
-          marginTop: 24
-        }}>
-          <div style={{ fontSize: 18, marginBottom: 8 }}>
-            الثُمُن رقم {current.id}
-          </div>
-          <div className="phrase">
-            {current.name || '—'}
-          </div>
-          <div className="info-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8 }}>
-            <Info label="السورة" value={current.surah || '—'} />
-            <Info label="رقم السورة" value={current.surahNumber ?? '—'} />
-            <Info label="الحزب" value={current.hizb ?? '—'} />
-            <Info label="الربع" value={current.quarter ?? '—'} />
-            <Info label="الجزء" value={current.juz ?? '—'} />
-            <Info label="النقزة" value={current.naqza ?? '—'} />
-          </div>
-        </div>
-      )}
-      </div>
+      {/* (Intentionally removed legacy duplicate meta and result card) */}
       {/* Accessibility floating panel */}
       <div className="a11y-fab">
         <details>
@@ -166,6 +218,15 @@ function App() {
         </details>
       </div>
     </div>
+    <Drawer
+      open={drawerOpen}
+      onClose={() => setDrawerOpen(false)}
+      user={user}
+      onAuthed={setUser}
+      onNavigate={(v) => setView(v)}
+      onLogout={() => { auth.logout(); setUser(null); setView('dashboard'); setSelectedStudent(null) }}
+    />
+    </>
   )
 }
 

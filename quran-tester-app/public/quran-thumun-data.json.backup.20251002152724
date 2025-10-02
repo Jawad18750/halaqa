@@ -108,7 +108,7 @@
       "surahNumber": 2,
       "page": 11,
       "hizb": 2,
-      "quarter": 5,
+      "quarter": 1,
       "juz": 1,
       "naqza": 1
     },
@@ -119,7 +119,7 @@
       "surahNumber": 2,
       "page": 12,
       "hizb": 2,
-      "quarter": 5,
+      "quarter": 1,
       "juz": 1,
       "naqza": 1
     },
@@ -130,7 +130,7 @@
       "surahNumber": 2,
       "page": 14,
       "hizb": 2,
-      "quarter": 6,
+      "quarter": 2,
       "juz": 1,
       "naqza": 1
     },
@@ -141,7 +141,7 @@
       "surahNumber": 2,
       "page": 15,
       "hizb": 2,
-      "quarter": 6,
+      "quarter": 2,
       "juz": 1,
       "naqza": 1
     },
@@ -152,7 +152,7 @@
       "surahNumber": 2,
       "page": 16,
       "hizb": 2,
-      "quarter": 7,
+      "quarter": 3,
       "juz": 1,
       "naqza": 1
     },
@@ -163,7 +163,7 @@
       "surahNumber": 2,
       "page": 17,
       "hizb": 2,
-      "quarter": 7,
+      "quarter": 3,
       "juz": 1,
       "naqza": 1
     },
@@ -174,7 +174,7 @@
       "surahNumber": 2,
       "page": 19,
       "hizb": 2,
-      "quarter": 8,
+      "quarter": 4,
       "juz": 1,
       "naqza": 1
     },
@@ -185,7 +185,7 @@
       "surahNumber": 2,
       "page": 20,
       "hizb": 2,
-      "quarter": 8,
+      "quarter": 4,
       "juz": 1,
       "naqza": 1
     },
@@ -196,7 +196,7 @@
       "surahNumber": 2,
       "page": 21,
       "hizb": 3,
-      "quarter": 9,
+      "quarter": 1,
       "juz": 2,
       "naqza": 1
     },
@@ -207,7 +207,7 @@
       "surahNumber": 2,
       "page": 22,
       "hizb": 3,
-      "quarter": 9,
+      "quarter": 1,
       "juz": 2,
       "naqza": 1
     },
@@ -218,7 +218,7 @@
       "surahNumber": 2,
       "page": 24,
       "hizb": 3,
-      "quarter": 10,
+      "quarter": 2,
       "juz": 2,
       "naqza": 1
     },
@@ -229,7 +229,7 @@
       "surahNumber": 2,
       "page": 25,
       "hizb": 3,
-      "quarter": 10,
+      "quarter": 2,
       "juz": 2,
       "naqza": 1
     },
@@ -240,7 +240,7 @@
       "surahNumber": 2,
       "page": 26,
       "hizb": 3,
-      "quarter": 11,
+      "quarter": 3,
       "juz": 2,
       "naqza": 1
     },
@@ -251,7 +251,7 @@
       "surahNumber": 2,
       "page": 27,
       "hizb": 3,
-      "quarter": 11,
+      "quarter": 3,
       "juz": 2,
       "naqza": 1
     },
@@ -262,7 +262,7 @@
       "surahNumber": 2,
       "page": 29,
       "hizb": 3,
-      "quarter": 12,
+      "quarter": 4,
       "juz": 2,
       "naqza": 1
     },
@@ -273,7 +273,7 @@
       "surahNumber": 2,
       "page": 30,
       "hizb": 3,
-      "quarter": 12,
+      "quarter": 4,
       "juz": 2,
       "naqza": 1
     },
@@ -284,7 +284,7 @@
       "surahNumber": 2,
       "page": 31,
       "hizb": 4,
-      "quarter": 13,
+      "quarter": 1,
       "juz": 2,
       "naqza": 2
     },
@@ -295,7 +295,7 @@
       "surahNumber": 2,
       "page": 32,
       "hizb": 4,
-      "quarter": 13,
+      "quarter": 1,
       "juz": 2,
       "naqza": 2
     },
@@ -306,7 +306,7 @@
       "surahNumber": 2,
       "page": 34,
       "hizb": 4,
-      "quarter": 14,
+      "quarter": 2,
       "juz": 2,
       "naqza": 2
     },
@@ -317,7 +317,7 @@
       "surahNumber": 2,
       "page": 35,
       "hizb": 4,
-      "quarter": 14,
+      "quarter": 2,
       "juz": 2,
       "naqza": 2
     },
@@ -328,7 +328,7 @@
       "surahNumber": 2,
       "page": 36,
       "hizb": 4,
-      "quarter": 15,
+      "quarter": 3,
       "juz": 2,
       "naqza": 2
     },
@@ -339,7 +339,7 @@
       "surahNumber": 2,
       "page": 38,
       "hizb": 4,
-      "quarter": 15,
+      "quarter": 3,
       "juz": 2,
       "naqza": 2
     },
@@ -350,7 +350,7 @@
       "surahNumber": 2,
       "page": 39,
       "hizb": 4,
-      "quarter": 16,
+      "quarter": 4,
       "juz": 2,
       "naqza": 2
     },
@@ -361,7 +361,7 @@
       "surahNumber": 2,
       "page": 40,
       "hizb": 4,
-      "quarter": 16,
+      "quarter": 4,
       "juz": 2,
       "naqza": 2
     },
@@ -372,7 +372,7 @@
       "surahNumber": 2,
       "page": 41,
       "hizb": 5,
-      "quarter": 17,
+      "quarter": 1,
       "juz": 3,
       "naqza": 2
     },
@@ -383,7 +383,7 @@
       "surahNumber": 2,
       "page": 43,
       "hizb": 5,
-      "quarter": 17,
+      "quarter": 1,
       "juz": 3,
       "naqza": 2
     },
@@ -394,7 +394,7 @@
       "surahNumber": 2,
       "page": 44,
       "hizb": 5,
-      "quarter": 18,
+      "quarter": 2,
       "juz": 3,
       "naqza": 2
     },
@@ -405,7 +405,7 @@
       "surahNumber": 2,
       "page": 45,
       "hizb": 5,
-      "quarter": 18,
+      "quarter": 2,
       "juz": 3,
       "naqza": 2
     },
@@ -416,7 +416,7 @@
       "surahNumber": 2,
       "page": 46,
       "hizb": 5,
-      "quarter": 19,
+      "quarter": 3,
       "juz": 3,
       "naqza": 2
     },
@@ -427,7 +427,7 @@
       "surahNumber": 2,
       "page": 48,
       "hizb": 5,
-      "quarter": 19,
+      "quarter": 3,
       "juz": 3,
       "naqza": 2
     },
@@ -438,7 +438,7 @@
       "surahNumber": 2,
       "page": 49,
       "hizb": 5,
-      "quarter": 20,
+      "quarter": 4,
       "juz": 3,
       "naqza": 2
     },
@@ -449,7 +449,7 @@
       "surahNumber": null,
       "page": 50,
       "hizb": 5,
-      "quarter": 20,
+      "quarter": 4,
       "juz": 3,
       "naqza": 2
     },
@@ -460,7 +460,7 @@
       "surahNumber": null,
       "page": 51,
       "hizb": 6,
-      "quarter": 21,
+      "quarter": 1,
       "juz": 3,
       "naqza": 2
     },
@@ -471,7 +471,7 @@
       "surahNumber": null,
       "page": 53,
       "hizb": 6,
-      "quarter": 21,
+      "quarter": 1,
       "juz": 3,
       "naqza": 2
     },
@@ -482,7 +482,7 @@
       "surahNumber": null,
       "page": 54,
       "hizb": 6,
-      "quarter": 22,
+      "quarter": 2,
       "juz": 3,
       "naqza": 2
     },
@@ -493,7 +493,7 @@
       "surahNumber": null,
       "page": 55,
       "hizb": 6,
-      "quarter": 22,
+      "quarter": 2,
       "juz": 3,
       "naqza": 2
     },
@@ -504,7 +504,7 @@
       "surahNumber": null,
       "page": 56,
       "hizb": 6,
-      "quarter": 23,
+      "quarter": 3,
       "juz": 3,
       "naqza": 2
     },
@@ -515,7 +515,7 @@
       "surahNumber": null,
       "page": 58,
       "hizb": 6,
-      "quarter": 23,
+      "quarter": 3,
       "juz": 3,
       "naqza": 2
     },
@@ -526,7 +526,7 @@
       "surahNumber": null,
       "page": 59,
       "hizb": 6,
-      "quarter": 24,
+      "quarter": 4,
       "juz": 3,
       "naqza": 2
     },
@@ -537,7 +537,7 @@
       "surahNumber": null,
       "page": 60,
       "hizb": 6,
-      "quarter": 24,
+      "quarter": 4,
       "juz": 3,
       "naqza": 2
     },
@@ -548,7 +548,7 @@
       "surahNumber": null,
       "page": 61,
       "hizb": 7,
-      "quarter": 25,
+      "quarter": 1,
       "juz": 4,
       "naqza": 3
     },
@@ -559,7 +559,7 @@
       "surahNumber": null,
       "page": 63,
       "hizb": 7,
-      "quarter": 25,
+      "quarter": 1,
       "juz": 4,
       "naqza": 3
     },
@@ -570,7 +570,7 @@
       "surahNumber": null,
       "page": 64,
       "hizb": 7,
-      "quarter": 26,
+      "quarter": 2,
       "juz": 4,
       "naqza": 3
     },
@@ -581,7 +581,7 @@
       "surahNumber": null,
       "page": 65,
       "hizb": 7,
-      "quarter": 26,
+      "quarter": 2,
       "juz": 4,
       "naqza": 3
     },
@@ -592,7 +592,7 @@
       "surahNumber": null,
       "page": 66,
       "hizb": 7,
-      "quarter": 27,
+      "quarter": 3,
       "juz": 4,
       "naqza": 3
     },
@@ -603,7 +603,7 @@
       "surahNumber": null,
       "page": 68,
       "hizb": 7,
-      "quarter": 27,
+      "quarter": 3,
       "juz": 4,
       "naqza": 3
     },
@@ -614,7 +614,7 @@
       "surahNumber": null,
       "page": 69,
       "hizb": 7,
-      "quarter": 28,
+      "quarter": 4,
       "juz": 4,
       "naqza": 3
     },
@@ -625,7 +625,7 @@
       "surahNumber": null,
       "page": 70,
       "hizb": 7,
-      "quarter": 28,
+      "quarter": 4,
       "juz": 4,
       "naqza": 3
     },
@@ -636,7 +636,7 @@
       "surahNumber": null,
       "page": 71,
       "hizb": 8,
-      "quarter": 29,
+      "quarter": 1,
       "juz": 4,
       "naqza": 3
     },
@@ -647,7 +647,7 @@
       "surahNumber": null,
       "page": 73,
       "hizb": 8,
-      "quarter": 29,
+      "quarter": 1,
       "juz": 4,
       "naqza": 3
     },
@@ -658,7 +658,7 @@
       "surahNumber": null,
       "page": 74,
       "hizb": 8,
-      "quarter": 30,
+      "quarter": 2,
       "juz": 4,
       "naqza": 3
     },
@@ -669,7 +669,7 @@
       "surahNumber": null,
       "page": 75,
       "hizb": 8,
-      "quarter": 30,
+      "quarter": 2,
       "juz": 4,
       "naqza": 3
     },
@@ -680,7 +680,7 @@
       "surahNumber": 4,
       "page": 77,
       "hizb": 8,
-      "quarter": 31,
+      "quarter": 3,
       "juz": 4,
       "naqza": 3
     },
@@ -691,7 +691,7 @@
       "surahNumber": 4,
       "page": 78,
       "hizb": 8,
-      "quarter": 31,
+      "quarter": 3,
       "juz": 4,
       "naqza": 3
     },
@@ -702,7 +702,7 @@
       "surahNumber": 4,
       "page": 79,
       "hizb": 8,
-      "quarter": 32,
+      "quarter": 4,
       "juz": 4,
       "naqza": 3
     },
@@ -713,7 +713,7 @@
       "surahNumber": 4,
       "page": 80,
       "hizb": 8,
-      "quarter": 32,
+      "quarter": 4,
       "juz": 4,
       "naqza": 3
     },
@@ -724,7 +724,7 @@
       "surahNumber": 4,
       "page": 82,
       "hizb": 9,
-      "quarter": 33,
+      "quarter": 1,
       "juz": 5,
       "naqza": 3
     },
@@ -735,7 +735,7 @@
       "surahNumber": 4,
       "page": 83,
       "hizb": 9,
-      "quarter": 33,
+      "quarter": 1,
       "juz": 5,
       "naqza": 3
     },
@@ -746,7 +746,7 @@
       "surahNumber": 4,
       "page": 84,
       "hizb": 9,
-      "quarter": 34,
+      "quarter": 2,
       "juz": 5,
       "naqza": 3
     },
@@ -757,7 +757,7 @@
       "surahNumber": 4,
       "page": 85,
       "hizb": 9,
-      "quarter": 34,
+      "quarter": 2,
       "juz": 5,
       "naqza": 3
     },
@@ -768,7 +768,7 @@
       "surahNumber": 4,
       "page": 87,
       "hizb": 9,
-      "quarter": 35,
+      "quarter": 3,
       "juz": 5,
       "naqza": 3
     },
@@ -779,7 +779,7 @@
       "surahNumber": 4,
       "page": 88,
       "hizb": 9,
-      "quarter": 35,
+      "quarter": 3,
       "juz": 5,
       "naqza": 3
     },
@@ -790,7 +790,7 @@
       "surahNumber": 4,
       "page": 89,
       "hizb": 9,
-      "quarter": 36,
+      "quarter": 4,
       "juz": 5,
       "naqza": 3
     },
@@ -801,7 +801,7 @@
       "surahNumber": 4,
       "page": 90,
       "hizb": 9,
-      "quarter": 36,
+      "quarter": 4,
       "juz": 5,
       "naqza": 3
     },
@@ -812,7 +812,7 @@
       "surahNumber": 4,
       "page": 92,
       "hizb": 10,
-      "quarter": 37,
+      "quarter": 1,
       "juz": 5,
       "naqza": 4
     },
@@ -823,7 +823,7 @@
       "surahNumber": 4,
       "page": 93,
       "hizb": 10,
-      "quarter": 37,
+      "quarter": 1,
       "juz": 5,
       "naqza": 4
     },
@@ -834,7 +834,7 @@
       "surahNumber": 4,
       "page": 94,
       "hizb": 10,
-      "quarter": 38,
+      "quarter": 2,
       "juz": 5,
       "naqza": 4
     },
@@ -845,7 +845,7 @@
       "surahNumber": 4,
       "page": 95,
       "hizb": 10,
-      "quarter": 38,
+      "quarter": 2,
       "juz": 5,
       "naqza": 4
     },
@@ -856,7 +856,7 @@
       "surahNumber": 4,
       "page": 97,
       "hizb": 10,
-      "quarter": 39,
+      "quarter": 3,
       "juz": 5,
       "naqza": 4
     },
@@ -867,7 +867,7 @@
       "surahNumber": 4,
       "page": 98,
       "hizb": 10,
-      "quarter": 39,
+      "quarter": 3,
       "juz": 5,
       "naqza": 4
     },
@@ -878,7 +878,7 @@
       "surahNumber": 4,
       "page": 99,
       "hizb": 10,
-      "quarter": 40,
+      "quarter": 4,
       "juz": 5,
       "naqza": 4
     },
@@ -889,7 +889,7 @@
       "surahNumber": 4,
       "page": 100,
       "hizb": 10,
-      "quarter": 40,
+      "quarter": 4,
       "juz": 5,
       "naqza": 4
     },
@@ -900,7 +900,7 @@
       "surahNumber": 4,
       "page": 102,
       "hizb": 11,
-      "quarter": 41,
+      "quarter": 1,
       "juz": 6,
       "naqza": 4
     },
@@ -911,7 +911,7 @@
       "surahNumber": 4,
       "page": 103,
       "hizb": 11,
-      "quarter": 41,
+      "quarter": 1,
       "juz": 6,
       "naqza": 4
     },
@@ -922,7 +922,7 @@
       "surahNumber": 4,
       "page": 104,
       "hizb": 11,
-      "quarter": 42,
+      "quarter": 2,
       "juz": 6,
       "naqza": 4
     },
@@ -933,7 +933,7 @@
       "surahNumber": 4,
       "page": 105,
       "hizb": 11,
-      "quarter": 42,
+      "quarter": 2,
       "juz": 6,
       "naqza": 4
     },
@@ -944,7 +944,7 @@
       "surahNumber": 5,
       "page": 107,
       "hizb": 11,
-      "quarter": 43,
+      "quarter": 3,
       "juz": 6,
       "naqza": 4
     },
@@ -955,7 +955,7 @@
       "surahNumber": 5,
       "page": 108,
       "hizb": 11,
-      "quarter": 43,
+      "quarter": 3,
       "juz": 6,
       "naqza": 4
     },
@@ -966,7 +966,7 @@
       "surahNumber": 5,
       "page": 109,
       "hizb": 11,
-      "quarter": 44,
+      "quarter": 4,
       "juz": 6,
       "naqza": 4
     },
@@ -977,7 +977,7 @@
       "surahNumber": 5,
       "page": 111,
       "hizb": 11,
-      "quarter": 44,
+      "quarter": 4,
       "juz": 6,
       "naqza": 4
     },
@@ -988,7 +988,7 @@
       "surahNumber": 5,
       "page": 112,
       "hizb": 12,
-      "quarter": 45,
+      "quarter": 1,
       "juz": 6,
       "naqza": 4
     },
@@ -999,7 +999,7 @@
       "surahNumber": 5,
       "page": 113,
       "hizb": 12,
-      "quarter": 45,
+      "quarter": 1,
       "juz": 6,
       "naqza": 4
     },
@@ -1010,7 +1010,7 @@
       "surahNumber": 5,
       "page": 114,
       "hizb": 12,
-      "quarter": 46,
+      "quarter": 2,
       "juz": 6,
       "naqza": 4
     },
@@ -1021,7 +1021,7 @@
       "surahNumber": 5,
       "page": 116,
       "hizb": 12,
-      "quarter": 46,
+      "quarter": 2,
       "juz": 6,
       "naqza": 4
     },
@@ -1032,7 +1032,7 @@
       "surahNumber": 5,
       "page": 117,
       "hizb": 12,
-      "quarter": 47,
+      "quarter": 3,
       "juz": 6,
       "naqza": 4
     },
@@ -1043,7 +1043,7 @@
       "surahNumber": 5,
       "page": 118,
       "hizb": 12,
-      "quarter": 47,
+      "quarter": 3,
       "juz": 6,
       "naqza": 4
     },
@@ -1054,7 +1054,7 @@
       "surahNumber": 5,
       "page": 119,
       "hizb": 12,
-      "quarter": 48,
+      "quarter": 4,
       "juz": 6,
       "naqza": 4
     },
@@ -1065,7 +1065,7 @@
       "surahNumber": 5,
       "page": 121,
       "hizb": 12,
-      "quarter": 48,
+      "quarter": 4,
       "juz": 6,
       "naqza": 4
     },
@@ -1076,7 +1076,7 @@
       "surahNumber": 5,
       "page": 122,
       "hizb": 13,
-      "quarter": 49,
+      "quarter": 1,
       "juz": 7,
       "naqza": 5
     },
@@ -1087,7 +1087,7 @@
       "surahNumber": 5,
       "page": 123,
       "hizb": 13,
-      "quarter": 49,
+      "quarter": 1,
       "juz": 7,
       "naqza": 5
     },
@@ -1098,7 +1098,7 @@
       "surahNumber": 5,
       "page": 124,
       "hizb": 13,
-      "quarter": 50,
+      "quarter": 2,
       "juz": 7,
       "naqza": 5
     },
@@ -1109,7 +1109,7 @@
       "surahNumber": 5,
       "page": 126,
       "hizb": 13,
-      "quarter": 50,
+      "quarter": 2,
       "juz": 7,
       "naqza": 5
     },
@@ -1120,7 +1120,7 @@
       "surahNumber": 5,
       "page": 127,
       "hizb": 13,
-      "quarter": 51,
+      "quarter": 3,
       "juz": 7,
       "naqza": 5
     },
@@ -1131,7 +1131,7 @@
       "surahNumber": 6,
       "page": 128,
       "hizb": 13,
-      "quarter": 51,
+      "quarter": 3,
       "juz": 7,
       "naqza": 5
     },
@@ -1142,7 +1142,7 @@
       "surahNumber": 6,
       "page": 129,
       "hizb": 13,
-      "quarter": 52,
+      "quarter": 4,
       "juz": 7,
       "naqza": 5
     },
@@ -1153,7 +1153,7 @@
       "surahNumber": 6,
       "page": 131,
       "hizb": 13,
-      "quarter": 52,
+      "quarter": 4,
       "juz": 7,
       "naqza": 5
     },
@@ -1164,7 +1164,7 @@
       "surahNumber": 6,
       "page": 132,
       "hizb": 14,
-      "quarter": 53,
+      "quarter": 1,
       "juz": 7,
       "naqza": 5
     },
@@ -1175,7 +1175,7 @@
       "surahNumber": 6,
       "page": 133,
       "hizb": 14,
-      "quarter": 53,
+      "quarter": 1,
       "juz": 7,
       "naqza": 5
     },
@@ -1186,7 +1186,7 @@
       "surahNumber": 6,
       "page": 134,
       "hizb": 14,
-      "quarter": 54,
+      "quarter": 2,
       "juz": 7,
       "naqza": 5
     },
@@ -1197,7 +1197,7 @@
       "surahNumber": 6,
       "page": 136,
       "hizb": 14,
-      "quarter": 54,
+      "quarter": 2,
       "juz": 7,
       "naqza": 5
     },
@@ -1208,7 +1208,7 @@
       "surahNumber": 6,
       "page": 137,
       "hizb": 14,
-      "quarter": 55,
+      "quarter": 3,
       "juz": 7,
       "naqza": 5
     },
@@ -1219,7 +1219,7 @@
       "surahNumber": 6,
       "page": 138,
       "hizb": 14,
-      "quarter": 55,
+      "quarter": 3,
       "juz": 7,
       "naqza": 5
     },
@@ -1230,7 +1230,7 @@
       "surahNumber": 6,
       "page": 139,
       "hizb": 14,
-      "quarter": 56,
+      "quarter": 4,
       "juz": 7,
       "naqza": 5
     },
@@ -1241,7 +1241,7 @@
       "surahNumber": 6,
       "page": 141,
       "hizb": 14,
-      "quarter": 56,
+      "quarter": 4,
       "juz": 7,
       "naqza": 5
     },
@@ -1252,7 +1252,7 @@
       "surahNumber": 6,
       "page": 142,
       "hizb": 15,
-      "quarter": 57,
+      "quarter": 1,
       "juz": 8,
       "naqza": 5
     },
@@ -1263,7 +1263,7 @@
       "surahNumber": 6,
       "page": 143,
       "hizb": 15,
-      "quarter": 57,
+      "quarter": 1,
       "juz": 8,
       "naqza": 5
     },
@@ -1274,7 +1274,7 @@
       "surahNumber": 6,
       "page": 145,
       "hizb": 15,
-      "quarter": 58,
+      "quarter": 2,
       "juz": 8,
       "naqza": 5
     },
@@ -1285,7 +1285,7 @@
       "surahNumber": 6,
       "page": 146,
       "hizb": 15,
-      "quarter": 58,
+      "quarter": 2,
       "juz": 8,
       "naqza": 5
     },
@@ -1296,7 +1296,7 @@
       "surahNumber": 6,
       "page": 147,
       "hizb": 15,
-      "quarter": 59,
+      "quarter": 3,
       "juz": 8,
       "naqza": 5
     },
@@ -1307,7 +1307,7 @@
       "surahNumber": 6,
       "page": 148,
       "hizb": 15,
-      "quarter": 59,
+      "quarter": 3,
       "juz": 8,
       "naqza": 5
     },
@@ -1318,7 +1318,7 @@
       "surahNumber": 6,
       "page": 150,
       "hizb": 15,
-      "quarter": 60,
+      "quarter": 4,
       "juz": 8,
       "naqza": 5
     },
@@ -1329,7 +1329,7 @@
       "surahNumber": 6,
       "page": 151,
       "hizb": 15,
-      "quarter": 60,
+      "quarter": 4,
       "juz": 8,
       "naqza": 5
     },
@@ -1340,7 +1340,7 @@
       "surahNumber": 7,
       "page": 152,
       "hizb": 16,
-      "quarter": 61,
+      "quarter": 1,
       "juz": 8,
       "naqza": 6
     },
@@ -1351,7 +1351,7 @@
       "surahNumber": 7,
       "page": 153,
       "hizb": 16,
-      "quarter": 61,
+      "quarter": 1,
       "juz": 8,
       "naqza": 6
     },
@@ -1362,7 +1362,7 @@
       "surahNumber": 7,
       "page": 155,
       "hizb": 16,
-      "quarter": 62,
+      "quarter": 2,
       "juz": 8,
       "naqza": 6
     },
@@ -1373,7 +1373,7 @@
       "surahNumber": 7,
       "page": 156,
       "hizb": 16,
-      "quarter": 62,
+      "quarter": 2,
       "juz": 8,
       "naqza": 6
     },
@@ -1384,7 +1384,7 @@
       "surahNumber": 7,
       "page": 157,
       "hizb": 16,
-      "quarter": 63,
+      "quarter": 3,
       "juz": 8,
       "naqza": 6
     },
@@ -1395,7 +1395,7 @@
       "surahNumber": 7,
       "page": 158,
       "hizb": 16,
-      "quarter": 63,
+      "quarter": 3,
       "juz": 8,
       "naqza": 6
     },
@@ -1406,7 +1406,7 @@
       "surahNumber": 7,
       "page": 160,
       "hizb": 16,
-      "quarter": 64,
+      "quarter": 4,
       "juz": 8,
       "naqza": 6
     },
@@ -1417,7 +1417,7 @@
       "surahNumber": 7,
       "page": 161,
       "hizb": 16,
-      "quarter": 64,
+      "quarter": 4,
       "juz": 8,
       "naqza": 6
     },
@@ -1428,7 +1428,7 @@
       "surahNumber": 7,
       "page": 162,
       "hizb": 17,
-      "quarter": 65,
+      "quarter": 1,
       "juz": 9,
       "naqza": 6
     },
@@ -1439,7 +1439,7 @@
       "surahNumber": 7,
       "page": 163,
       "hizb": 17,
-      "quarter": 65,
+      "quarter": 1,
       "juz": 9,
       "naqza": 6
     },
@@ -1450,7 +1450,7 @@
       "surahNumber": 7,
       "page": 165,
       "hizb": 17,
-      "quarter": 66,
+      "quarter": 2,
       "juz": 9,
       "naqza": 6
     },
@@ -1461,7 +1461,7 @@
       "surahNumber": 7,
       "page": 166,
       "hizb": 17,
-      "quarter": 66,
+      "quarter": 2,
       "juz": 9,
       "naqza": 6
     },
@@ -1472,7 +1472,7 @@
       "surahNumber": 7,
       "page": 167,
       "hizb": 17,
-      "quarter": 67,
+      "quarter": 3,
       "juz": 9,
       "naqza": 6
     },
@@ -1483,7 +1483,7 @@
       "surahNumber": 7,
       "page": 168,
       "hizb": 17,
-      "quarter": 67,
+      "quarter": 3,
       "juz": 9,
       "naqza": 6
     },
@@ -1494,7 +1494,7 @@
       "surahNumber": 7,
       "page": 170,
       "hizb": 17,
-      "quarter": 68,
+      "quarter": 4,
       "juz": 9,
       "naqza": 6
     },
@@ -1505,7 +1505,7 @@
       "surahNumber": 7,
       "page": 171,
       "hizb": 17,
-      "quarter": 68,
+      "quarter": 4,
       "juz": 9,
       "naqza": 6
     },
@@ -1516,7 +1516,7 @@
       "surahNumber": 7,
       "page": 172,
       "hizb": 18,
-      "quarter": 69,
+      "quarter": 1,
       "juz": 9,
       "naqza": 6
     },
@@ -1527,7 +1527,7 @@
       "surahNumber": 7,
       "page": 173,
       "hizb": 18,
-      "quarter": 69,
+      "quarter": 1,
       "juz": 9,
       "naqza": 6
     },
@@ -1538,7 +1538,7 @@
       "surahNumber": 7,
       "page": 175,
       "hizb": 18,
-      "quarter": 70,
+      "quarter": 2,
       "juz": 9,
       "naqza": 6
     },
@@ -1549,7 +1549,7 @@
       "surahNumber": 7,
       "page": 176,
       "hizb": 18,
-      "quarter": 70,
+      "quarter": 2,
       "juz": 9,
       "naqza": 6
     },
@@ -1560,7 +1560,7 @@
       "surahNumber": 8,
       "page": 177,
       "hizb": 18,
-      "quarter": 71,
+      "quarter": 3,
       "juz": 9,
       "naqza": 6
     },
@@ -1571,7 +1571,7 @@
       "surahNumber": 8,
       "page": 179,
       "hizb": 18,
-      "quarter": 71,
+      "quarter": 3,
       "juz": 9,
       "naqza": 6
     },
@@ -1582,7 +1582,7 @@
       "surahNumber": 8,
       "page": 180,
       "hizb": 18,
-      "quarter": 72,
+      "quarter": 4,
       "juz": 9,
       "naqza": 6
     },
@@ -1593,7 +1593,7 @@
       "surahNumber": 8,
       "page": 181,
       "hizb": 18,
-      "quarter": 72,
+      "quarter": 4,
       "juz": 9,
       "naqza": 6
     },
@@ -1604,7 +1604,7 @@
       "surahNumber": 8,
       "page": 182,
       "hizb": 19,
-      "quarter": 73,
+      "quarter": 1,
       "juz": 10,
       "naqza": 7
     },
@@ -1615,7 +1615,7 @@
       "surahNumber": 8,
       "page": 184,
       "hizb": 19,
-      "quarter": 73,
+      "quarter": 1,
       "juz": 10,
       "naqza": 7
     },
@@ -1626,7 +1626,7 @@
       "surahNumber": 8,
       "page": 185,
       "hizb": 19,
-      "quarter": 74,
+      "quarter": 2,
       "juz": 10,
       "naqza": 7
     },
@@ -1637,7 +1637,7 @@
       "surahNumber": 8,
       "page": 186,
       "hizb": 19,
-      "quarter": 74,
+      "quarter": 2,
       "juz": 10,
       "naqza": 7
     },
@@ -1648,7 +1648,7 @@
       "surahNumber": 9,
       "page": 187,
       "hizb": 19,
-      "quarter": 75,
+      "quarter": 3,
       "juz": 10,
       "naqza": 7
     },
@@ -1659,7 +1659,7 @@
       "surahNumber": 9,
       "page": 189,
       "hizb": 19,
-      "quarter": 75,
+      "quarter": 3,
       "juz": 10,
       "naqza": 7
     },
@@ -1670,7 +1670,7 @@
       "surahNumber": 9,
       "page": 190,
       "hizb": 19,
-      "quarter": 76,
+      "quarter": 4,
       "juz": 10,
       "naqza": 7
     },
@@ -1681,7 +1681,7 @@
       "surahNumber": 9,
       "page": 191,
       "hizb": 19,
-      "quarter": 76,
+      "quarter": 4,
       "juz": 10,
       "naqza": 7
     },
@@ -1692,7 +1692,7 @@
       "surahNumber": 9,
       "page": 192,
       "hizb": 20,
-      "quarter": 77,
+      "quarter": 1,
       "juz": 10,
       "naqza": 7
     },
@@ -1703,7 +1703,7 @@
       "surahNumber": 9,
       "page": 194,
       "hizb": 20,
-      "quarter": 77,
+      "quarter": 1,
       "juz": 10,
       "naqza": 7
     },
@@ -1714,7 +1714,7 @@
       "surahNumber": 9,
       "page": 195,
       "hizb": 20,
-      "quarter": 78,
+      "quarter": 2,
       "juz": 10,
       "naqza": 7
     },
@@ -1725,7 +1725,7 @@
       "surahNumber": 9,
       "page": 196,
       "hizb": 20,
-      "quarter": 78,
+      "quarter": 2,
       "juz": 10,
       "naqza": 7
     },
@@ -1736,7 +1736,7 @@
       "surahNumber": 9,
       "page": 197,
       "hizb": 20,
-      "quarter": 79,
+      "quarter": 3,
       "juz": 10,
       "naqza": 7
     },
@@ -1747,7 +1747,7 @@
       "surahNumber": 9,
       "page": 199,
       "hizb": 20,
-      "quarter": 79,
+      "quarter": 3,
       "juz": 10,
       "naqza": 7
     },
@@ -1758,7 +1758,7 @@
       "surahNumber": 9,
       "page": 200,
       "hizb": 20,
-      "quarter": 80,
+      "quarter": 4,
       "juz": 10,
       "naqza": 7
     },
@@ -1769,7 +1769,7 @@
       "surahNumber": 9,
       "page": 201,
       "hizb": 20,
-      "quarter": 80,
+      "quarter": 4,
       "juz": 10,
       "naqza": 7
     },
@@ -1780,7 +1780,7 @@
       "surahNumber": 9,
       "page": 202,
       "hizb": 21,
-      "quarter": 81,
+      "quarter": 1,
       "juz": 11,
       "naqza": 7
     },
@@ -1791,7 +1791,7 @@
       "surahNumber": 9,
       "page": 204,
       "hizb": 21,
-      "quarter": 81,
+      "quarter": 1,
       "juz": 11,
       "naqza": 7
     },
@@ -1802,7 +1802,7 @@
       "surahNumber": 9,
       "page": 205,
       "hizb": 21,
-      "quarter": 82,
+      "quarter": 2,
       "juz": 11,
       "naqza": 7
     },
@@ -1813,7 +1813,7 @@
       "surahNumber": 9,
       "page": 206,
       "hizb": 21,
-      "quarter": 82,
+      "quarter": 2,
       "juz": 11,
       "naqza": 7
     },
@@ -1824,7 +1824,7 @@
       "surahNumber": 9,
       "page": 207,
       "hizb": 21,
-      "quarter": 83,
+      "quarter": 3,
       "juz": 11,
       "naqza": 7
     },
@@ -1835,7 +1835,7 @@
       "surahNumber": 10,
       "page": 209,
       "hizb": 21,
-      "quarter": 83,
+      "quarter": 3,
       "juz": 11,
       "naqza": 7
     },
@@ -1846,7 +1846,7 @@
       "surahNumber": 10,
       "page": 210,
       "hizb": 21,
-      "quarter": 84,
+      "quarter": 4,
       "juz": 11,
       "naqza": 7
     },
@@ -1857,7 +1857,7 @@
       "surahNumber": 10,
       "page": 211,
       "hizb": 21,
-      "quarter": 84,
+      "quarter": 4,
       "juz": 11,
       "naqza": 7
     },
@@ -1868,7 +1868,7 @@
       "surahNumber": 10,
       "page": 212,
       "hizb": 22,
-      "quarter": 85,
+      "quarter": 1,
       "juz": 11,
       "naqza": 8
     },
@@ -1879,7 +1879,7 @@
       "surahNumber": 10,
       "page": 214,
       "hizb": 22,
-      "quarter": 85,
+      "quarter": 1,
       "juz": 11,
       "naqza": 8
     },
@@ -1890,7 +1890,7 @@
       "surahNumber": 10,
       "page": 215,
       "hizb": 22,
-      "quarter": 86,
+      "quarter": 2,
       "juz": 11,
       "naqza": 8
     },
@@ -1901,7 +1901,7 @@
       "surahNumber": 10,
       "page": 216,
       "hizb": 22,
-      "quarter": 86,
+      "quarter": 2,
       "juz": 11,
       "naqza": 8
     },
@@ -1912,7 +1912,7 @@
       "surahNumber": 10,
       "page": 218,
       "hizb": 22,
-      "quarter": 87,
+      "quarter": 3,
       "juz": 11,
       "naqza": 8
     },
@@ -1923,7 +1923,7 @@
       "surahNumber": 10,
       "page": 219,
       "hizb": 22,
-      "quarter": 87,
+      "quarter": 3,
       "juz": 11,
       "naqza": 8
     },
@@ -1934,7 +1934,7 @@
       "surahNumber": 10,
       "page": 220,
       "hizb": 22,
-      "quarter": 88,
+      "quarter": 4,
       "juz": 11,
       "naqza": 8
     },
@@ -1945,7 +1945,7 @@
       "surahNumber": 10,
       "page": 221,
       "hizb": 22,
-      "quarter": 88,
+      "quarter": 4,
       "juz": 11,
       "naqza": 8
     },
@@ -1956,7 +1956,7 @@
       "surahNumber": 11,
       "page": 223,
       "hizb": 23,
-      "quarter": 89,
+      "quarter": 1,
       "juz": 12,
       "naqza": 8
     },
@@ -1967,7 +1967,7 @@
       "surahNumber": 11,
       "page": 224,
       "hizb": 23,
-      "quarter": 89,
+      "quarter": 1,
       "juz": 12,
       "naqza": 8
     },
@@ -1978,7 +1978,7 @@
       "surahNumber": 11,
       "page": 225,
       "hizb": 23,
-      "quarter": 90,
+      "quarter": 2,
       "juz": 12,
       "naqza": 8
     },
@@ -1989,7 +1989,7 @@
       "surahNumber": 11,
       "page": 226,
       "hizb": 23,
-      "quarter": 90,
+      "quarter": 2,
       "juz": 12,
       "naqza": 8
     },
@@ -2000,7 +2000,7 @@
       "surahNumber": 11,
       "page": 228,
       "hizb": 23,
-      "quarter": 91,
+      "quarter": 3,
       "juz": 12,
       "naqza": 8
     },
@@ -2011,7 +2011,7 @@
       "surahNumber": 11,
       "page": 229,
       "hizb": 23,
-      "quarter": 91,
+      "quarter": 3,
       "juz": 12,
       "naqza": 8
     },
@@ -2022,7 +2022,7 @@
       "surahNumber": 11,
       "page": 230,
       "hizb": 23,
-      "quarter": 92,
+      "quarter": 4,
       "juz": 12,
       "naqza": 8
     },
@@ -2033,7 +2033,7 @@
       "surahNumber": 11,
       "page": 231,
       "hizb": 23,
-      "quarter": 92,
+      "quarter": 4,
       "juz": 12,
       "naqza": 8
     },
@@ -2044,7 +2044,7 @@
       "surahNumber": 11,
       "page": 233,
       "hizb": 24,
-      "quarter": 93,
+      "quarter": 1,
       "juz": 12,
       "naqza": 8
     },
@@ -2055,7 +2055,7 @@
       "surahNumber": 11,
       "page": 234,
       "hizb": 24,
-      "quarter": 93,
+      "quarter": 1,
       "juz": 12,
       "naqza": 8
     },
@@ -2066,7 +2066,7 @@
       "surahNumber": 11,
       "page": 235,
       "hizb": 24,
-      "quarter": 94,
+      "quarter": 2,
       "juz": 12,
       "naqza": 8
     },
@@ -2077,7 +2077,7 @@
       "surahNumber": 11,
       "page": 236,
       "hizb": 24,
-      "quarter": 94,
+      "quarter": 2,
       "juz": 12,
       "naqza": 8
     },
@@ -2088,7 +2088,7 @@
       "surahNumber": 12,
       "page": 238,
       "hizb": 24,
-      "quarter": 95,
+      "quarter": 3,
       "juz": 12,
       "naqza": 8
     },
@@ -2099,7 +2099,7 @@
       "surahNumber": 12,
       "page": 239,
       "hizb": 24,
-      "quarter": 95,
+      "quarter": 3,
       "juz": 12,
       "naqza": 8
     },
@@ -2110,7 +2110,7 @@
       "surahNumber": 12,
       "page": 240,
       "hizb": 24,
-      "quarter": 96,
+      "quarter": 4,
       "juz": 12,
       "naqza": 8
     },
@@ -2121,7 +2121,7 @@
       "surahNumber": 12,
       "page": 241,
       "hizb": 24,
-      "quarter": 96,
+      "quarter": 4,
       "juz": 12,
       "naqza": 8
     },
@@ -2132,7 +2132,7 @@
       "surahNumber": 12,
       "page": 243,
       "hizb": 25,
-      "quarter": 97,
+      "quarter": 1,
       "juz": 13,
       "naqza": 9
     },
@@ -2143,7 +2143,7 @@
       "surahNumber": 12,
       "page": 244,
       "hizb": 25,
-      "quarter": 97,
+      "quarter": 1,
       "juz": 13,
       "naqza": 9
     },
@@ -2154,7 +2154,7 @@
       "surahNumber": 12,
       "page": 245,
       "hizb": 25,
-      "quarter": 98,
+      "quarter": 2,
       "juz": 13,
       "naqza": 9
     },
@@ -2165,7 +2165,7 @@
       "surahNumber": 12,
       "page": 246,
       "hizb": 25,
-      "quarter": 98,
+      "quarter": 2,
       "juz": 13,
       "naqza": 9
     },
@@ -2176,7 +2176,7 @@
       "surahNumber": 12,
       "page": 248,
       "hizb": 25,
-      "quarter": 99,
+      "quarter": 3,
       "juz": 13,
       "naqza": 9
     },
@@ -2187,7 +2187,7 @@
       "surahNumber": 12,
       "page": 249,
       "hizb": 25,
-      "quarter": 99,
+      "quarter": 3,
       "juz": 13,
       "naqza": 9
     },
@@ -2198,7 +2198,7 @@
       "surahNumber": 13,
       "page": 250,
       "hizb": 25,
-      "quarter": 100,
+      "quarter": 4,
       "juz": 13,
       "naqza": 9
     },
@@ -2209,7 +2209,7 @@
       "surahNumber": 13,
       "page": 252,
       "hizb": 25,
-      "quarter": 100,
+      "quarter": 4,
       "juz": 13,
       "naqza": 9
     },
@@ -2220,7 +2220,7 @@
       "surahNumber": 13,
       "page": 253,
       "hizb": 26,
-      "quarter": 101,
+      "quarter": 1,
       "juz": 13,
       "naqza": 9
     },
@@ -2231,7 +2231,7 @@
       "surahNumber": 13,
       "page": 254,
       "hizb": 26,
-      "quarter": 101,
+      "quarter": 1,
       "juz": 13,
       "naqza": 9
     },
@@ -2242,7 +2242,7 @@
       "surahNumber": 13,
       "page": 255,
       "hizb": 26,
-      "quarter": 102,
+      "quarter": 2,
       "juz": 13,
       "naqza": 9
     },
@@ -2253,7 +2253,7 @@
       "surahNumber": 14,
       "page": 257,
       "hizb": 26,
-      "quarter": 102,
+      "quarter": 2,
       "juz": 13,
       "naqza": 9
     },
@@ -2264,7 +2264,7 @@
       "surahNumber": 14,
       "page": 258,
       "hizb": 26,
-      "quarter": 103,
+      "quarter": 3,
       "juz": 13,
       "naqza": 9
     },
@@ -2275,7 +2275,7 @@
       "surahNumber": 14,
       "page": 259,
       "hizb": 26,
-      "quarter": 103,
+      "quarter": 3,
       "juz": 13,
       "naqza": 9
     },
@@ -2286,7 +2286,7 @@
       "surahNumber": 14,
       "page": 260,
       "hizb": 26,
-      "quarter": 104,
+      "quarter": 4,
       "juz": 13,
       "naqza": 9
     },
@@ -2297,7 +2297,7 @@
       "surahNumber": 14,
       "page": 262,
       "hizb": 26,
-      "quarter": 104,
+      "quarter": 4,
       "juz": 13,
       "naqza": 9
     },
@@ -2308,7 +2308,7 @@
       "surahNumber": 15,
       "page": 263,
       "hizb": 27,
-      "quarter": 105,
+      "quarter": 1,
       "juz": 14,
       "naqza": 9
     },
@@ -2319,7 +2319,7 @@
       "surahNumber": 15,
       "page": 264,
       "hizb": 27,
-      "quarter": 105,
+      "quarter": 1,
       "juz": 14,
       "naqza": 9
     },
@@ -2330,7 +2330,7 @@
       "surahNumber": 15,
       "page": 265,
       "hizb": 27,
-      "quarter": 106,
+      "quarter": 2,
       "juz": 14,
       "naqza": 9
     },
@@ -2341,7 +2341,7 @@
       "surahNumber": 15,
       "page": 267,
       "hizb": 27,
-      "quarter": 106,
+      "quarter": 2,
       "juz": 14,
       "naqza": 9
     },
@@ -2352,7 +2352,7 @@
       "surahNumber": 16,
       "page": 268,
       "hizb": 27,
-      "quarter": 107,
+      "quarter": 3,
       "juz": 14,
       "naqza": 9
     },
@@ -2363,7 +2363,7 @@
       "surahNumber": 16,
       "page": 269,
       "hizb": 27,
-      "quarter": 107,
+      "quarter": 3,
       "juz": 14,
       "naqza": 9
     },
@@ -2374,7 +2374,7 @@
       "surahNumber": 16,
       "page": 270,
       "hizb": 27,
-      "quarter": 108,
+      "quarter": 4,
       "juz": 14,
       "naqza": 9
     },
@@ -2385,7 +2385,7 @@
       "surahNumber": 16,
       "page": 272,
       "hizb": 27,
-      "quarter": 108,
+      "quarter": 4,
       "juz": 14,
       "naqza": 9
     },
@@ -2396,7 +2396,7 @@
       "surahNumber": 16,
       "page": 273,
       "hizb": 28,
-      "quarter": 109,
+      "quarter": 1,
       "juz": 14,
       "naqza": 10
     },
@@ -2407,7 +2407,7 @@
       "surahNumber": 16,
       "page": 274,
       "hizb": 28,
-      "quarter": 109,
+      "quarter": 1,
       "juz": 14,
       "naqza": 10
     },
@@ -2418,7 +2418,7 @@
       "surahNumber": 16,
       "page": 275,
       "hizb": 28,
-      "quarter": 110,
+      "quarter": 2,
       "juz": 14,
       "naqza": 10
     },
@@ -2429,7 +2429,7 @@
       "surahNumber": 16,
       "page": 277,
       "hizb": 28,
-      "quarter": 110,
+      "quarter": 2,
       "juz": 14,
       "naqza": 10
     },
@@ -2440,7 +2440,7 @@
       "surahNumber": 16,
       "page": 278,
       "hizb": 28,
-      "quarter": 111,
+      "quarter": 3,
       "juz": 14,
       "naqza": 10
     },
@@ -2451,7 +2451,7 @@
       "surahNumber": 16,
       "page": 279,
       "hizb": 28,
-      "quarter": 111,
+      "quarter": 3,
       "juz": 14,
       "naqza": 10
     },
@@ -2462,7 +2462,7 @@
       "surahNumber": 16,
       "page": 280,
       "hizb": 28,
-      "quarter": 112,
+      "quarter": 4,
       "juz": 14,
       "naqza": 10
     },
@@ -2473,7 +2473,7 @@
       "surahNumber": 16,
       "page": 282,
       "hizb": 28,
-      "quarter": 112,
+      "quarter": 4,
       "juz": 14,
       "naqza": 10
     },
@@ -2484,7 +2484,7 @@
       "surahNumber": 17,
       "page": 283,
       "hizb": 29,
-      "quarter": 113,
+      "quarter": 1,
       "juz": 15,
       "naqza": 10
     },
@@ -2495,7 +2495,7 @@
       "surahNumber": 17,
       "page": 284,
       "hizb": 29,
-      "quarter": 113,
+      "quarter": 1,
       "juz": 15,
       "naqza": 10
     },
@@ -2506,7 +2506,7 @@
       "surahNumber": 17,
       "page": 286,
       "hizb": 29,
-      "quarter": 114,
+      "quarter": 2,
       "juz": 15,
       "naqza": 10
     },
@@ -2517,7 +2517,7 @@
       "surahNumber": 17,
       "page": 287,
       "hizb": 29,
-      "quarter": 114,
+      "quarter": 2,
       "juz": 15,
       "naqza": 10
     },
@@ -2528,7 +2528,7 @@
       "surahNumber": 17,
       "page": 288,
       "hizb": 29,
-      "quarter": 115,
+      "quarter": 3,
       "juz": 15,
       "naqza": 10
     },
@@ -2539,7 +2539,7 @@
       "surahNumber": 17,
       "page": 289,
       "hizb": 29,
-      "quarter": 115,
+      "quarter": 3,
       "juz": 15,
       "naqza": 10
     },
@@ -2550,7 +2550,7 @@
       "surahNumber": 17,
       "page": 291,
       "hizb": 29,
-      "quarter": 116,
+      "quarter": 4,
       "juz": 15,
       "naqza": 10
     },
@@ -2561,7 +2561,7 @@
       "surahNumber": 17,
       "page": 292,
       "hizb": 29,
-      "quarter": 116,
+      "quarter": 4,
       "juz": 15,
       "naqza": 10
     },
@@ -2572,7 +2572,7 @@
       "surahNumber": 17,
       "page": 293,
       "hizb": 30,
-      "quarter": 117,
+      "quarter": 1,
       "juz": 15,
       "naqza": 10
     },
@@ -2583,7 +2583,7 @@
       "surahNumber": 18,
       "page": 294,
       "hizb": 30,
-      "quarter": 117,
+      "quarter": 1,
       "juz": 15,
       "naqza": 10
     },
@@ -2594,7 +2594,7 @@
       "surahNumber": 18,
       "page": 296,
       "hizb": 30,
-      "quarter": 118,
+      "quarter": 2,
       "juz": 15,
       "naqza": 10
     },
@@ -2605,7 +2605,7 @@
       "surahNumber": 18,
       "page": 297,
       "hizb": 30,
-      "quarter": 118,
+      "quarter": 2,
       "juz": 15,
       "naqza": 10
     },
@@ -2616,7 +2616,7 @@
       "surahNumber": 18,
       "page": 298,
       "hizb": 30,
-      "quarter": 119,
+      "quarter": 3,
       "juz": 15,
       "naqza": 10
     },
@@ -2627,7 +2627,7 @@
       "surahNumber": 18,
       "page": 299,
       "hizb": 30,
-      "quarter": 119,
+      "quarter": 3,
       "juz": 15,
       "naqza": 10
     },
@@ -2638,7 +2638,7 @@
       "surahNumber": 18,
       "page": 301,
       "hizb": 30,
-      "quarter": 120,
+      "quarter": 4,
       "juz": 15,
       "naqza": 10
     },
@@ -2649,7 +2649,7 @@
       "surahNumber": 18,
       "page": 302,
       "hizb": 30,
-      "quarter": 120,
+      "quarter": 4,
       "juz": 15,
       "naqza": 10
     },
@@ -2660,7 +2660,7 @@
       "surahNumber": 18,
       "page": 303,
       "hizb": 31,
-      "quarter": 121,
+      "quarter": 1,
       "juz": 16,
       "naqza": 11
     },
@@ -2671,7 +2671,7 @@
       "surahNumber": 18,
       "page": 304,
       "hizb": 31,
-      "quarter": 121,
+      "quarter": 1,
       "juz": 16,
       "naqza": 11
     },
@@ -2682,7 +2682,7 @@
       "surahNumber": 18,
       "page": 306,
       "hizb": 31,
-      "quarter": 122,
+      "quarter": 2,
       "juz": 16,
       "naqza": 11
     },
@@ -2693,7 +2693,7 @@
       "surahNumber": 19,
       "page": 307,
       "hizb": 31,
-      "quarter": 122,
+      "quarter": 2,
       "juz": 16,
       "naqza": 11
     },
@@ -2704,7 +2704,7 @@
       "surahNumber": 19,
       "page": 308,
       "hizb": 31,
-      "quarter": 123,
+      "quarter": 3,
       "juz": 16,
       "naqza": 11
     },
@@ -2715,7 +2715,7 @@
       "surahNumber": 19,
       "page": 309,
       "hizb": 31,
-      "quarter": 123,
+      "quarter": 3,
       "juz": 16,
       "naqza": 11
     },
@@ -2726,7 +2726,7 @@
       "surahNumber": 19,
       "page": 311,
       "hizb": 31,
-      "quarter": 124,
+      "quarter": 4,
       "juz": 16,
       "naqza": 11
     },
@@ -2737,7 +2737,7 @@
       "surahNumber": 19,
       "page": 312,
       "hizb": 31,
-      "quarter": 124,
+      "quarter": 4,
       "juz": 16,
       "naqza": 11
     },
@@ -2748,7 +2748,7 @@
       "surahNumber": 20,
       "page": 313,
       "hizb": 32,
-      "quarter": 125,
+      "quarter": 1,
       "juz": 16,
       "naqza": 11
     },
@@ -2759,7 +2759,7 @@
       "surahNumber": 20,
       "page": 314,
       "hizb": 32,
-      "quarter": 125,
+      "quarter": 1,
       "juz": 16,
       "naqza": 11
     },
@@ -2770,7 +2770,7 @@
       "surahNumber": 20,
       "page": 316,
       "hizb": 32,
-      "quarter": 126,
+      "quarter": 2,
       "juz": 16,
       "naqza": 11
     },
@@ -2781,7 +2781,7 @@
       "surahNumber": 20,
       "page": 317,
       "hizb": 32,
-      "quarter": 126,
+      "quarter": 2,
       "juz": 16,
       "naqza": 11
     },
@@ -2792,7 +2792,7 @@
       "surahNumber": 20,
       "page": 318,
       "hizb": 32,
-      "quarter": 127,
+      "quarter": 3,
       "juz": 16,
       "naqza": 11
     },
@@ -2803,7 +2803,7 @@
       "surahNumber": 20,
       "page": 319,
       "hizb": 32,
-      "quarter": 127,
+      "quarter": 3,
       "juz": 16,
       "naqza": 11
     },
@@ -2814,7 +2814,7 @@
       "surahNumber": 20,
       "page": 321,
       "hizb": 32,
-      "quarter": 128,
+      "quarter": 4,
       "juz": 16,
       "naqza": 11
     },
@@ -2825,7 +2825,7 @@
       "surahNumber": 20,
       "page": 322,
       "hizb": 32,
-      "quarter": 128,
+      "quarter": 4,
       "juz": 16,
       "naqza": 11
     },
@@ -2836,7 +2836,7 @@
       "surahNumber": 21,
       "page": 323,
       "hizb": 33,
-      "quarter": 129,
+      "quarter": 1,
       "juz": 17,
       "naqza": 11
     },
@@ -2847,7 +2847,7 @@
       "surahNumber": 21,
       "page": 325,
       "hizb": 33,
-      "quarter": 129,
+      "quarter": 1,
       "juz": 17,
       "naqza": 11
     },
@@ -2858,7 +2858,7 @@
       "surahNumber": 21,
       "page": 326,
       "hizb": 33,
-      "quarter": 130,
+      "quarter": 2,
       "juz": 17,
       "naqza": 11
     },
@@ -2869,7 +2869,7 @@
       "surahNumber": 21,
       "page": 327,
       "hizb": 33,
-      "quarter": 130,
+      "quarter": 2,
       "juz": 17,
       "naqza": 11
     },
@@ -2880,7 +2880,7 @@
       "surahNumber": 21,
       "page": 328,
       "hizb": 33,
-      "quarter": 131,
+      "quarter": 3,
       "juz": 17,
       "naqza": 11
     },
@@ -2891,7 +2891,7 @@
       "surahNumber": 21,
       "page": 330,
       "hizb": 33,
-      "quarter": 131,
+      "quarter": 3,
       "juz": 17,
       "naqza": 11
     },
@@ -2902,7 +2902,7 @@
       "surahNumber": 21,
       "page": 331,
       "hizb": 33,
-      "quarter": 132,
+      "quarter": 4,
       "juz": 17,
       "naqza": 11
     },
@@ -2913,7 +2913,7 @@
       "surahNumber": 21,
       "page": 332,
       "hizb": 33,
-      "quarter": 132,
+      "quarter": 4,
       "juz": 17,
       "naqza": 11
     },
@@ -2924,7 +2924,7 @@
       "surahNumber": 22,
       "page": 333,
       "hizb": 34,
-      "quarter": 133,
+      "quarter": 1,
       "juz": 17,
       "naqza": 12
     },
@@ -2935,7 +2935,7 @@
       "surahNumber": 22,
       "page": 335,
       "hizb": 34,
-      "quarter": 133,
+      "quarter": 1,
       "juz": 17,
       "naqza": 12
     },
@@ -2946,7 +2946,7 @@
       "surahNumber": 22,
       "page": 336,
       "hizb": 34,
-      "quarter": 134,
+      "quarter": 2,
       "juz": 17,
       "naqza": 12
     },
@@ -2957,7 +2957,7 @@
       "surahNumber": 22,
       "page": 337,
       "hizb": 34,
-      "quarter": 134,
+      "quarter": 2,
       "juz": 17,
       "naqza": 12
     },
@@ -2968,7 +2968,7 @@
       "surahNumber": 22,
       "page": 338,
       "hizb": 34,
-      "quarter": 135,
+      "quarter": 3,
       "juz": 17,
       "naqza": 12
     },
@@ -2979,7 +2979,7 @@
       "surahNumber": 22,
       "page": 340,
       "hizb": 34,
-      "quarter": 135,
+      "quarter": 3,
       "juz": 17,
       "naqza": 12
     },
@@ -2990,7 +2990,7 @@
       "surahNumber": 22,
       "page": 341,
       "hizb": 34,
-      "quarter": 136,
+      "quarter": 4,
       "juz": 17,
       "naqza": 12
     },
@@ -3001,7 +3001,7 @@
       "surahNumber": 22,
       "page": 342,
       "hizb": 34,
-      "quarter": 136,
+      "quarter": 4,
       "juz": 17,
       "naqza": 12
     },
@@ -3012,7 +3012,7 @@
       "surahNumber": 23,
       "page": 343,
       "hizb": 35,
-      "quarter": 137,
+      "quarter": 1,
       "juz": 18,
       "naqza": 12
     },
@@ -3023,7 +3023,7 @@
       "surahNumber": 23,
       "page": 345,
       "hizb": 35,
-      "quarter": 137,
+      "quarter": 1,
       "juz": 18,
       "naqza": 12
     },
@@ -3034,7 +3034,7 @@
       "surahNumber": 23,
       "page": 346,
       "hizb": 35,
-      "quarter": 138,
+      "quarter": 2,
       "juz": 18,
       "naqza": 12
     },
@@ -3045,7 +3045,7 @@
       "surahNumber": 23,
       "page": 347,
       "hizb": 35,
-      "quarter": 138,
+      "quarter": 2,
       "juz": 18,
       "naqza": 12
     },
@@ -3056,7 +3056,7 @@
       "surahNumber": 23,
       "page": 348,
       "hizb": 35,
-      "quarter": 139,
+      "quarter": 3,
       "juz": 18,
       "naqza": 12
     },
@@ -3067,7 +3067,7 @@
       "surahNumber": 23,
       "page": 350,
       "hizb": 35,
-      "quarter": 139,
+      "quarter": 3,
       "juz": 18,
       "naqza": 12
     },
@@ -3078,7 +3078,7 @@
       "surahNumber": 23,
       "page": 351,
       "hizb": 35,
-      "quarter": 140,
+      "quarter": 4,
       "juz": 18,
       "naqza": 12
     },
@@ -3089,7 +3089,7 @@
       "surahNumber": 24,
       "page": 352,
       "hizb": 35,
-      "quarter": 140,
+      "quarter": 4,
       "juz": 18,
       "naqza": 12
     },
@@ -3100,7 +3100,7 @@
       "surahNumber": 24,
       "page": 353,
       "hizb": 36,
-      "quarter": 141,
+      "quarter": 1,
       "juz": 18,
       "naqza": 12
     },
@@ -3111,7 +3111,7 @@
       "surahNumber": 24,
       "page": 355,
       "hizb": 36,
-      "quarter": 141,
+      "quarter": 1,
       "juz": 18,
       "naqza": 12
     },
@@ -3122,7 +3122,7 @@
       "surahNumber": 24,
       "page": 356,
       "hizb": 36,
-      "quarter": 142,
+      "quarter": 2,
       "juz": 18,
       "naqza": 12
     },
@@ -3133,7 +3133,7 @@
       "surahNumber": 24,
       "page": 357,
       "hizb": 36,
-      "quarter": 142,
+      "quarter": 2,
       "juz": 18,
       "naqza": 12
     },
@@ -3144,7 +3144,7 @@
       "surahNumber": 24,
       "page": 359,
       "hizb": 36,
-      "quarter": 143,
+      "quarter": 3,
       "juz": 18,
       "naqza": 12
     },
@@ -3155,7 +3155,7 @@
       "surahNumber": 24,
       "page": 360,
       "hizb": 36,
-      "quarter": 143,
+      "quarter": 3,
       "juz": 18,
       "naqza": 12
     },
@@ -3166,7 +3166,7 @@
       "surahNumber": 24,
       "page": 361,
       "hizb": 36,
-      "quarter": 144,
+      "quarter": 4,
       "juz": 18,
       "naqza": 12
     },
@@ -3177,7 +3177,7 @@
       "surahNumber": 25,
       "page": 362,
       "hizb": 36,
-      "quarter": 144,
+      "quarter": 4,
       "juz": 18,
       "naqza": 12
     },
@@ -3188,7 +3188,7 @@
       "surahNumber": 25,
       "page": 364,
       "hizb": 37,
-      "quarter": 145,
+      "quarter": 1,
       "juz": 19,
       "naqza": 13
     },
@@ -3199,7 +3199,7 @@
       "surahNumber": 25,
       "page": 365,
       "hizb": 37,
-      "quarter": 145,
+      "quarter": 1,
       "juz": 19,
       "naqza": 13
     },
@@ -3210,7 +3210,7 @@
       "surahNumber": 25,
       "page": 366,
       "hizb": 37,
-      "quarter": 146,
+      "quarter": 2,
       "juz": 19,
       "naqza": 13
     },
@@ -3221,7 +3221,7 @@
       "surahNumber": 25,
       "page": 367,
       "hizb": 37,
-      "quarter": 146,
+      "quarter": 2,
       "juz": 19,
       "naqza": 13
     },
@@ -3232,7 +3232,7 @@
       "surahNumber": 26,
       "page": 369,
       "hizb": 37,
-      "quarter": 147,
+      "quarter": 3,
       "juz": 19,
       "naqza": 13
     },
@@ -3243,7 +3243,7 @@
       "surahNumber": 26,
       "page": 370,
       "hizb": 37,
-      "quarter": 147,
+      "quarter": 3,
       "juz": 19,
       "naqza": 13
     },
@@ -3254,7 +3254,7 @@
       "surahNumber": 26,
       "page": 371,
       "hizb": 37,
-      "quarter": 148,
+      "quarter": 4,
       "juz": 19,
       "naqza": 13
     },
@@ -3265,7 +3265,7 @@
       "surahNumber": 26,
       "page": 372,
       "hizb": 37,
-      "quarter": 148,
+      "quarter": 4,
       "juz": 19,
       "naqza": 13
     },
@@ -3276,7 +3276,7 @@
       "surahNumber": 26,
       "page": 374,
       "hizb": 38,
-      "quarter": 149,
+      "quarter": 1,
       "juz": 19,
       "naqza": 13
     },
@@ -3287,7 +3287,7 @@
       "surahNumber": 26,
       "page": 375,
       "hizb": 38,
-      "quarter": 149,
+      "quarter": 1,
       "juz": 19,
       "naqza": 13
     },
@@ -3298,7 +3298,7 @@
       "surahNumber": 26,
       "page": 376,
       "hizb": 38,
-      "quarter": 150,
+      "quarter": 2,
       "juz": 19,
       "naqza": 13
     },
@@ -3309,7 +3309,7 @@
       "surahNumber": 26,
       "page": 377,
       "hizb": 38,
-      "quarter": 150,
+      "quarter": 2,
       "juz": 19,
       "naqza": 13
     },
@@ -3320,7 +3320,7 @@
       "surahNumber": 27,
       "page": 379,
       "hizb": 38,
-      "quarter": 151,
+      "quarter": 3,
       "juz": 19,
       "naqza": 13
     },
@@ -3331,7 +3331,7 @@
       "surahNumber": 27,
       "page": 380,
       "hizb": 38,
-      "quarter": 151,
+      "quarter": 3,
       "juz": 19,
       "naqza": 13
     },
@@ -3342,7 +3342,7 @@
       "surahNumber": 27,
       "page": 381,
       "hizb": 38,
-      "quarter": 152,
+      "quarter": 4,
       "juz": 19,
       "naqza": 13
     },
@@ -3353,7 +3353,7 @@
       "surahNumber": 27,
       "page": 382,
       "hizb": 38,
-      "quarter": 152,
+      "quarter": 4,
       "juz": 19,
       "naqza": 13
     },
@@ -3364,7 +3364,7 @@
       "surahNumber": 27,
       "page": 384,
       "hizb": 39,
-      "quarter": 153,
+      "quarter": 1,
       "juz": 20,
       "naqza": 13
     },
@@ -3375,7 +3375,7 @@
       "surahNumber": 27,
       "page": 385,
       "hizb": 39,
-      "quarter": 153,
+      "quarter": 1,
       "juz": 20,
       "naqza": 13
     },
@@ -3386,7 +3386,7 @@
       "surahNumber": 27,
       "page": 386,
       "hizb": 39,
-      "quarter": 154,
+      "quarter": 2,
       "juz": 20,
       "naqza": 13
     },
@@ -3397,7 +3397,7 @@
       "surahNumber": 28,
       "page": 387,
       "hizb": 39,
-      "quarter": 154,
+      "quarter": 2,
       "juz": 20,
       "naqza": 13
     },
@@ -3408,7 +3408,7 @@
       "surahNumber": 28,
       "page": 389,
       "hizb": 39,
-      "quarter": 155,
+      "quarter": 3,
       "juz": 20,
       "naqza": 13
     },
@@ -3419,7 +3419,7 @@
       "surahNumber": 28,
       "page": 390,
       "hizb": 39,
-      "quarter": 155,
+      "quarter": 3,
       "juz": 20,
       "naqza": 13
     },
@@ -3430,7 +3430,7 @@
       "surahNumber": 28,
       "page": 391,
       "hizb": 39,
-      "quarter": 156,
+      "quarter": 4,
       "juz": 20,
       "naqza": 13
     },
@@ -3441,7 +3441,7 @@
       "surahNumber": 28,
       "page": 393,
       "hizb": 39,
-      "quarter": 156,
+      "quarter": 4,
       "juz": 20,
       "naqza": 13
     },
@@ -3452,7 +3452,7 @@
       "surahNumber": 28,
       "page": 394,
       "hizb": 40,
-      "quarter": 157,
+      "quarter": 1,
       "juz": 20,
       "naqza": 14
     },
@@ -3463,7 +3463,7 @@
       "surahNumber": 28,
       "page": 395,
       "hizb": 40,
-      "quarter": 157,
+      "quarter": 1,
       "juz": 20,
       "naqza": 14
     },
@@ -3474,7 +3474,7 @@
       "surahNumber": 28,
       "page": 396,
       "hizb": 40,
-      "quarter": 158,
+      "quarter": 2,
       "juz": 20,
       "naqza": 14
     },
@@ -3485,7 +3485,7 @@
       "surahNumber": 28,
       "page": 398,
       "hizb": 40,
-      "quarter": 158,
+      "quarter": 2,
       "juz": 20,
       "naqza": 14
     },
@@ -3496,7 +3496,7 @@
       "surahNumber": 29,
       "page": 399,
       "hizb": 40,
-      "quarter": 159,
+      "quarter": 3,
       "juz": 20,
       "naqza": 14
     },
@@ -3507,7 +3507,7 @@
       "surahNumber": 29,
       "page": 400,
       "hizb": 40,
-      "quarter": 159,
+      "quarter": 3,
       "juz": 20,
       "naqza": 14
     },
@@ -3518,7 +3518,7 @@
       "surahNumber": 29,
       "page": 401,
       "hizb": 40,
-      "quarter": 160,
+      "quarter": 4,
       "juz": 20,
       "naqza": 14
     },
@@ -3529,7 +3529,7 @@
       "surahNumber": 29,
       "page": 403,
       "hizb": 40,
-      "quarter": 160,
+      "quarter": 4,
       "juz": 20,
       "naqza": 14
     },
@@ -3540,7 +3540,7 @@
       "surahNumber": 29,
       "page": 404,
       "hizb": 41,
-      "quarter": 161,
+      "quarter": 1,
       "juz": 21,
       "naqza": 14
     },
@@ -3551,7 +3551,7 @@
       "surahNumber": 29,
       "page": 405,
       "hizb": 41,
-      "quarter": 161,
+      "quarter": 1,
       "juz": 21,
       "naqza": 14
     },
@@ -3562,7 +3562,7 @@
       "surahNumber": 30,
       "page": 406,
       "hizb": 41,
-      "quarter": 162,
+      "quarter": 2,
       "juz": 21,
       "naqza": 14
     },
@@ -3573,7 +3573,7 @@
       "surahNumber": 30,
       "page": 408,
       "hizb": 41,
-      "quarter": 162,
+      "quarter": 2,
       "juz": 21,
       "naqza": 14
     },
@@ -3584,7 +3584,7 @@
       "surahNumber": 30,
       "page": 409,
       "hizb": 41,
-      "quarter": 163,
+      "quarter": 3,
       "juz": 21,
       "naqza": 14
     },
@@ -3595,7 +3595,7 @@
       "surahNumber": 30,
       "page": 410,
       "hizb": 41,
-      "quarter": 163,
+      "quarter": 3,
       "juz": 21,
       "naqza": 14
     },
@@ -3606,7 +3606,7 @@
       "surahNumber": 30,
       "page": 411,
       "hizb": 41,
-      "quarter": 164,
+      "quarter": 4,
       "juz": 21,
       "naqza": 14
     },
@@ -3617,7 +3617,7 @@
       "surahNumber": 31,
       "page": 413,
       "hizb": 41,
-      "quarter": 164,
+      "quarter": 4,
       "juz": 21,
       "naqza": 14
     },
@@ -3628,7 +3628,7 @@
       "surahNumber": 31,
       "page": 414,
       "hizb": 42,
-      "quarter": 165,
+      "quarter": 1,
       "juz": 21,
       "naqza": 14
     },
@@ -3639,7 +3639,7 @@
       "surahNumber": 31,
       "page": 415,
       "hizb": 42,
-      "quarter": 165,
+      "quarter": 1,
       "juz": 21,
       "naqza": 14
     },
@@ -3650,7 +3650,7 @@
       "surahNumber": 32,
       "page": 416,
       "hizb": 42,
-      "quarter": 166,
+      "quarter": 2,
       "juz": 21,
       "naqza": 14
     },
@@ -3661,7 +3661,7 @@
       "surahNumber": 32,
       "page": 418,
       "hizb": 42,
-      "quarter": 166,
+      "quarter": 2,
       "juz": 21,
       "naqza": 14
     },
@@ -3672,7 +3672,7 @@
       "surahNumber": 33,
       "page": 419,
       "hizb": 42,
-      "quarter": 167,
+      "quarter": 3,
       "juz": 21,
       "naqza": 14
     },
@@ -3683,7 +3683,7 @@
       "surahNumber": 33,
       "page": 420,
       "hizb": 42,
-      "quarter": 167,
+      "quarter": 3,
       "juz": 21,
       "naqza": 14
     },
@@ -3694,7 +3694,7 @@
       "surahNumber": 33,
       "page": 421,
       "hizb": 42,
-      "quarter": 168,
+      "quarter": 4,
       "juz": 21,
       "naqza": 14
     },
@@ -3705,7 +3705,7 @@
       "surahNumber": 33,
       "page": 423,
       "hizb": 42,
-      "quarter": 168,
+      "quarter": 4,
       "juz": 21,
       "naqza": 14
     },
@@ -3716,7 +3716,7 @@
       "surahNumber": 33,
       "page": 424,
       "hizb": 43,
-      "quarter": 169,
+      "quarter": 1,
       "juz": 22,
       "naqza": 15
     },
@@ -3727,7 +3727,7 @@
       "surahNumber": 33,
       "page": 425,
       "hizb": 43,
-      "quarter": 169,
+      "quarter": 1,
       "juz": 22,
       "naqza": 15
     },
@@ -3738,7 +3738,7 @@
       "surahNumber": 33,
       "page": 426,
       "hizb": 43,
-      "quarter": 170,
+      "quarter": 2,
       "juz": 22,
       "naqza": 15
     },
@@ -3749,7 +3749,7 @@
       "surahNumber": 33,
       "page": 428,
       "hizb": 43,
-      "quarter": 170,
+      "quarter": 2,
       "juz": 22,
       "naqza": 15
     },
@@ -3760,7 +3760,7 @@
       "surahNumber": 33,
       "page": 429,
       "hizb": 43,
-      "quarter": 171,
+      "quarter": 3,
       "juz": 22,
       "naqza": 15
     },
@@ -3771,7 +3771,7 @@
       "surahNumber": 33,
       "page": 430,
       "hizb": 43,
-      "quarter": 171,
+      "quarter": 3,
       "juz": 22,
       "naqza": 15
     },
@@ -3782,7 +3782,7 @@
       "surahNumber": null,
       "page": 432,
       "hizb": 43,
-      "quarter": 172,
+      "quarter": 4,
       "juz": 22,
       "naqza": 15
     },
@@ -3793,7 +3793,7 @@
       "surahNumber": null,
       "page": 433,
       "hizb": 43,
-      "quarter": 172,
+      "quarter": 4,
       "juz": 22,
       "naqza": 15
     },
@@ -3804,7 +3804,7 @@
       "surahNumber": null,
       "page": 434,
       "hizb": 44,
-      "quarter": 173,
+      "quarter": 1,
       "juz": 22,
       "naqza": 15
     },
@@ -3815,7 +3815,7 @@
       "surahNumber": null,
       "page": 435,
       "hizb": 44,
-      "quarter": 173,
+      "quarter": 1,
       "juz": 22,
       "naqza": 15
     },
@@ -3826,7 +3826,7 @@
       "surahNumber": null,
       "page": 437,
       "hizb": 44,
-      "quarter": 174,
+      "quarter": 2,
       "juz": 22,
       "naqza": 15
     },
@@ -3837,7 +3837,7 @@
       "surahNumber": 35,
       "page": 438,
       "hizb": 44,
-      "quarter": 174,
+      "quarter": 2,
       "juz": 22,
       "naqza": 15
     },
@@ -3848,7 +3848,7 @@
       "surahNumber": 35,
       "page": 439,
       "hizb": 44,
-      "quarter": 175,
+      "quarter": 3,
       "juz": 22,
       "naqza": 15
     },
@@ -3859,7 +3859,7 @@
       "surahNumber": 35,
       "page": 440,
       "hizb": 44,
-      "quarter": 175,
+      "quarter": 3,
       "juz": 22,
       "naqza": 15
     },
@@ -3870,7 +3870,7 @@
       "surahNumber": 35,
       "page": 442,
       "hizb": 44,
-      "quarter": 176,
+      "quarter": 4,
       "juz": 22,
       "naqza": 15
     },
@@ -3881,7 +3881,7 @@
       "surahNumber": 36,
       "page": 443,
       "hizb": 44,
-      "quarter": 176,
+      "quarter": 4,
       "juz": 22,
       "naqza": 15
     },
@@ -3892,7 +3892,7 @@
       "surahNumber": 36,
       "page": 444,
       "hizb": 45,
-      "quarter": 177,
+      "quarter": 1,
       "juz": 23,
       "naqza": 15
     },
@@ -3903,7 +3903,7 @@
       "surahNumber": 36,
       "page": 445,
       "hizb": 45,
-      "quarter": 177,
+      "quarter": 1,
       "juz": 23,
       "naqza": 15
     },
@@ -3914,7 +3914,7 @@
       "surahNumber": 36,
       "page": 447,
       "hizb": 45,
-      "quarter": 178,
+      "quarter": 2,
       "juz": 23,
       "naqza": 15
     },
@@ -3925,7 +3925,7 @@
       "surahNumber": 36,
       "page": 448,
       "hizb": 45,
-      "quarter": 178,
+      "quarter": 2,
       "juz": 23,
       "naqza": 15
     },
@@ -3936,7 +3936,7 @@
       "surahNumber": 37,
       "page": 449,
       "hizb": 45,
-      "quarter": 179,
+      "quarter": 3,
       "juz": 23,
       "naqza": 15
     },
@@ -3947,7 +3947,7 @@
       "surahNumber": 37,
       "page": 450,
       "hizb": 45,
-      "quarter": 179,
+      "quarter": 3,
       "juz": 23,
       "naqza": 15
     },
@@ -3958,7 +3958,7 @@
       "surahNumber": 37,
       "page": 452,
       "hizb": 45,
-      "quarter": 180,
+      "quarter": 4,
       "juz": 23,
       "naqza": 15
     },
@@ -3969,7 +3969,7 @@
       "surahNumber": 37,
       "page": 453,
       "hizb": 45,
-      "quarter": 180,
+      "quarter": 4,
       "juz": 23,
       "naqza": 15
     },
@@ -3980,7 +3980,7 @@
       "surahNumber": 37,
       "page": 454,
       "hizb": 46,
-      "quarter": 181,
+      "quarter": 1,
       "juz": 23,
       "naqza": 16
     },
@@ -3991,7 +3991,7 @@
       "surahNumber": 38,
       "page": 455,
       "hizb": 46,
-      "quarter": 181,
+      "quarter": 1,
       "juz": 23,
       "naqza": 16
     },
@@ -4002,7 +4002,7 @@
       "surahNumber": 38,
       "page": 457,
       "hizb": 46,
-      "quarter": 182,
+      "quarter": 2,
       "juz": 23,
       "naqza": 16
     },
@@ -4013,7 +4013,7 @@
       "surahNumber": 38,
       "page": 458,
       "hizb": 46,
-      "quarter": 182,
+      "quarter": 2,
       "juz": 23,
       "naqza": 16
     },
@@ -4024,7 +4024,7 @@
       "surahNumber": 38,
       "page": 459,
       "hizb": 46,
-      "quarter": 183,
+      "quarter": 3,
       "juz": 23,
       "naqza": 16
     },
@@ -4035,7 +4035,7 @@
       "surahNumber": 38,
       "page": 460,
       "hizb": 46,
-      "quarter": 183,
+      "quarter": 3,
       "juz": 23,
       "naqza": 16
     },
@@ -4046,7 +4046,7 @@
       "surahNumber": 39,
       "page": 462,
       "hizb": 46,
-      "quarter": 184,
+      "quarter": 4,
       "juz": 23,
       "naqza": 16
     },
@@ -4057,7 +4057,7 @@
       "surahNumber": 39,
       "page": 463,
       "hizb": 46,
-      "quarter": 184,
+      "quarter": 4,
       "juz": 23,
       "naqza": 16
     },
@@ -4068,7 +4068,7 @@
       "surahNumber": 39,
       "page": 464,
       "hizb": 47,
-      "quarter": 185,
+      "quarter": 1,
       "juz": 24,
       "naqza": 16
     },
@@ -4079,7 +4079,7 @@
       "surahNumber": 39,
       "page": 466,
       "hizb": 47,
-      "quarter": 185,
+      "quarter": 1,
       "juz": 24,
       "naqza": 16
     },
@@ -4090,7 +4090,7 @@
       "surahNumber": 39,
       "page": 467,
       "hizb": 47,
-      "quarter": 186,
+      "quarter": 2,
       "juz": 24,
       "naqza": 16
     },
@@ -4101,7 +4101,7 @@
       "surahNumber": 39,
       "page": 468,
       "hizb": 47,
-      "quarter": 186,
+      "quarter": 2,
       "juz": 24,
       "naqza": 16
     },
@@ -4112,7 +4112,7 @@
       "surahNumber": 40,
       "page": 469,
       "hizb": 47,
-      "quarter": 187,
+      "quarter": 3,
       "juz": 24,
       "naqza": 16
     },
@@ -4123,7 +4123,7 @@
       "surahNumber": 40,
       "page": 471,
       "hizb": 47,
-      "quarter": 187,
+      "quarter": 3,
       "juz": 24,
       "naqza": 16
     },
@@ -4134,7 +4134,7 @@
       "surahNumber": 40,
       "page": 472,
       "hizb": 47,
-      "quarter": 188,
+      "quarter": 4,
       "juz": 24,
       "naqza": 16
     },
@@ -4145,7 +4145,7 @@
       "surahNumber": 40,
       "page": 473,
       "hizb": 47,
-      "quarter": 188,
+      "quarter": 4,
       "juz": 24,
       "naqza": 16
     },
@@ -4156,7 +4156,7 @@
       "surahNumber": 40,
       "page": 474,
       "hizb": 48,
-      "quarter": 189,
+      "quarter": 1,
       "juz": 24,
       "naqza": 16
     },
@@ -4167,7 +4167,7 @@
       "surahNumber": 40,
       "page": 476,
       "hizb": 48,
-      "quarter": 189,
+      "quarter": 1,
       "juz": 24,
       "naqza": 16
     },
@@ -4178,7 +4178,7 @@
       "surahNumber": 40,
       "page": 477,
       "hizb": 48,
-      "quarter": 190,
+      "quarter": 2,
       "juz": 24,
       "naqza": 16
     },
@@ -4189,7 +4189,7 @@
       "surahNumber": 40,
       "page": 478,
       "hizb": 48,
-      "quarter": 190,
+      "quarter": 2,
       "juz": 24,
       "naqza": 16
     },
@@ -4200,7 +4200,7 @@
       "surahNumber": 41,
       "page": 479,
       "hizb": 48,
-      "quarter": 191,
+      "quarter": 3,
       "juz": 24,
       "naqza": 16
     },
@@ -4211,7 +4211,7 @@
       "surahNumber": 41,
       "page": 481,
       "hizb": 48,
-      "quarter": 191,
+      "quarter": 3,
       "juz": 24,
       "naqza": 16
     },
@@ -4222,7 +4222,7 @@
       "surahNumber": 41,
       "page": 482,
       "hizb": 48,
-      "quarter": 192,
+      "quarter": 4,
       "juz": 24,
       "naqza": 16
     },
@@ -4233,7 +4233,7 @@
       "surahNumber": 41,
       "page": 483,
       "hizb": 48,
-      "quarter": 192,
+      "quarter": 4,
       "juz": 24,
       "naqza": 16
     },
@@ -4244,7 +4244,7 @@
       "surahNumber": 41,
       "page": 484,
       "hizb": 49,
-      "quarter": 193,
+      "quarter": 1,
       "juz": 25,
       "naqza": 17
     },
@@ -4255,7 +4255,7 @@
       "surahNumber": 42,
       "page": 486,
       "hizb": 49,
-      "quarter": 193,
+      "quarter": 1,
       "juz": 25,
       "naqza": 17
     },
@@ -4266,7 +4266,7 @@
       "surahNumber": 42,
       "page": 487,
       "hizb": 49,
-      "quarter": 194,
+      "quarter": 2,
       "juz": 25,
       "naqza": 17
     },
@@ -4277,7 +4277,7 @@
       "surahNumber": 42,
       "page": 488,
       "hizb": 49,
-      "quarter": 194,
+      "quarter": 2,
       "juz": 25,
       "naqza": 17
     },
@@ -4288,7 +4288,7 @@
       "surahNumber": 42,
       "page": 489,
       "hizb": 49,
-      "quarter": 195,
+      "quarter": 3,
       "juz": 25,
       "naqza": 17
     },
@@ -4299,7 +4299,7 @@
       "surahNumber": 42,
       "page": 491,
       "hizb": 49,
-      "quarter": 195,
+      "quarter": 3,
       "juz": 25,
       "naqza": 17
     },
@@ -4310,7 +4310,7 @@
       "surahNumber": 42,
       "page": 492,
       "hizb": 49,
-      "quarter": 196,
+      "quarter": 4,
       "juz": 25,
       "naqza": 17
     },
@@ -4321,7 +4321,7 @@
       "surahNumber": 43,
       "page": 493,
       "hizb": 49,
-      "quarter": 196,
+      "quarter": 4,
       "juz": 25,
       "naqza": 17
     },
@@ -4332,7 +4332,7 @@
       "surahNumber": 43,
       "page": 494,
       "hizb": 50,
-      "quarter": 197,
+      "quarter": 1,
       "juz": 25,
       "naqza": 17
     },
@@ -4343,7 +4343,7 @@
       "surahNumber": 43,
       "page": 496,
       "hizb": 50,
-      "quarter": 197,
+      "quarter": 1,
       "juz": 25,
       "naqza": 17
     },
@@ -4354,7 +4354,7 @@
       "surahNumber": 43,
       "page": 497,
       "hizb": 50,
-      "quarter": 198,
+      "quarter": 2,
       "juz": 25,
       "naqza": 17
     },
@@ -4365,7 +4365,7 @@
       "surahNumber": 43,
       "page": 498,
       "hizb": 50,
-      "quarter": 198,
+      "quarter": 2,
       "juz": 25,
       "naqza": 17
     },
@@ -4376,7 +4376,7 @@
       "surahNumber": 44,
       "page": 500,
       "hizb": 50,
-      "quarter": 199,
+      "quarter": 3,
       "juz": 25,
       "naqza": 17
     },
@@ -4387,7 +4387,7 @@
       "surahNumber": 44,
       "page": 501,
       "hizb": 50,
-      "quarter": 199,
+      "quarter": 3,
       "juz": 25,
       "naqza": 17
     },
@@ -4398,7 +4398,7 @@
       "surahNumber": 45,
       "page": 502,
       "hizb": 50,
-      "quarter": 200,
+      "quarter": 4,
       "juz": 25,
       "naqza": 17
     },
@@ -4409,7 +4409,7 @@
       "surahNumber": 45,
       "page": 503,
       "hizb": 50,
-      "quarter": 200,
+      "quarter": 4,
       "juz": 25,
       "naqza": 17
     },
@@ -4420,7 +4420,7 @@
       "surahNumber": 46,
       "page": 505,
       "hizb": 51,
-      "quarter": 201,
+      "quarter": 1,
       "juz": 26,
       "naqza": 17
     },
@@ -4431,7 +4431,7 @@
       "surahNumber": 46,
       "page": 506,
       "hizb": 51,
-      "quarter": 201,
+      "quarter": 1,
       "juz": 26,
       "naqza": 17
     },
@@ -4442,7 +4442,7 @@
       "surahNumber": 46,
       "page": 507,
       "hizb": 51,
-      "quarter": 202,
+      "quarter": 2,
       "juz": 26,
       "naqza": 17
     },
@@ -4453,7 +4453,7 @@
       "surahNumber": 46,
       "page": 508,
       "hizb": 51,
-      "quarter": 202,
+      "quarter": 2,
       "juz": 26,
       "naqza": 17
     },
@@ -4464,7 +4464,7 @@
       "surahNumber": 47,
       "page": 510,
       "hizb": 51,
-      "quarter": 203,
+      "quarter": 3,
       "juz": 26,
       "naqza": 17
     },
@@ -4475,7 +4475,7 @@
       "surahNumber": 47,
       "page": 511,
       "hizb": 51,
-      "quarter": 203,
+      "quarter": 3,
       "juz": 26,
       "naqza": 17
     },
@@ -4486,7 +4486,7 @@
       "surahNumber": 47,
       "page": 512,
       "hizb": 51,
-      "quarter": 204,
+      "quarter": 4,
       "juz": 26,
       "naqza": 17
     },
@@ -4497,7 +4497,7 @@
       "surahNumber": 48,
       "page": 513,
       "hizb": 51,
-      "quarter": 204,
+      "quarter": 4,
       "juz": 26,
       "naqza": 17
     },
@@ -4508,7 +4508,7 @@
       "surahNumber": 48,
       "page": 515,
       "hizb": 52,
-      "quarter": 205,
+      "quarter": 1,
       "juz": 26,
       "naqza": 18
     },
@@ -4519,7 +4519,7 @@
       "surahNumber": 48,
       "page": 516,
       "hizb": 52,
-      "quarter": 205,
+      "quarter": 1,
       "juz": 26,
       "naqza": 18
     },
@@ -4530,7 +4530,7 @@
       "surahNumber": 49,
       "page": 517,
       "hizb": 52,
-      "quarter": 206,
+      "quarter": 2,
       "juz": 26,
       "naqza": 18
     },
@@ -4541,7 +4541,7 @@
       "surahNumber": 49,
       "page": 518,
       "hizb": 52,
-      "quarter": 206,
+      "quarter": 2,
       "juz": 26,
       "naqza": 18
     },
@@ -4552,7 +4552,7 @@
       "surahNumber": 49,
       "page": 520,
       "hizb": 52,
-      "quarter": 207,
+      "quarter": 3,
       "juz": 26,
       "naqza": 18
     },
@@ -4563,7 +4563,7 @@
       "surahNumber": 50,
       "page": 521,
       "hizb": 52,
-      "quarter": 207,
+      "quarter": 3,
       "juz": 26,
       "naqza": 18
     },
@@ -4574,7 +4574,7 @@
       "surahNumber": 50,
       "page": 522,
       "hizb": 52,
-      "quarter": 208,
+      "quarter": 4,
       "juz": 26,
       "naqza": 18
     },
@@ -4585,7 +4585,7 @@
       "surahNumber": 51,
       "page": 523,
       "hizb": 52,
-      "quarter": 208,
+      "quarter": 4,
       "juz": 26,
       "naqza": 18
     },
@@ -4596,7 +4596,7 @@
       "surahNumber": 51,
       "page": 525,
       "hizb": 53,
-      "quarter": 209,
+      "quarter": 1,
       "juz": 27,
       "naqza": 18
     },
@@ -4607,7 +4607,7 @@
       "surahNumber": 51,
       "page": 526,
       "hizb": 53,
-      "quarter": 209,
+      "quarter": 1,
       "juz": 27,
       "naqza": 18
     },
@@ -4618,7 +4618,7 @@
       "surahNumber": 52,
       "page": 527,
       "hizb": 53,
-      "quarter": 210,
+      "quarter": 2,
       "juz": 27,
       "naqza": 18
     },
@@ -4629,7 +4629,7 @@
       "surahNumber": 52,
       "page": 528,
       "hizb": 53,
-      "quarter": 210,
+      "quarter": 2,
       "juz": 27,
       "naqza": 18
     },
@@ -4640,7 +4640,7 @@
       "surahNumber": 53,
       "page": 530,
       "hizb": 53,
-      "quarter": 211,
+      "quarter": 3,
       "juz": 27,
       "naqza": 18
     },
@@ -4651,7 +4651,7 @@
       "surahNumber": 53,
       "page": 531,
       "hizb": 53,
-      "quarter": 211,
+      "quarter": 3,
       "juz": 27,
       "naqza": 18
     },
@@ -4662,7 +4662,7 @@
       "surahNumber": 54,
       "page": 532,
       "hizb": 53,
-      "quarter": 212,
+      "quarter": 4,
       "juz": 27,
       "naqza": 18
     },
@@ -4673,7 +4673,7 @@
       "surahNumber": 54,
       "page": 534,
       "hizb": 53,
-      "quarter": 212,
+      "quarter": 4,
       "juz": 27,
       "naqza": 18
     },
@@ -4684,7 +4684,7 @@
       "surahNumber": 55,
       "page": 535,
       "hizb": 54,
-      "quarter": 213,
+      "quarter": 1,
       "juz": 27,
       "naqza": 18
     },
@@ -4695,7 +4695,7 @@
       "surahNumber": 55,
       "page": 536,
       "hizb": 54,
-      "quarter": 213,
+      "quarter": 1,
       "juz": 27,
       "naqza": 18
     },
@@ -4706,7 +4706,7 @@
       "surahNumber": 55,
       "page": 537,
       "hizb": 54,
-      "quarter": 214,
+      "quarter": 2,
       "juz": 27,
       "naqza": 18
     },
@@ -4717,7 +4717,7 @@
       "surahNumber": 56,
       "page": 539,
       "hizb": 54,
-      "quarter": 214,
+      "quarter": 2,
       "juz": 27,
       "naqza": 18
     },
@@ -4728,7 +4728,7 @@
       "surahNumber": 56,
       "page": 540,
       "hizb": 54,
-      "quarter": 215,
+      "quarter": 3,
       "juz": 27,
       "naqza": 18
     },
@@ -4739,7 +4739,7 @@
       "surahNumber": 57,
       "page": 541,
       "hizb": 54,
-      "quarter": 215,
+      "quarter": 3,
       "juz": 27,
       "naqza": 18
     },
@@ -4750,7 +4750,7 @@
       "surahNumber": 57,
       "page": 542,
       "hizb": 54,
-      "quarter": 216,
+      "quarter": 4,
       "juz": 27,
       "naqza": 18
     },
@@ -4761,7 +4761,7 @@
       "surahNumber": 57,
       "page": 544,
       "hizb": 54,
-      "quarter": 216,
+      "quarter": 4,
       "juz": 27,
       "naqza": 18
     },
@@ -4772,7 +4772,7 @@
       "surahNumber": 58,
       "page": 545,
       "hizb": 55,
-      "quarter": 217,
+      "quarter": 1,
       "juz": 28,
       "naqza": 19
     },
@@ -4783,7 +4783,7 @@
       "surahNumber": 58,
       "page": 546,
       "hizb": 55,
-      "quarter": 217,
+      "quarter": 1,
       "juz": 28,
       "naqza": 19
     },
@@ -4794,7 +4794,7 @@
       "surahNumber": 58,
       "page": 547,
       "hizb": 55,
-      "quarter": 218,
+      "quarter": 2,
       "juz": 28,
       "naqza": 19
     },
@@ -4805,7 +4805,7 @@
       "surahNumber": 59,
       "page": 549,
       "hizb": 55,
-      "quarter": 218,
+      "quarter": 2,
       "juz": 28,
       "naqza": 19
     },
@@ -4816,7 +4816,7 @@
       "surahNumber": 59,
       "page": 550,
       "hizb": 55,
-      "quarter": 219,
+      "quarter": 3,
       "juz": 28,
       "naqza": 19
     },
@@ -4827,7 +4827,7 @@
       "surahNumber": 60,
       "page": 551,
       "hizb": 55,
-      "quarter": 219,
+      "quarter": 3,
       "juz": 28,
       "naqza": 19
     },
@@ -4838,7 +4838,7 @@
       "surahNumber": 60,
       "page": 552,
       "hizb": 55,
-      "quarter": 220,
+      "quarter": 4,
       "juz": 28,
       "naqza": 19
     },
@@ -4849,7 +4849,7 @@
       "surahNumber": 61,
       "page": 554,
       "hizb": 55,
-      "quarter": 220,
+      "quarter": 4,
       "juz": 28,
       "naqza": 19
     },
@@ -4860,7 +4860,7 @@
       "surahNumber": 62,
       "page": 555,
       "hizb": 56,
-      "quarter": 221,
+      "quarter": 1,
       "juz": 28,
       "naqza": 19
     },
@@ -4871,7 +4871,7 @@
       "surahNumber": 62,
       "page": 556,
       "hizb": 56,
-      "quarter": 221,
+      "quarter": 1,
       "juz": 28,
       "naqza": 19
     },
@@ -4882,7 +4882,7 @@
       "surahNumber": 63,
       "page": 557,
       "hizb": 56,
-      "quarter": 222,
+      "quarter": 2,
       "juz": 28,
       "naqza": 19
     },
@@ -4893,7 +4893,7 @@
       "surahNumber": 64,
       "page": 559,
       "hizb": 56,
-      "quarter": 222,
+      "quarter": 2,
       "juz": 28,
       "naqza": 19
     },
@@ -4904,7 +4904,7 @@
       "surahNumber": 64,
       "page": 560,
       "hizb": 56,
-      "quarter": 223,
+      "quarter": 3,
       "juz": 28,
       "naqza": 19
     },
@@ -4915,7 +4915,7 @@
       "surahNumber": 65,
       "page": 561,
       "hizb": 56,
-      "quarter": 223,
+      "quarter": 3,
       "juz": 28,
       "naqza": 19
     },
@@ -4926,7 +4926,7 @@
       "surahNumber": 65,
       "page": 562,
       "hizb": 56,
-      "quarter": 224,
+      "quarter": 4,
       "juz": 28,
       "naqza": 19
     },
@@ -4937,7 +4937,7 @@
       "surahNumber": 66,
       "page": 564,
       "hizb": 56,
-      "quarter": 224,
+      "quarter": 4,
       "juz": 28,
       "naqza": 19
     },
@@ -4948,7 +4948,7 @@
       "surahNumber": 67,
       "page": 565,
       "hizb": 57,
-      "quarter": 225,
+      "quarter": 1,
       "juz": 29,
       "naqza": 19
     },
@@ -4959,7 +4959,7 @@
       "surahNumber": 67,
       "page": 566,
       "hizb": 57,
-      "quarter": 225,
+      "quarter": 1,
       "juz": 29,
       "naqza": 19
     },
@@ -4970,7 +4970,7 @@
       "surahNumber": 68,
       "page": 567,
       "hizb": 57,
-      "quarter": 226,
+      "quarter": 2,
       "juz": 29,
       "naqza": 19
     },
@@ -4981,7 +4981,7 @@
       "surahNumber": 69,
       "page": 569,
       "hizb": 57,
-      "quarter": 226,
+      "quarter": 2,
       "juz": 29,
       "naqza": 19
     },
@@ -4992,7 +4992,7 @@
       "surahNumber": 69,
       "page": 570,
       "hizb": 57,
-      "quarter": 227,
+      "quarter": 3,
       "juz": 29,
       "naqza": 19
     },
@@ -5003,7 +5003,7 @@
       "surahNumber": 70,
       "page": 571,
       "hizb": 57,
-      "quarter": 227,
+      "quarter": 3,
       "juz": 29,
       "naqza": 19
     },
@@ -5014,7 +5014,7 @@
       "surahNumber": 70,
       "page": 573,
       "hizb": 57,
-      "quarter": 228,
+      "quarter": 4,
       "juz": 29,
       "naqza": 19
     },
@@ -5025,7 +5025,7 @@
       "surahNumber": 71,
       "page": 574,
       "hizb": 57,
-      "quarter": 228,
+      "quarter": 4,
       "juz": 29,
       "naqza": 19
     },
@@ -5036,7 +5036,7 @@
       "surahNumber": 72,
       "page": 575,
       "hizb": 58,
-      "quarter": 229,
+      "quarter": 1,
       "juz": 29,
       "naqza": 20
     },
@@ -5047,7 +5047,7 @@
       "surahNumber": 72,
       "page": 576,
       "hizb": 58,
-      "quarter": 229,
+      "quarter": 1,
       "juz": 29,
       "naqza": 20
     },
@@ -5058,7 +5058,7 @@
       "surahNumber": 73,
       "page": 578,
       "hizb": 58,
-      "quarter": 230,
+      "quarter": 2,
       "juz": 29,
       "naqza": 20
     },
@@ -5069,7 +5069,7 @@
       "surahNumber": 74,
       "page": 579,
       "hizb": 58,
-      "quarter": 230,
+      "quarter": 2,
       "juz": 29,
       "naqza": 20
     },
@@ -5080,7 +5080,7 @@
       "surahNumber": 75,
       "page": 580,
       "hizb": 58,
-      "quarter": 231,
+      "quarter": 3,
       "juz": 29,
       "naqza": 20
     },
@@ -5091,7 +5091,7 @@
       "surahNumber": 76,
       "page": 581,
       "hizb": 58,
-      "quarter": 231,
+      "quarter": 3,
       "juz": 29,
       "naqza": 20
     },
@@ -5102,7 +5102,7 @@
       "surahNumber": 76,
       "page": 583,
       "hizb": 58,
-      "quarter": 232,
+      "quarter": 4,
       "juz": 29,
       "naqza": 20
     },
@@ -5113,7 +5113,7 @@
       "surahNumber": 77,
       "page": 584,
       "hizb": 58,
-      "quarter": 232,
+      "quarter": 4,
       "juz": 29,
       "naqza": 20
     },
@@ -5124,7 +5124,7 @@
       "surahNumber": null,
       "page": 585,
       "hizb": 59,
-      "quarter": 233,
+      "quarter": 1,
       "juz": 30,
       "naqza": 20
     },
@@ -5135,7 +5135,7 @@
       "surahNumber": 79,
       "page": 586,
       "hizb": 59,
-      "quarter": 233,
+      "quarter": 1,
       "juz": 30,
       "naqza": 20
     },
@@ -5146,7 +5146,7 @@
       "surahNumber": 79,
       "page": 588,
       "hizb": 59,
-      "quarter": 234,
+      "quarter": 2,
       "juz": 30,
       "naqza": 20
     },
@@ -5157,7 +5157,7 @@
       "surahNumber": 80,
       "page": 589,
       "hizb": 59,
-      "quarter": 234,
+      "quarter": 2,
       "juz": 30,
       "naqza": 20
     },
@@ -5168,7 +5168,7 @@
       "surahNumber": 81,
       "page": 590,
       "hizb": 59,
-      "quarter": 235,
+      "quarter": 3,
       "juz": 30,
       "naqza": 20
     },
@@ -5179,7 +5179,7 @@
       "surahNumber": 83,
       "page": 591,
       "hizb": 59,
-      "quarter": 235,
+      "quarter": 3,
       "juz": 30,
       "naqza": 20
     },
@@ -5190,7 +5190,7 @@
       "surahNumber": 84,
       "page": 593,
       "hizb": 59,
-      "quarter": 236,
+      "quarter": 4,
       "juz": 30,
       "naqza": 20
     },
@@ -5201,7 +5201,7 @@
       "surahNumber": 85,
       "page": 594,
       "hizb": 59,
-      "quarter": 236,
+      "quarter": 4,
       "juz": 30,
       "naqza": 20
     },
@@ -5212,7 +5212,7 @@
       "surahNumber": 87,
       "page": 595,
       "hizb": 60,
-      "quarter": 237,
+      "quarter": 1,
       "juz": 30,
       "naqza": 20
     },
@@ -5223,7 +5223,7 @@
       "surahNumber": 88,
       "page": 596,
       "hizb": 60,
-      "quarter": 237,
+      "quarter": 1,
       "juz": 30,
       "naqza": 20
     },
@@ -5234,7 +5234,7 @@
       "surahNumber": 90,
       "page": 598,
       "hizb": 60,
-      "quarter": 238,
+      "quarter": 2,
       "juz": 30,
       "naqza": 20
     },
@@ -5245,7 +5245,7 @@
       "surahNumber": null,
       "page": 599,
       "hizb": 60,
-      "quarter": 238,
+      "quarter": 2,
       "juz": 30,
       "naqza": 20
     },
@@ -5256,7 +5256,7 @@
       "surahNumber": 94,
       "page": 600,
       "hizb": 60,
-      "quarter": 239,
+      "quarter": 3,
       "juz": 30,
       "naqza": 20
     },
@@ -5267,7 +5267,7 @@
       "surahNumber": 97,
       "page": 601,
       "hizb": 60,
-      "quarter": 239,
+      "quarter": 3,
       "juz": 30,
       "naqza": 20
     },
@@ -5278,7 +5278,7 @@
       "surahNumber": 100,
       "page": 603,
       "hizb": 60,
-      "quarter": 240,
+      "quarter": 4,
       "juz": 30,
       "naqza": 20
     },
@@ -5289,7 +5289,7 @@
       "surahNumber": 105,
       "page": 604,
       "hizb": 60,
-      "quarter": 240,
+      "quarter": 4,
       "juz": 30,
       "naqza": 20
     }

@@ -1,7 +1,7 @@
 # Thumun Data Summary
 
 ## Overview
-This document provides a complete reference for all 240 Thumuns extracted from the PDF "فهرس الاثمان والأحزاب والنقزات".
+This document provides a complete reference for all 480 Thumuns.
 
 **Source**: مصحف ليبيا برواية قالون عن نافع (Libyan Mushaf - Qalun narration from Nafi')  
 **Reference**: Mushaf Madani page numbering (604 pages)  
@@ -14,7 +14,7 @@ Each Thumun entry contains:
 - **name**: Arabic text showing the beginning words of the Thumun
 - **surah**: Surah name in Arabic
 - **surahNumber**: Surah number (1-114)
-- **page**: Mushaf Madani page number
+- **page**: Mushaf Madani page number (optional in Phase 1)
 - **hizb**: Hizb number (1-60)
 - **quarter**: Quarter within the Hizb (1-4)
 - **juz**: Juz number (1-30)
@@ -107,18 +107,12 @@ Based on the 25-page PDF, here are the Surahs documented with Thumun divisions:
 
 ---
 
-## Data Extraction Status
+## Data Status
 
 ### Completed ✅
-- [x] Project documentation structure
-- [x] PDF images exported (25 pages)
-- [x] Data model designed
-- [x] Sample data extracted (first 21 Thumuns)
-
-### In Progress 🔄
-- [ ] Complete extraction of all 240 Thumuns
-- [ ] Verification against Mushaf Madani
-- [ ] Double-checking Arabic diacritics
+- [x] JSON structure (480 thumuns)
+- [x] Names and assignments wired
+- [ ] Optional: page mapping from index
 
 ### Recommended Next Steps
 
@@ -195,7 +189,7 @@ If you want to help complete the data extraction:
 
 ---
 
-**Last Updated**: October 1, 2025  
-**Status**: Partial data extracted (60/480 Thumuns)  
-**Source**: فهرس الاثمان والأحزاب والنقزات.pdf (25 pages)
+**Last Updated**: October 2, 2025  
+**Status**: 480/480 thumuns named (pages optional)  
+**Source**: فهرس الاثمان والأحزاب والنقزات.pdf (index reference)
 
