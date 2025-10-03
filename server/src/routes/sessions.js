@@ -96,8 +96,13 @@ router.post('/', async (req, res) => {
       rows = result.rows
       console.log(`[sessions] inserted id=${rows[0]?.id}`)
     } catch (e) {
-      console.error('[sessions] insert failed', e?.message)
-      return res.status(504).json({ error: 'session save timeout or failed', details: e?.message || '' })
+      const msg = e?.message || ''
+      console.error('[sessions] insert failed', msg)
+      // Map common constraint errors to 400 for better client feedback
+      if (/check constraint/i.test(msg) || /violates check constraint/i.test(msg)) {
+        return res.status(400).json({ error: 'invalid session data', details: msg })
+      }
+      return res.status(504).json({ error: 'session save timeout or failed', details: msg })
     }
 
   // Progression: decrement current_naqza on every pass (no weekly restriction)
@@ -125,7 +130,7 @@ router.post('/', async (req, res) => {
     return res.status(500).json({ error: 'internal error', details: e?.message || '' })
   }
 })
-
+// TEST addding a comment
 router.get('/student/:id', async (req, res) => {
   const { id } = req.params
   const owned = await pool.query('select id from students where id=$1 and user_id=$2', [id, req.user.id])

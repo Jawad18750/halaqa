@@ -3,6 +3,10 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -92,11 +96,15 @@ jobs:
             DATABASE_URL=$DATABASE_URL
             JWT_SECRET=$JWT_SECRET
             EOF
+            # Run DB migrations (will apply 000, 001, 002_relax_attempt_day.sql, ...)
             npm run migrate
             ln -sfn \"$API_RELEASE\" \"${VPS_API_PATH}_current\"
             command -v pm2 >/dev/null 2>&1 || npm i -g pm2
             (pm2 start \"${VPS_API_PATH}_current/src/index.js\" --name halaqa-api --update-env --cwd \"${VPS_API_PATH}_current\" || pm2 restart halaqa-api --update-env)
             pm2 save
+            # Keep last 5 releases
+            cd "$(dirname \"$API_RELEASE\")"
+            ls -1 | sort | head -n -5 | xargs -r -I {} rm -rf {}
           "
 
       # ---------- Post-deploy smoke tests ----------

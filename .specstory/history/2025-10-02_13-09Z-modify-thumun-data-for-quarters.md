@@ -793,3 +793,424 @@ Yes—exact comparison. The script compares `id`, `name`, `hizb`, `juz`, and `na
 
 ---
 
+_**User (2025-10-02 19:02Z)**_
+
+still index-BwlheaE5.js:49 API request → GET https://api.halaqa.abdeljawad.com/auth/me
+index-BwlheaE5.js:49 API request → GET https://api.halaqa.abdeljawad.com/sessions/weekly
+index-BwlheaE5.js:49 API request → GET https://api.halaqa.abdeljawad.com/students
+index-BwlheaE5.js:49 API request → GET https://api.halaqa.abdeljawad.com/students
+index-BwlheaE5.js:49 Finalize clicked {passed: true, thumunId: 474, fatha: 2, taradud: 0}
+index-BwlheaE5.js:49 POST /sessions payload {studentId: '384ed283-9bf4-44eb-8d87-45bb70a08c44', mode: 'naqza', selectedNaqza: 20, selectedJuz: null, thumunId: 474, …}
+index-BwlheaE5.js:49 API request → POST https://api.halaqa.abdeljawad.com/sessions
+[Violation] 'click' handler took 2718ms
+index-BwlheaE5.js:49 Finalize session failed Error: Network timeout
+    at Ht (index-BwlheaE5.js:49:38152)
+    at async Object.create (index-BwlheaE5.js:49:38868)
+    at async Cl (index-BwlheaE5.js:49:50368)
+    at async onClick (index-BwlheaE5.js:49:53637)
+overrideMethod @ hook.js:608
+Cl @ index-BwlheaE5.js:49
+await in Cl
+onClick @ index-BwlheaE5.js:49
+wo @ index-BwlheaE5.js:48
+(anonymous) @ index-BwlheaE5.js:48
+If @ index-BwlheaE5.js:48
+Pc @ index-BwlheaE5.js:48
+hf @ index-BwlheaE5.js:49
+ey @ index-BwlheaE5.js:49
+
+
+
+see the log for yourself of the pm2 
+
+root@abdeljawad-server-ly:~# sudo -u deploy pm2 logs halaqa-api
+[TAILING] Tailing last 15 lines for [halaqa-api] process (change the value with --lines option)
+/home/deploy/.pm2/logs/halaqa-api-out.log last 15 lines:
+0|halaqa-a | Halaqa server listening on http://localhost:4000
+0|halaqa-a | Halaqa server listening on http://localhost:4000
+
+/home/deploy/.pm2/logs/halaqa-api-error.log last 15 lines:
+0|halaqa-a |   detail: 'Failing row contains (1598fa55-e492-45c0-a49a-b808e3e70162, 384ed283-9bf4-44eb-8d87-45bb70a08c44, 2025-09-27, fri, naqza, 20, null, 474, 88, 60, 30, 20, 2, 0, t, 80, 2025-10-03 09:20:56.508474+00).',
+0|halaqa-a |   hint: undefined,
+0|halaqa-a |   position: undefined,
+0|halaqa-a |   internalPosition: undefined,
+0|halaqa-a |   internalQuery: undefined,
+0|halaqa-a |   where: undefined,
+0|halaqa-a |   schema: 'public',
+0|halaqa-a |   table: 'sessions',
+0|halaqa-a |   column: undefined,
+0|halaqa-a |   dataType: undefined,
+0|halaqa-a |   constraint: 'sessions_attempt_day_check',
+0|halaqa-a |   file: 'execMain.c',
+0|halaqa-a |   line: '1937',
+0|halaqa-a |   routine: 'ExecConstraints'
+0|halaqa-a | }
+
+
+---
+
+_**Assistant (gpt-5)**_
+
+
+
+---
+
+I’ll inspect the sessions schema and route to see what values are allowed for `attempt_day` and how it’s being set, since the DB constraint `sessions_attempt_day_check` is failing with `fri`. Then I’ll fix the mapping so only allowed values are inserted.
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/001_init.sql
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/index.js
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/000_extensions.sql
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/quran-tester-app/src/components/TestView.jsx
+
+---
+
+<think><details><summary>Thought Process</summary>**Analyzing timezone logic**
+
+I’m considering how the deployed version might be using the timezone environment variable. There seems to be an issue with how the `getWeekStartSaturday` function uses `Date.now`, which could lead to incorrectly mapping weekdays, especially with Fridays. The current code seems to set the attempt day inconsistently since it allows inserting only 'sat' or 'sun'. Based on the screenshot, it appears the server shows Friday. I’m thinking we could either expand the constraint or adjust calculations to correctly fit these expectations.
+**Considering database constraints**
+
+The screenshot log indicates that there's a constraint failure. To resolve this quickly, the sessions table constraint could be changed to include weekdays 'sat', 'sun', and 'fri' if they want to allow Friday. However, there's a note in the code stating that the database currently accepts only Saturday and Sunday. There have been timeout issues with Friday insertions. I think it's essential to clarify the user's desired business rule before making modifications, so I should ask if they want to change the constraint or adjust the API to avoid sending 'fri'.
+**Examining attemptDay logic**
+
+I'm thinking about how to set `attemptDay` as 'sat' for Fridays and Saturdays, and 'sun' for the other weekdays. Right now, it seems like Sundays are set to 'sun' and everything from Monday to Saturday gets set to 'sat', which isn't what's needed for Fridays. I wonder if the server is processing `attemptDay` differently. I plan to search for `attempt_day` mapping or request body fields in the server repository to clarify how it's being handled. A grep search might help me understand this better!</details></think>
+
+---
+
+I’m going to search the server code for any other places where `attempt_day` or `attemptDay` is referenced to see if the deployed version might still read it from the request or map it differently, and confirm the insert statement.
+
+---
+
+Tool use: **grep**
+
+<details>
+<summary>Grep for "attempt_day|attemptDay" in "/Volumes/ExtremeSSD/Projects/QuranTester/server/src" • 5 matches</summary>
+
+Output mode: content
+
+
+| Content | Line |
+|------|------|
+| `const attemptDay = (weekday === 0) ? 'sun' : 'sat'` | L65 |
+| `console.log(`[sessions] insert student=$\{studentId\} day=$\{attemptDay\} mode=$\{mode\} thumun=$\{t.id\} fatha=$\{fathaPrompts\} taradud=$\{taradudCount\} passed=$\{passed\}`)` | L75 |
+| `student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,` | L81 |
+| `studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,` | L88 |
+| `attempt_day text not null check (attempt_day in ('sat','sun')),` | L27 |
+
+
+</details>
+
+---
+
+<think><details><summary>Thought Process</summary>**Debugging client issues**
+
+I need to respond to the user's logs showing client failure related to a network timeout, and the pm2 logs indicate a database constraint issue with `sessions_attempt_day_check`. They need help debugging. We've already looked at the code and found that attempt days are set to 'sat' or 'sun', but the pm2 error shows 'fri'. This suggests that the server might be running an outdated version of code or the database constraint might be different. It'll be crucial to clarify this with them.
+**Addressing database constraint issues**
+
+The screenshot shows Arabic text, and the pm2 log indicates an inserted row with an `attempt_day` of 'fri', which fails the check given the week starts on '2025-09-27' (Saturday). To fix this, one option is to adjust the database constraint to include 'fri', but likely only 'sat' and 'sun' are allowed due to business rules indicated in the code comment. It looks like we need to update the deployed server to compute `attemptDay` correctly. I also need to ensure the front-end isn't overriding it, although it appears not to be in the API payload.
+**Explaining timeout issues**
+
+The logs indicate a network timeout where the server responded with a 504 error labeled 'session save timeout or failed.' This occurred because the API tries to insert `attempt_day` as 'fri', which violates the database constraint. My plan is to deploy the latest server code. I also want to quickly check `thumunData.js` for any relevance, though it seems less critical. Given their caution to avoid changes until we're confident, we can suggest a fix since we've made adjustments with their prior approval.
+**Deciding on a fix for attemptDay**
+
+I need to consider the immediate fix for the server error. One option is to hot-patch the code to compute `attemptDay` strictly as 'sat' or 'sun', or alternatively, they can choose to adjust the database constraint to include 'fri'. Since they previously allowed only 'sat' and 'sun', it seems best to stick with that.
+
+I’ll reply concisely, outlining the issue and possible solutions, including a suggestion to improve error handling to report the correct details on constraint violations instead of ambiguous 504 timeouts.
+**Clarifying client error and suggesting steps**
+
+The client error shows that the click handler took 2718ms, indicating a UI-heavy issue, though that’s not the core of the problem. To help them understand the reason, I'll summarize actions while highlighting diagnosis and potential fixes.
+
+First, I’ll explain that the logs indicate 'fri' was inserted against the constraint that allows only 'sat' and 'sun', and the deployed API is likely using an older version of the code. 
+
+The proposed steps include redeploying the API with an updated `sessions.js` file, which sets the `attemptDay` correctly, along with options to relax the constraint or a short-term workaround that sets it to 'sat'.</details></think>
+
+---
+
+I checked the schema and server route. The database only allows `attempt_day in ('sat','sun')`, but the deployed API is trying to insert `attempt_day='fri'`, which triggers the constraint and surfaces to the client as a “Network timeout”.
+
+- DB constraint:
+```24:41:/Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/001_init.sql
+create table if not exists sessions (
+  ...
+  attempt_day text not null check (attempt_day in ('sat','sun')),
+  ...
+);
+```
+
+- Current server code (local) forces only sat/sun:
+```61:66:/Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js
+const now = new Date()
+const weekStart = getWeekStartSaturday(now)
+const weekday = now.getDay() // 0 Sun ... 6 Sat
+// التقييد في قاعدة البيانات يسمح بالسبت/الأحد فقط
+const attemptDay = (weekday === 0) ? 'sun' : 'sat'
+```
+
+What this means
+- Your production API is running older code (or different logic) that still produces `fri`. That violates the constraint and causes the POST /sessions to fail; your frontend shows “Network timeout” due to the 504 the API returns on insert failure.
+
+What to do
+- Redeploy the API with the current `sessions.js` so `attempt_day` is only `sat`/`sun`.
+- If you actually want to record any day, update the DB constraint to include all days:
+  - Add a migration to replace the check with `('sat','sun','mon','tue','wed','thu','fri')`.
+- Optional: Improve the server’s error mapping so constraint violations return 400 with a clear message instead of 504 “timeout”.
+
+If you want, I can prepare a quick migration to relax the constraint, or a small change to return a clearer error.
+
+---
+
+_**User (2025-10-02 19:02Z)**_
+
+Redeploy the API with the current sessions.js so attempt_day is only sat/sun.
+If you actually want to record any day, update the DB constraint to include all days:
+Add a migration to replace the check with ('sat','sun','mon','tue','wed','thu','fri').
+Optional: Improve the server’s error mapping so constraint violations return 400 with a clear message instead of 504 “timeout”.
+ prepare a quick migration to relax the constraint, or a small change to return a clearer error.
+
+
+---
+
+_**Assistant (gpt-5)**_
+
+<think><details><summary>Thought Process</summary>**Planning migration and API updates**
+
+I need to follow the user's request to adjust the attempt_day constraint and improve server error mapping to return a 400 status with a clear message instead of a 504 timeout. I can’t deploy the API directly, but I can update the workflow or run commands to ensure the pipeline triggers a redeploy when code is pushed. The user mentioned making changes to allow recording on any day, so I’ll include that in the migration plan.
+**Improving error handling and migration**
+
+I need to enhance the server’s error mapping so that constraint violations generate a 400 status with a clear message instead of the misleading 504 “timeout.” The user is requesting a migration to relax this constraint and to adjust error handling. I'll create a migration file in the server/src/db/migrations/ folder to modify the database table. To ensure the migration works correctly, I should check the naming convention in server/src/db/migrate.js before creating the SQL file.</details></think>
+
+---
+
+I'll check the DB migration runner and existing migrations to follow the correct naming and format, then add a new SQL migration to relax the constraint and update server error handling to return 400 with a clear message.
+
+---
+
+Tool use: **read_file**
+
+Read file: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrate.js
+
+---
+
+<think><details><summary>Thought Process</summary>**Planning error handling and migration**
+
+I need to implement a migration to relax the constraint and modify server error handling to return a 400 error instead of a 504 when there's a constraint violation or insert failure. The user has requested a redeploy of the API with a specific modification to the sessions.js file, limiting attempt_day to Saturday and Sunday. They also want to prepare a migration to relax the constraint or improve error messaging—suggesting we might need to do both. I'll add migration 002_relax_attempt_day.sql to address this.
+**Preparing database migration and error handling**
+
+In Postgres, altering a check constraint involves dropping the old one and adding a new. I see the constraint name `sessions_attempt_day_check`, which needs updating. I'll write an ALTER TABLE statement to drop the existing constraint and add a new one. The migration file will be placed in `server/src/db/migrations/002_relax_attempt_day.sql`. I'll also update `server/src/routes/sessions.js` to enhance error handling, ensuring we return a 400 status code for constraint violations. Additionally, I’ll prepare for local migrations and GitHub Actions for deployment.
+**Implementing code changes and migration**
+
+I’m focusing on implementing code changes now, starting with updating the migration file using `apply_patch`. This will help to modify `sessions.js` for better error handling. I must include status updates before any tool calls, and I may need to call `apply_patch` twice, followed by `read_lints` to ensure everything looks good. The migration SQL will drop the existing constraint and add a new one for `attempt_day`. This table adjustment allows for weekdays to be included. Let’s get to work on that!
+**Updating error handling in sessions.js**
+
+I need to adjust the error handling in `sessions.js` for the insert catch block. Currently, it returns a 504 status on failure, but I want to change it to handle specific cases better. If the error code is '23514', I'll return a 400 status for invalid session data. If the error message includes 'timeout', it will return a 504. Otherwise, a 500 will be returned for general failures. Also, I’ll double-check allowed origins and suggest a redeploy step, though I won't execute it remotely. Testing Node migrations locally isn't essential right now.
+**Implementing code changes with apply_patch**
+
+I need to follow the guideline of making code changes by exclusively using `apply_patch` and not directly outputting code to the user. I’ll focus on making the necessary edits while providing status updates and managing tasks effectively. My first steps will be to create todos for adding the migration file and changing the server error handling. Once those tasks are done, I'll mark them as complete. Let's get started with the implementation!</details></think>
+
+---
+
+I'll add a migration to relax the sessions attempt_day constraint and update the server error handling in the sessions route to return clearer 400/500/504 responses. Then I'll run a quick lint check on the edited files.
+
+---
+
+Tool use: **todo_write**
+
+## Todo List
+
+- [-] Add SQL migration to relax sessions attempt_day constraint
+- [ ] Improve sessions insert error handling to return 400 on constraint violations
+
+---
+
+Tool use: **apply_patch**
+
+<details>
+        <summary>Apply patch for /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/002_relax_attempt_day.sql</summary>
+      
+
+```diff
+<<'PATCH'
+*** Begin Patch
+*** Add File: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/002_relax_attempt_day.sql
++-- Relax attempt_day constraint to allow all weekdays
++alter table if exists sessions
++  drop constraint if exists sessions_attempt_day_check;
++
++alter table if exists sessions
++  add constraint sessions_attempt_day_check
++  check (attempt_day in ('sat','sun','mon','tue','wed','thu','fri'));
++
+*** End Patch
+PATCH
+```
+
+---
+
+Tool use: **todo_write**
+
+## Todo List
+
+- [x] Add SQL migration to relax sessions attempt_day constraint
+- [-] Improve sessions insert error handling to return 400 on constraint violations
+
+---
+
+Tool use: **apply_patch**
+
+<details>
+        <summary>Apply patch for /Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js</summary>
+      
+
+```diff
+<<'PATCH'
+*** Begin Patch
+*** Update File: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js
+@@
+-    let rows
+-    try {
+-      const result = await withTimeout(
+-        pool.query(
+-          `insert into sessions(
+-            student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
+-            thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score
+-          ) values (
+-            $1,$2,$3,$4,$5,$6,
+-            $7,$8,$9,$10,$11,$12,$13,$14,$15
+-          ) returning *`,
+-          [
+-            studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,
+-            t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
+-            fathaPrompts, taradudCount, passed, computedScore
+-          ]
+-        ),
+-        15000,
+-        'insert sessions'
+-      )
+-      rows = result.rows
+-      console.log(`[sessions] inserted id=${rows[0]?.id}`)
+-    } catch (e) {
+-      console.error('[sessions] insert failed', e?.message)
+-      return res.status(504).json({ error: 'session save timeout or failed', details: e?.message || '' })
+-    }
++    let rows
++    try {
++      const result = await withTimeout(
++        pool.query(
++          `insert into sessions(
++            student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
++            thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score
++          ) values (
++            $1,$2,$3,$4,$5,$6,
++            $7,$8,$9,$10,$11,$12,$13,$14,$15
++          ) returning *`,
++          [
++            studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,
++            t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
++            fathaPrompts, taradudCount, passed, computedScore
++          ]
++        ),
++        15000,
++        'insert sessions'
++      )
++      rows = result.rows
++      console.log(`[sessions] inserted id=${rows[0]?.id}`)
++    } catch (e) {
++      const msg = e?.message || ''
++      console.error('[sessions] insert failed', msg)
++      // Map common constraint errors to 400 for better client feedback
++      if (/check constraint/i.test(msg) || /violates check constraint/i.test(msg)) {
++        return res.status(400).json({ error: 'invalid session data', details: msg })
++      }
++      return res.status(504).json({ error: 'session save timeout or failed', details: msg })
++    }
+*** End Patch
+PATCH
+```
+
+---
+
+Tool use: **read_lints**
+
+<details>
+          <summary>Read lints for 2 files</summary>
+      
+Lint paths:
+
+- `/Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js`
+- `/Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/002_relax_attempt_day.sql`
+
+Lint results
+
+
+**No lint errors found**
+</details>
+
+---
+
+Tool use: **todo_write**
+
+## Todo List
+
+- [x] Add SQL migration to relax sessions attempt_day constraint
+- [x] Improve sessions insert error handling to return 400 on constraint violations
+
+---
+
+- I added a SQL migration to relax `attempt_day` to allow all weekdays and updated server error handling to return 400 on check-constraint violations instead of 504.
+
+Key changes:
+- New migration `server/src/db/migrations/002_relax_attempt_day.sql`:
+```1:7:/Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations/002_relax_attempt_day.sql
+-- Relax attempt_day constraint to allow all weekdays
+alter table if exists sessions
+  drop constraint if exists sessions_attempt_day_check;
+
+alter table if exists sessions
+  add constraint sessions_attempt_day_check
+  check (attempt_day in ('sat','sun','mon','tue','wed','thu','fri'));
+```
+- Improved error mapping in `server/src/routes/sessions.js`:
+```88:106:/Volumes/ExtremeSSD/Projects/QuranTester/server/src/routes/sessions.js
+} catch (e) {
+  const msg = e?.message || ''
+  console.error('[sessions] insert failed', msg)
+  // Map common constraint errors to 400 for better client feedback
+  if (/check constraint/i.test(msg) || /violates check constraint/i.test(msg)) {
+    return res.status(400).json({ error: 'invalid session data', details: msg })
+  }
+  return res.status(504).json({ error: 'session save timeout or failed', details: msg })
+}
+```
+
+What to do next:
+- Run DB migrations on the server: from `server/`, run `node src/db/migrate.js` with the proper env vars set.
+- Redeploy the API so these changes go live.
+
+If you prefer to keep only `sat`/`sun`, skip the migration and just redeploy the current server code; it already forces `attemptDay` to `sat` or `sun`.
+
+---
+
