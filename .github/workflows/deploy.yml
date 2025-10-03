@@ -23,7 +23,7 @@ jobs:
       - name: Build (frontend)
         working-directory: quran-tester-app
         env:
-          VITE_API_URL: https://halaqa.abdeljawad.com/api
+          VITE_API_URL: https://api.halaqa.abdeljawad.com
         run: npm run build
 
       - name: Prepare artifacts
