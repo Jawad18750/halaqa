@@ -90,7 +90,7 @@ export default function TestView({ student, thumuns, onDone }) {
   return (
     <div className="test-container" style={{ padding:16, display:'grid', gap:16 }}>
       <div className="card appear" style={{ display:'grid', gap:8 }}>
-        <div className="info-grid" style={{ gridTemplateColumns:'repeat(3,minmax(0,1fr))' }}>
+        <div className="info-grid info-grid--fit">
           <Info label="الطالب" value={`${student.name}`} />
           <Info label="رقم الطالب" value={`${student.number}`} />
           <Info label="النقزة الحالية" value={formatNaqza(student.current_naqza)} />
@@ -137,7 +137,7 @@ export default function TestView({ student, thumuns, onDone }) {
       )}
 
       <div className="card appear" style={{ display:'grid', gap:12 }}>
-        <div className="info-grid" style={{ gridTemplateColumns:'repeat(2,minmax(0,1fr))' }}>
+        <div className="info-grid info-grid--fit">
           <div className="info">
             <div className="info-label">الفتحة</div>
             <div className="info-value">{fatha} / 3</div>
