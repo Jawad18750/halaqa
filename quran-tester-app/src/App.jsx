@@ -186,7 +186,7 @@ function App() {
                   سجل الطالب
                 </button>
               </div>
-              <TestView student={selectedStudent} thumuns={thumuns} onDone={() => { setSelectedStudent(null); setView('students') }} />
+              <TestView student={selectedStudent} thumuns={thumuns} onDone={() => { setView('studentHistory') }} />
             </>
           )}
           {view === 'studentHistory' && selectedStudent && (
