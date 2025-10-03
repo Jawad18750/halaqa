@@ -17,6 +17,7 @@ function getWeekStartSaturday(date = new Date()) {
 
 router.post('/', async (req, res) => {
   try {
+    console.log('[sessions] incoming body', req.body)
     const { studentId, mode, selectedNaqza, selectedJuz, thumunId } = req.body || {}
     let { fathaPrompts, taradudCount } = req.body || {}
     if (!studentId || !mode || !thumunId) {

@@ -30,6 +30,12 @@ app.options('*', cors(corsOptions))
 app.use((req, res, next) => { res.setHeader('Vary', 'Origin'); next() })
 app.use(express.json())
 
+// Minimal request logger to diagnose hangs
+app.use((req, _res, next) => {
+  console.log(`[req] ${req.method} ${req.url}`)
+  next()
+})
+
 app.get('/health', async (req, res) => {
   try {
     const r = await pool.query('select 1 as ok')
