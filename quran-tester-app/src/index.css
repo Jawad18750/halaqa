@@ -74,6 +74,19 @@ body {
 .brand { margin-top: 18px; margin-bottom: 8px; }
 .brand .app-logo { filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15)); }
 
+/* Clickable brand elements without tile/background/outline */
+.brand-link {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
 .hero-title {
   font-size: clamp(28px, 4.2vw, 40px);
   line-height: 1.2;

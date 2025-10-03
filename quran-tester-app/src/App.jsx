@@ -112,11 +112,11 @@ function App() {
     <>
     <div className="container">
       <div className="brand" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
-        <button className="btn btn--ghost" onClick={() => setView('dashboard')} style={{ padding:0, border:'none', background:'transparent' }}>
-          <img className="app-logo" src={theme === 'dark' ? '/quran-white.png' : '/quran.png'} alt="شعار التطبيق" width="56" height="56" style={{ borderRadius: 8 }} />
+        <button className="brand-link" onClick={() => setView('dashboard')} aria-label="الصفحة الرئيسية">
+          <img className="app-logo" src={theme === 'dark' ? '/quran-white.png' : '/quran.png'} alt="شعار التطبيق" width="56" height="56" style={{ borderRadius: 8, background:'transparent' }} />
         </button>
-        <button className="btn btn--ghost" onClick={() => setView('dashboard')} style={{ padding:0, border:'none', background:'transparent' }}>
-          <h1 className="hero-title" style={{ marginBottom: 0 }}>اختبار القرآن الكريم</h1>
+        <button className="brand-link" onClick={() => setView('dashboard')} aria-label="الذهاب إلى لوحة التحكم">
+          <h1 className="hero-title" style={{ marginBottom: 0, background:'transparent' }}>اختبار القرآن الكريم</h1>
         </button>
       </div>
 
