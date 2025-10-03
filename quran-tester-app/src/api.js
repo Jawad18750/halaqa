@@ -11,7 +11,9 @@ export function setToken(next) {
 async function request(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) }
   if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers })
+  const url = `${API_URL}${path}`
+  console.log('API request →', options.method || 'GET', url)
+  const res = await fetch(url, { ...options, headers })
   const isJson = (res.headers.get('content-type') || '').includes('application/json')
   const body = isJson ? await res.json() : null
   if (!res.ok) {

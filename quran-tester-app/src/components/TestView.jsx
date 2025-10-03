@@ -50,7 +50,12 @@ export default function TestView({ student, thumuns, onDone }) {
   useEffect(() => { setCurrent(null) }, [mode, juz, student.current_naqza])
 
   async function finalize(passed) {
-    if (!current) return
+    if (!current) {
+      setError('يرجى اختيار ثُمُن أولاً')
+      console.warn('Finalize blocked: no current thumun selected')
+      return
+    }
+    console.log('Finalize clicked', { passed, thumunId: current?.id, fatha, taradud })
     // Pass strictly depends on Fatha < 4
     const effectivePassed = fatha < 4
     // Client mirror of server scoring guarantees
@@ -76,6 +81,7 @@ export default function TestView({ student, thumuns, onDone }) {
     setSaving(true)
     setError('')
     try {
+      console.log('POST /sessions payload', payload)
       const res = await sessions.create(payload)
       showToast('تم تسجيل المحاولة')
       onDone?.(res)
