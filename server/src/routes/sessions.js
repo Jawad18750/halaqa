@@ -24,6 +24,7 @@ router.post('/', async (req, res) => {
   if (!['naqza','juz'].includes(mode)) return res.status(400).json({ error: 'invalid mode' })
 
   // Validate ownership
+  console.log(`[sessions] start user=${req.user?.id} student=${studentId}`)
   const s = await pool.query('select id from students where id=$1 and user_id=$2', [studentId, req.user.id])
   if (!s.rows.length) return res.status(404).json({ error: 'student not found' })
 
@@ -58,30 +59,61 @@ router.post('/', async (req, res) => {
   const now = new Date()
   const weekStart = getWeekStartSaturday(now)
   const weekday = now.getDay() // 0 Sun ... 6 Sat
-  const dayCodes = ['sun','mon','tue','wed','thu','fri','sat']
-  const attemptDay = dayCodes[weekday]
-  const { rows } = await pool.query(
-    `insert into sessions(
-      student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
-      thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score
-    ) values (
-      $1,$2,$3,$4,$5,$6,
-      $7,$8,$9,$10,$11,$12,$13,$14,$15
-    ) returning *`,
-    [
-      studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,
-      t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
-      fathaPrompts, taradudCount, passed, computedScore
-    ]
-  )
+  // التقييد في قاعدة البيانات يسمح بالسبت/الأحد فقط
+  const attemptDay = (weekday === 0) ? 'sun' : 'sat'
+
+  function withTimeout(promise, ms, label) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`timeout: ${label}`)), ms))
+    ])
+  }
+
+  console.log(`[sessions] insert student=${studentId} day=${attemptDay} mode=${mode} thumun=${t.id} fatha=${fathaPrompts} taradud=${taradudCount} passed=${passed}`)
+  let rows
+  try {
+    const result = await withTimeout(
+      pool.query(
+        `insert into sessions(
+          student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
+          thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score
+        ) values (
+          $1,$2,$3,$4,$5,$6,
+          $7,$8,$9,$10,$11,$12,$13,$14,$15
+        ) returning *`,
+        [
+          studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,
+          t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
+          fathaPrompts, taradudCount, passed, computedScore
+        ]
+      ),
+      15000,
+      'insert sessions'
+    )
+    rows = result.rows
+    console.log(`[sessions] inserted id=${rows[0]?.id}`)
+  } catch (e) {
+    console.error('[sessions] insert failed', e?.message)
+    return res.status(504).json({ error: 'session save timeout or failed', details: e?.message || '' })
+  }
 
   // Progression: decrement current_naqza on every pass (no weekly restriction)
   if (passed) {
-    await pool.query(
-      `update students set current_naqza = greatest(1, current_naqza - 1), updated_at=now()
-       where id=$1 and user_id=$2`,
-      [studentId, req.user.id]
-    )
+    try {
+      await withTimeout(
+        pool.query(
+          `update students set current_naqza = greatest(1, current_naqza - 1), updated_at=now()
+           where id=$1 and user_id=$2`,
+          [studentId, req.user.id]
+        ),
+        15000,
+        'update progression'
+      )
+      console.log(`[sessions] progression updated for student=${studentId}`)
+    } catch (e) {
+      console.error('[sessions] progression update failed', e?.message)
+      return res.status(504).json({ error: 'progression update timeout or failed', details: e?.message || '' })
+    }
   }
 
   res.status(201).json({ session: rows[0] })
