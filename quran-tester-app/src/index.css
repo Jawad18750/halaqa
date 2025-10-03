@@ -92,6 +92,8 @@ body {
   line-height: 1.2;
   margin: 8px 0 10px;
   text-align: center;
+  font-family: 'IBM Plex Sans Arabic', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font-weight: 700;
 }
 
 /* Controls */
