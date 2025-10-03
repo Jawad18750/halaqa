@@ -76,12 +76,13 @@ export default function TestView({ student, thumuns, onDone }) {
     setSaving(true)
     setError('')
     try {
-      await sessions.create(payload)
-      // After finalize, go to this student's history view
-      window.dispatchEvent(new CustomEvent('navigate-student-history', { detail: { studentId: student.id } }))
-      onDone?.()
+      const res = await sessions.create(payload)
+      showToast('تم تسجيل المحاولة')
+      onDone?.(res)
     } catch (e) {
-      setError(e.message)
+      const msg = e?.message ? String(e.message) : 'تعذر حفظ المحاولة'
+      setError(msg)
+      console.error('Finalize session failed', e)
     } finally {
       setSaving(false)
     }
