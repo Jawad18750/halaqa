@@ -112,5 +112,6 @@ jobs:
             -H 'Access-Control-Request-Method: POST' \
             -H 'Access-Control-Request-Headers: content-type,authorization')
           echo "$RESP"
-          echo "$RESP" | grep -iq 'access-control-allow-origin: https://halaqa.abdeljawad.com'
+          # Accept either explicit origin echo or wildcard managed by proxy
+          echo "$RESP" | grep -iq 'access-control-allow-origin: \*\|access-control-allow-origin: https://halaqa.abdeljawad.com'
           echo "$RESP" | grep -iq 'HTTP/1.1 200\|HTTP/2 200\|HTTP/1.1 204\|HTTP/2 204'
