@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -26,7 +26,7 @@ jobs:
           VITE_API_URL: https://api.halaqa.abdeljawad.com
         run: npm run build
 
-      - name: Prepare artifacts
+      - name: Prepare frontend artifact
         run: |
           mkdir -p artifact_frontend
           cp -r quran-tester-app/dist/* artifact_frontend/
@@ -39,6 +39,9 @@ jobs:
           RewriteRule ^ index.html [L]
           EOF
 
+      # ---------- Backend ----------
+      - name: Prepare backend artifact
+        run: |
           mkdir -p artifact_server
           rsync -a server/ artifact_server/ --exclude node_modules --exclude .env
 
@@ -69,17 +72,17 @@ jobs:
           API_RELEASE="${VPS_API_PATH}_releases/${TS}"
 
           # Create release dirs
-          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "mkdir -p \"$FRONT_RELEASE\" \"$API_RELEASE\""
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" "mkdir -p \"$FRONT_RELEASE\" \"$API_RELEASE\""
 
           # Upload frontend
-          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key" artifact_frontend/ "$VPS_USER@$VPS_HOST:$FRONT_RELEASE/"
-          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "ln -sfn \"$FRONT_RELEASE\" \"${VPS_FRONT_PATH}_current\""
+          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" artifact_frontend/ "$VPS_USER@$VPS_HOST:$FRONT_RELEASE/"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" "ln -sfn \"$FRONT_RELEASE\" \"${VPS_FRONT_PATH}_current\""
 
           # Upload backend
-          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key" artifact_server/ "$VPS_USER@$VPS_HOST:$API_RELEASE/"
+          rsync -az --delete -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" artifact_server/ "$VPS_USER@$VPS_HOST:$API_RELEASE/"
 
           # Backend: deps, .env, migrate, PM2
-          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" bash -lc "
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" bash -lc "
             set -e
             cd \"$API_RELEASE\"
             npm install --omit=dev
@@ -92,6 +95,22 @@ jobs:
             npm run migrate
             ln -sfn \"$API_RELEASE\" \"${VPS_API_PATH}_current\"
             command -v pm2 >/dev/null 2>&1 || npm i -g pm2
-            (pm2 start \"${VPS_API_PATH}_current/src/index.js\" --name halaqa-api --update-env || pm2 restart halaqa-api --update-env)
+            (pm2 start \"${VPS_API_PATH}_current/src/index.js\" --name halaqa-api --update-env --cwd \"${VPS_API_PATH}_current\" || pm2 restart halaqa-api --update-env)
             pm2 save
           "
+
+      # ---------- Post-deploy smoke tests ----------
+      - name: Health check API
+        run: |
+          curl -sS https://api.halaqa.abdeljawad.com/health
+
+      - name: Preflight (OPTIONS) /sessions CORS check
+        run: |
+          set -e
+          RESP=$(curl -s -i -X OPTIONS https://api.halaqa.abdeljawad.com/sessions \
+            -H 'Origin: https://halaqa.abdeljawad.com' \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type,authorization')
+          echo "$RESP"
+          echo "$RESP" | grep -iq 'access-control-allow-origin: https://halaqa.abdeljawad.com'
+          echo "$RESP" | grep -iq 'HTTP/1.1 200\|HTTP/2 200\|HTTP/1.1 204\|HTTP/2 204'
