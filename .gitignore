@@ -32,3 +32,11 @@ quran-thumun-data.demo-backup.*.json
 quran.png
 quran-white.png
 
+# Folders and files not needed in repo root
+ocr_output_pages
+ocr_output_pages_alt
+ocr_output_snips
+ocr_snips
+tessdata
+quran-thumun-data.demo-backup.2025-10-01.json
+pdf_extracted.txt
