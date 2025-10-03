@@ -13,14 +13,25 @@ async function request(path, options = {}) {
   if (token) headers['Authorization'] = `Bearer ${token}`
   const url = `${API_URL}${path}`
   console.log('API request →', options.method || 'GET', url)
-  const res = await fetch(url, { ...options, headers })
-  const isJson = (res.headers.get('content-type') || '').includes('application/json')
-  const body = isJson ? await res.json() : null
-  if (!res.ok) {
-    const msg = body?.error || res.statusText
-    throw new Error(msg)
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort('timeout'), 15000)
+  try {
+    const res = await fetch(url, { ...options, headers, signal: controller.signal })
+    const isJson = (res.headers.get('content-type') || '').includes('application/json')
+    const body = isJson ? await res.json() : null
+    if (!res.ok) {
+      const msg = body?.error || res.statusText || 'Request failed'
+      throw new Error(msg)
+    }
+    return body
+  } catch (e) {
+    if (e?.name === 'AbortError' || e === 'timeout') {
+      throw new Error('Network timeout')
+    }
+    throw e
+  } finally {
+    clearTimeout(timeout)
   }
-  return body
 }
 
 // Auth

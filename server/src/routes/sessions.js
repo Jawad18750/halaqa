@@ -65,10 +65,11 @@ router.post('/', async (req, res) => {
     const attemptDay = (weekday === 0) ? 'sun' : 'sat'
 
   function withTimeout(promise, ms, label) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error(`timeout: ${label}`)), ms))
-    ])
+    let timeoutId
+    const timed = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error(`timeout: ${label}`)), ms)
+    })
+    return Promise.race([promise.finally(() => clearTimeout(timeoutId)), timed])
   }
 
     console.log(`[sessions] insert student=${studentId} day=${attemptDay} mode=${mode} thumun=${t.id} fatha=${fathaPrompts} taradud=${taradudCount} passed=${passed}`)
