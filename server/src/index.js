@@ -12,6 +12,8 @@ const app = express()
 const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174',
   'https://halaqa.abdeljawad.com'
 ])
 function isAllowedOrigin(origin) {
@@ -48,6 +50,21 @@ app.get('/health', async (req, res) => {
 app.use('/auth', authRoutes)
 app.use('/students', studentRoutes)
 app.use('/sessions', sessionRoutes)
+
+// 404 handler for API routes to help debug missing endpoints
+app.use((req, res, next) => {
+  if (req.path.startsWith('/auth') || req.path.startsWith('/students') || req.path.startsWith('/sessions')) {
+    return res.status(404).type('text/plain').send(`Not Found: ${req.method} ${req.path}`)
+  }
+  next()
+})
+
+// Static uploads (student photos)
+import path from 'path'
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Global error guard to always respond JSON and include CORS when possible
 app.use((err, req, res, next) => {

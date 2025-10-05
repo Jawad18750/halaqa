@@ -32,8 +32,8 @@ npm run dev
 - POST /auth/login { username, password }
 - GET  /auth/me (Bearer token)
 - GET  /students
-- POST /students { number(1-30), name, notes }
-- PATCH /students/:id { number?, name?, notes?, current_naqza? }
+- POST /students { number(1-30), name }
+- PATCH /students/:id { number?, name?, current_naqza?, date_of_birth?, photo_url? }
 - DELETE /students/:id
 - POST /sessions { studentId, attemptDay('sat'|'sun'), mode('naqza'|'juz'), selectedNaqza?, selectedJuz?, thumunId, fathaPrompts, taradudCount, passed, score }
 - GET  /sessions/student/:id

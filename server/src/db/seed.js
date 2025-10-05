@@ -12,10 +12,10 @@ async function main() {
   // Create sample students 1..5
   for (let n = 1; n <= 5; n++) {
     await pool.query(
-      `insert into students(user_id, number, name, notes)
-       values($1, $2, $3, $4)
+      `insert into students(user_id, number, name)
+       values($1, $2, $3)
        on conflict (user_id, number) do update set name=excluded.name`,
-      [sheikhId, n, `طالب ${n}`, '']
+      [sheikhId, n, `طالب ${n}`]
     )
   }
   console.log('Seed complete')
