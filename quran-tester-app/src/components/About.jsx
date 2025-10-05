@@ -16,12 +16,16 @@ export default function About({ onBack }) {
         </div>
       </div>
       <div className="card appear" style={{ marginTop:12 }}>
-        <h2 style={{ textAlign:'center' }}>الاعتمادات</h2>
+        <h2 style={{ textAlign:'center' }}>إسهامات</h2>
         <ul style={{ listStyle:'none', padding:0, margin:0, display:'grid', gap:6 }}>
+          <li><i className="fa-solid fa-lightbulb" style={{ marginInlineStart:6 }}></i>صاحب الفكرة: الشيخ عبدالرحمن الغرياني</li>
           <li><i className="fa-solid fa-code" style={{ marginInlineStart:6 }}></i> المطور: عبدالجواد الميلادي</li>
-          <li><i className="fa-solid fa-database" style={{ marginInlineStart:6 }}></i> بيانات الأثمان: مصفوفة محلية من مصحف ليبيا رواية قالون عن نافع (ليبيا)</li>
+          <li><i className="fa-solid fa-database" style={{ marginInlineStart:6 }}></i> بيانات الأثمان: فهرس الأثمان والأحزاب والنقزات من مصحف ليبيا رواية قالون عن نافع</li>
           <li><i className="fa-solid fa-font" style={{ marginInlineStart:6 }}></i> الخط: IBM Plex Sans Arabic</li>
         </ul>
+      </div>
+      <div style={{ textAlign:'center', color:'var(--muted)', marginTop:12 }}>
+        <small>© {new Date().getFullYear()} جميع الحقوق محفوظة — حلقة </small>
       </div>
     </div>
   )

@@ -24,7 +24,7 @@ export default function Drawer({ open, onClose, user, onAuthed, onNavigate, onLo
                   <i className="fa-solid fa-users" style={{ marginInlineStart:6 }}></i> الطلاب
                 </button>
                 <button className="btn" onClick={() => { onNavigate('weekly'); onClose(); }}>
-                  <i className="fa-solid fa-calendar-week" style={{ marginInlineStart:6 }}></i> الأسبوع الحالي
+                  <i className="fa-solid fa-calendar-week" style={{ marginInlineStart:6 }}></i> نظرة زمنية
                 </button>
                 <button className="btn" onClick={() => { onNavigate('about'); onClose(); }}>
                   <i className="fa-solid fa-circle-info" style={{ marginInlineStart:6 }}></i> عن التطبيق

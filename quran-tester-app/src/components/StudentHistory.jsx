@@ -92,7 +92,7 @@ function grade(score){
   if (s >= 80) return 'جيد جدًا'
   if (s >= 70) return 'جيد'
   if (s >= 60) return 'مقبول'
-  return 'راسب'
+  return 'ضعيف'
 }
 
 function formatThumun(id, thumuns){

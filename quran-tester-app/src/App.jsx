@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import './App.css'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Auth from './components/Auth'
 import Students from './components/Students'
+import StudentProfile from './components/StudentProfile'
 import TestView from './components/TestView'
 import StudentHistory from './components/StudentHistory'
 import WeeklyOverview from './components/WeeklyOverview'
@@ -9,7 +9,8 @@ import Drawer from './components/Drawer'
 import Dashboard from './components/Dashboard'
 import About from './components/About'
 import Privacy from './components/Privacy'
-import { auth } from './api'
+import ResetPassword from './components/ResetPassword'
+import { auth, getToken } from './api'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -19,7 +20,13 @@ function App() {
   const [thumuns, setThumuns] = useState([])
   const [naqza, setNaqza] = useState(1)
   const [juz, setJuz] = useState('')
+  const [guestMode, setGuestMode] = useState('naqza')
+  const [guestFiveHizb, setGuestFiveHizb] = useState('')
+  const [guestQuarter, setGuestQuarter] = useState('')
+  const [guestHalf, setGuestHalf] = useState('')
   const [current, setCurrent] = useState(null)
+  const resultRef = useRef(null)
+  const [highlight, setHighlight] = useState(false)
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [fontScale, setFontScale] = useState(() => Number(localStorage.getItem('fontScale') || 1))
@@ -46,9 +53,20 @@ function App() {
     document.documentElement.lang = 'ar'
   }, [])
 
+  // Deep-link handling for reset password route
   useEffect(() => {
-    // try auto login
-    auth.me().then(({ user }) => setUser(user)).catch(() => {})
+    try {
+      if (window.location.pathname.startsWith('/reset')) {
+        setView('reset')
+      }
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    // try auto login only if a token exists to avoid 401 noise
+    if (getToken()) {
+      auth.me().then(({ user }) => setUser(user)).catch(() => {})
+    }
   }, [])
 
   useEffect(() => {
@@ -67,6 +85,12 @@ function App() {
     if (link) link.href = theme === 'dark' ? '/quran-white.png' : '/quran.png'
     // Footer author logo remains SVG, but invert color in dark via CSS
   }, [theme])
+
+  // Update mode data-attribute for hero color
+  useEffect(() => {
+    const mode = !user ? guestMode : (view === 'test' ? 'naqza' : view === 'students' ? 'naqza' : view === 'dashboard' ? 'naqza' : view)
+    if (mode) document.documentElement.dataset.mode = mode
+  }, [view, user, guestMode])
 
   useEffect(() => {
     document.documentElement.style.setProperty('--font-scale', String(fontScale))
@@ -91,13 +115,23 @@ function App() {
     loadData()
   }, [])
 
+  function fiveHizbGroupOf(hizb){
+    const num = Number(hizb || 0)
+    return num > 0 ? Math.floor((num - 1) / 5) + 1 : null
+  }
   const filtered = useMemo(() => {
     if (!thumuns.length) return []
-    if (juz) {
-      return thumuns.filter(t => t.juz === Number(juz))
+    if (!user) {
+      if (guestMode === 'juz' && juz) return thumuns.filter(t => t.juz === Number(juz))
+      if (guestMode === 'five_hizb' && guestFiveHizb) return thumuns.filter(t => fiveHizbGroupOf(t.hizb) === Number(guestFiveHizb))
+      if (guestMode === 'quarter' && guestQuarter) return thumuns.filter(t => Number(t.quranQuarter || Math.floor((t.id-1)/120)+1) === Number(guestQuarter))
+      if (guestMode === 'half' && guestHalf) return thumuns.filter(t => Number(t.quranHalf || Math.floor((t.id-1)/240)+1) === Number(guestHalf))
+      if (guestMode === 'full') return thumuns
+      return thumuns.filter(t => t.naqza === Number(naqza))
     }
+    if (juz) return thumuns.filter(t => t.juz === Number(juz))
     return thumuns.filter(t => t.naqza === Number(naqza))
-  }, [thumuns, naqza, juz])
+  }, [thumuns, naqza, juz, user, guestMode, guestFiveHizb, guestQuarter, guestHalf])
 
   function pickRandom() {
     if (!filtered.length) return
@@ -116,7 +150,7 @@ function App() {
           <img className="app-logo" src={theme === 'dark' ? '/quran-white.png' : '/quran.png'} alt="شعار التطبيق" width="56" height="56" style={{ borderRadius: 8, background:'transparent' }} />
         </button>
         <button className="brand-link" onClick={() => setView('dashboard')} aria-label="الذهاب إلى لوحة التحكم">
-          <h1 className="hero-title" style={{ marginBottom: 0, background:'transparent' }}>اختبار القرآن الكريم</h1>
+          <h1 className="hero-title" style={{ marginBottom: 0, background:'transparent' }}>اختبار الحلقة</h1>
         </button>
       </div>
 
@@ -128,34 +162,93 @@ function App() {
       </button>
 
       {!user ? (
+        view === 'reset' ? (
+          <ResetPassword />
+        ) : (
         <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingInline: 16, minHeight: '70vh' }}>
           {/* Free randomizer for guests */}
-          <div className="controls" style={{ maxWidth: 560, width: '100%' }}>
-            <label>
-              النقزة:
-              <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input">
-                {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
-                ))}
+          <div className="controls" style={{ maxWidth: 720, width: '100%', display:'grid', gridTemplateColumns:'1fr', justifyItems:'center', gap:10 }}>
+            <label aria-label="الوضع">
+              الوضع:
+              <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input" style={{ width: 240 }}>
+                <option value="naqza">حسب النقزة</option>
+                <option value="juz">حسب الجزء</option>
+                <option value="five_hizb">خمسة أحزاب</option>
+                <option value="quarter">ربع القرآن</option>
+                <option value="half">نصف القرآن</option>
+                <option value="full">القرآن كامل</option>
               </select>
+              <div className="hint">اختر طريقة التصفية المناسبة</div>
             </label>
-            <span className="or">أو</span>
-            <label>
-              الجزء:
-              <select value={juz} onChange={e => setJuz(e.target.value)} className="input">
-                <option value="">—</option>
-                {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
-                ))}
-              </select>
-            </label>
+            {guestMode === 'naqza' && (
+              <label aria-label="النقزة">
+                النقزة:
+                <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input" style={{ width: 260 }}>
+                  {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
+                    <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
+                  ))}
+                </select>
+                <div className="hint">اختر النقزة الحالية للطالب</div>
+              </label>
+            )}
+            {guestMode === 'juz' && (
+              <label aria-label="الجزء">
+                الجزء:
+                <select value={juz} onChange={e => setJuz(e.target.value)} className="input" style={{ width: 200 }}>
+                  <option value="">—</option>
+                  {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
+                    <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
+                  ))}
+                </select>
+                <div className="hint">اختر رقم الجزء</div>
+              </label>
+            )}
+            {guestMode === 'five_hizb' && (
+              <label aria-label="خمسة أحزاب">
+                المجموعة:
+                <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input" style={{ width: 220 }}>
+                  <option value="">—</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
+                    <option key={n} value={n}>{`الأحزاب ${((n-1)*5+1)}–${n*5}`}</option>
+                  ))}
+                </select>
+                <div className="hint">اختر مجموعة من ٥ أحزاب</div>
+              </label>
+            )}
+            {guestMode === 'quarter' && (
+              <label aria-label="ربع القرآن">
+                الربع:
+                <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input" style={{ width: 220 }}>
+                  <option value="">—</option>
+                  <option value="1">الربع الأول</option>
+                  <option value="2">الربع الثاني</option>
+                  <option value="3">الربع الثالث</option>
+                  <option value="4">الربع الرابع</option>
+                </select>
+                <div className="hint">اختر ربع القرآن</div>
+              </label>
+            )}
+            {guestMode === 'half' && (
+              <label aria-label="نصف القرآن">
+                النصف:
+                <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input" style={{ width: 220 }}>
+                  <option value="">—</option>
+                  <option value="1">النصف الأول</option>
+                  <option value="2">النصف الثاني</option>
+                </select>
+                <div className="hint">اختر نصف القرآن</div>
+              </label>
+            )}
             <button className="btn btn--primary" style={{ gridColumn: '1 / -1', justifySelf:'center' }} onClick={pickRandom} disabled={loading || !filtered.length}>اختر ثُمُناً عشوائياً</button>
           </div>
-          <div className="meta" style={{ marginTop: 8 }}>{loading ? 'جاري التحميل…' : `عدد الأثمان المتاحة: ${filtered.length}`}</div>
+          <div className="meta" style={{ marginTop: 8 }}>{loading ? 'جاري التحميل…' : (filtered.length ? `عدد الأثمان المتاحة: ${filtered.length.toLocaleString('ar-EG-u-nu-latn')}` : 'لا توجد أثمان متاحة')}</div>
           {current && (
-            <div className="card appear" style={{ marginTop: 16, maxWidth: 720 }}>
+            <div ref={resultRef} className={`card appear ${highlight ? 'pulse-outline' : ''}`} style={{ marginTop: 16, maxWidth: 720 }}>
               <div style={{ fontSize: 18, marginBottom: 8 }}>الثُمُن رقم {current.id}</div>
               <div className="phrase">{current.name || '—'}</div>
+              <div style={{ display:'flex', justifyContent:'center', gap:8, marginTop:4 }}>
+                <button className="btn" onClick={pickRandom}>اختيار جديد</button>
+              </div>
               <div className="info-grid">
                 <Info label="السورة" value={current.surah || '—'} />
                 <Info label="رقم السورة" value={current.surahNumber ?? '—'} />
@@ -167,13 +260,17 @@ function App() {
             </div>
           )}
         </div>
+        )
       ) : (
         <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center' }}>
           {view === 'dashboard' && (
             <Dashboard />
           )}
           {view === 'students' && !selectedStudent && (
-            <Students onSelect={(s) => { setSelectedStudent(s); setView('test') }} />
+            <Students onSelect={(s) => { setSelectedStudent(s); setView('test') }} onProfile={(s) => { setSelectedStudent(s); setView('students') }} />
+          )}
+          {view === 'students' && selectedStudent && (
+            <StudentProfile student={selectedStudent} onBack={() => setSelectedStudent(null)} />
           )}
           {view === 'test' && selectedStudent && (
             <>
@@ -200,6 +297,9 @@ function App() {
           )}
           {view === 'privacy' && (
             <Privacy onBack={() => setView('dashboard')} />
+          )}
+          {view === 'reset' && (
+            <ResetPassword />
           )}
         </div>
       )}

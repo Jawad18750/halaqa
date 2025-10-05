@@ -4,6 +4,9 @@ import { sessions } from '../api'
 export default function TestView({ student, thumuns, onDone }) {
   const [mode, setMode] = useState('naqza')
   const [juz, setJuz] = useState('')
+  const [fiveHizb, setFiveHizb] = useState('')
+  const [quranQuarter, setQuranQuarter] = useState('')
+  const [quranHalf, setQuranHalf] = useState('')
   const [current, setCurrent] = useState(null)
   const [fatha, setFatha] = useState(0)
   const [taradud, setTaradud] = useState(0)
@@ -33,11 +36,32 @@ export default function TestView({ student, thumuns, onDone }) {
     return `${num} - ${name}`
   }
 
+  function getFiveHizbGroup(h){
+    const num = Number(h)
+    if (!num) return null
+    return Math.floor((num - 1) / 5) + 1 // 1..12
+  }
+
+  function fiveHizbLabel(k){
+    const n = Number(k)
+    if (!n) return ''
+    const start = (n - 1) * 5 + 1
+    const end = n * 5
+    return `الأحزاب ${start}–${end}`
+  }
+
+  const QUARTER_LABELS = ['الربع الأول','الربع الثاني','الربع الثالث','الربع الرابع']
+  const HALF_LABELS = ['النصف الأول','النصف الثاني']
+
   const filtered = useMemo(() => {
     if (!thumuns?.length) return []
     if (mode === 'juz' && juz) return thumuns.filter(t => t.juz === Number(juz))
+    if (mode === 'five_hizb' && fiveHizb) return thumuns.filter(t => getFiveHizbGroup(t.hizb) === Number(fiveHizb))
+    if (mode === 'quarter' && quranQuarter) return thumuns.filter(t => Math.floor((Number(t.id) - 1) / 120) + 1 === Number(quranQuarter))
+    if (mode === 'half' && quranHalf) return thumuns.filter(t => Math.floor((Number(t.id) - 1) / 240) + 1 === Number(quranHalf))
+    if (mode === 'full') return thumuns
     return thumuns.filter(t => t.naqza === Number(student.current_naqza))
-  }, [thumuns, mode, juz, student])
+  }, [thumuns, mode, juz, fiveHizb, quranQuarter, quranHalf, student])
 
   function pickRandom() {
     if (!filtered.length) return
@@ -47,7 +71,7 @@ export default function TestView({ student, thumuns, onDone }) {
     setCurrent(pool[idx])
   }
 
-  useEffect(() => { setCurrent(null) }, [mode, juz, student.current_naqza])
+  useEffect(() => { setCurrent(null) }, [mode, juz, fiveHizb, quranQuarter, quranHalf, student.current_naqza])
 
   async function finalize(passed) {
     if (!current) {
@@ -72,6 +96,9 @@ export default function TestView({ student, thumuns, onDone }) {
       mode,
       selectedNaqza: mode === 'naqza' ? student.current_naqza : null,
       selectedJuz: mode === 'juz' ? Number(juz) : null,
+      selectedFiveHizb: mode === 'five_hizb' ? Number(fiveHizb) || null : null,
+      selectedQuranQuarter: mode === 'quarter' ? Number(quranQuarter) || null : null,
+      selectedQuranHalf: mode === 'half' ? Number(quranHalf) || null : null,
       thumunId: current.id,
       fathaPrompts: fatha,
       taradudCount: taradud,
@@ -95,8 +122,8 @@ export default function TestView({ student, thumuns, onDone }) {
   }
 
   return (
-    <div className="test-container" style={{ padding:16, display:'grid', gap:16 }}>
-      <div className="card appear" style={{ display:'grid', gap:8 }}>
+    <div className="test-container" style={{ padding:16, display:'grid', gap:16, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
+      <div className="card appear" style={{ display:'grid', gap:8, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
         <div className="info-grid info-grid--fit">
           <Info label="الطالب" value={`${student.name}`} />
           <Info label="رقم الطالب" value={`${student.number}`} />
@@ -108,6 +135,10 @@ export default function TestView({ student, thumuns, onDone }) {
             <select className="input" value={mode} onChange={e => setMode(e.target.value)} style={{ width:160 }}>
               <option value="naqza">حسب النقزة</option>
               <option value="juz">حسب الجزء</option>
+              <option value="five_hizb">خمسة أحزاب</option>
+              <option value="quarter">ربع القرآن</option>
+              <option value="half">نصف القرآن</option>
+              <option value="full">القرآن كامل</option>
             </select>
           </label>
           {mode === 'juz' && (
@@ -121,6 +152,39 @@ export default function TestView({ student, thumuns, onDone }) {
               </select>
             </label>
           )}
+          {mode === 'five_hizb' && (
+            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
+              المجموعة:
+              <select className="input" value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} style={{ width:140 }}>
+                <option value="">—</option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
+                  <option key={n} value={n}>{fiveHizbLabel(n)}</option>
+                ))}
+              </select>
+            </label>
+          )}
+          {mode === 'quarter' && (
+            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
+              الربع:
+              <select className="input" value={quranQuarter} onChange={e => setQuranQuarter(e.target.value)} style={{ width:140 }}>
+                <option value="">—</option>
+                {QUARTER_LABELS.map((lbl, idx) => (
+                  <option key={idx+1} value={idx+1}>{lbl}</option>
+                ))}
+              </select>
+            </label>
+          )}
+          {mode === 'half' && (
+            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
+              النصف:
+              <select className="input" value={quranHalf} onChange={e => setQuranHalf(e.target.value)} style={{ width:140 }}>
+                <option value="">—</option>
+                {HALF_LABELS.map((lbl, idx) => (
+                  <option key={idx+1} value={idx+1}>{lbl}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
         <div style={{ textAlign:'center' }}>
           <button className="btn btn--primary" onClick={pickRandom} disabled={!filtered.length}>اختر ثُمُناً عشوائياً</button>
@@ -129,7 +193,7 @@ export default function TestView({ student, thumuns, onDone }) {
       </div>
 
       {current && (
-        <div className="card appear" style={{ display:'grid', gap:10 }}>
+        <div className="card appear" style={{ display:'grid', gap:10, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
           <div className="phrase" style={{ marginBottom:0 }}>الثُمُن رقم {current.id}</div>
           <div className="phrase">{current.name}</div>
           <div className="info-grid">
@@ -143,7 +207,7 @@ export default function TestView({ student, thumuns, onDone }) {
         </div>
       )}
 
-      <div className="card appear" style={{ display:'grid', gap:12 }}>
+      <div className="card appear" style={{ display:'grid', gap:12, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
         <div className="info-grid info-grid--fit">
           <div className="info">
             <div className="info-label">الفتحة</div>

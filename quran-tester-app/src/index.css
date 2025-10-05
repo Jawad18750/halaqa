@@ -69,6 +69,7 @@ body {
   margin: 0 auto;
   padding: calc(var(--space) * 1.25) var(--space);
   font-size: calc(16px * var(--font-scale));
+  overflow-x: hidden;
 }
 
 .brand { margin-top: 18px; margin-bottom: 8px; }
@@ -94,6 +95,7 @@ body {
   text-align: center;
   font-family: 'IBM Plex Sans Arabic', system-ui, -apple-system, Segoe UI, Roboto, Arial;
   font-weight: 700;
+  color: var(--fg);
 }
 
 /* Controls */
@@ -174,6 +176,7 @@ body {
 }
 
 .meta { color: var(--muted); font-size: 13px; }
+.hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
 
 /* Card */
 .card {
@@ -184,6 +187,10 @@ body {
   box-shadow: var(--shadow);
   padding: 16px;
 }
+
+/* Brief outline pulse for newly selected thumun */
+.pulse-outline { animation: pulseOutline .9s ease-out 1; }
+@keyframes pulseOutline { 0%{ box-shadow: 0 0 0 2px var(--primary) inset; } 100%{ box-shadow: none; } }
 
 .appear { animation: fadeInUp .25s ease-out both; }
 @keyframes fadeInUp { from{opacity:0;transform:translate3d(0,6px,0)} to{opacity:1;transform:translate3d(0,0,0)} }
@@ -252,6 +259,37 @@ select.input { appearance: none; }
 .responsive-table th { text-align: center; padding: 10px; border-bottom: 1px solid var(--card-border); background: var(--tile-bg); color: var(--fg); position: sticky; top: 0; }
 .responsive-table td { text-align: center; padding: 10px; border-bottom: 1px solid var(--card-border); color: var(--fg); }
 
+/* Profile page: constrain horizontal scroll to table only on mobile */
+.profile-header { position: sticky; top: 0; z-index: 5; background: var(--card-bg); overflow: hidden; }
+.profile-table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.profile-table { min-width: 720px; }
+.profile-table thead th { position: sticky; top: 0; background: var(--tile-bg); }
+.profile-photo { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; background: var(--tile-bg); border: 1px solid var(--tile-border); display: block; }
+
+@media (max-width: 640px) {
+  .container { padding-left: 12px; padding-right: 12px; }
+  .profile-header { grid-template-columns: 80px 1fr; }
+  .profile-table { min-width: 640px; }
+  .card { margin-left: auto; margin-right: auto; }
+}
+
+/* Fine-tune for small iPhone widths (e.g., 390px) */
+@media (max-width: 390px) {
+  /* Lock content to device width and avoid edge bleed */
+  .container { max-width: 390px; margin-left: auto; margin-right: auto; }
+  .card, .profile-card { width: 100%; box-sizing: border-box; overflow: hidden; }
+
+  /* Reduce avatar to save horizontal space */
+  .profile-photo { width: 72px; height: 72px; }
+  .profile-header { grid-template-columns: 72px 1fr; }
+
+  /* Keep sticky header clear of floating toggles; responsive offset */
+  .profile-header { top: clamp(calc(env(safe-area-inset-top, 0px) + 48px), 8vh, 72px); }
+
+  /* Prevent nested elements from pushing layout horizontally */
+  .profile-card * { max-width: 100%; }
+}
+
 /* Icon buttons and tags */
 .icon-btn { width: 36px; height: 36px; display: inline-grid; place-items: center; border-radius: 10px; border: 1px solid var(--card-border); background: var(--tile-bg); color: var(--fg); box-shadow: var(--shadow); }
 .icon-btn:active { transform: translateY(1px); }
@@ -280,8 +318,8 @@ select.input { appearance: none; }
 .nav-list .btn i { min-width: 1em; }
 
 /* Multi-line truncation helper */
-.truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .clamp { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; overflow-wrap: anywhere; }
-.clamp--collapsed { -webkit-line-clamp: var(--clamp-lines, 2); max-height: calc(1.4em * var(--clamp-lines, 2)); }
+.clamp--collapsed { -webkit-line-clamp: var(--clamp-lines, 2); line-clamp: var(--clamp-lines, 2); max-height: calc(1.4em * var(--clamp-lines, 2)); }
 .clamp-toggle { margin-top: 6px; padding: 6px 10px; font-size: 12px; }
