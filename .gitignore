@@ -4,6 +4,15 @@ npm-debug.log*
 pnpm-lock.yaml
 package-lock.json
 
+# Environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+.env.*
+
 # Editor/OS
 .DS_Store
 .idea/
@@ -40,3 +49,22 @@ ocr_snips
 tessdata
 quran-thumun-data.demo-backup.2025-10-01.json
 pdf_extracted.txt
+
+# Deployment packages and artifacts
+quran-tester-deployment.zip
+halaqa_src_*.zip
+_artifact_src/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup
+*.bak

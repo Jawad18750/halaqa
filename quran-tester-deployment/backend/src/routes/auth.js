@@ -56,7 +56,7 @@ const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'abdeljawad.com',
   port: Number(process.env.SMTP_PORT || 587),
   secure: false,
-  auth: { user: process.env.SMTP_USER || 'halaqa@abdeljawad.com', pass: process.env.SMTP_PASS || '' },
+  auth: { user: process.env.SMTP_USER || '', pass: process.env.SMTP_PASS || '' },
   tls: { rejectUnauthorized: false }
 })
 
@@ -77,7 +77,7 @@ router.post('/forgot', async (req, res) => {
     console.log('[auth/forgot] reset link for', user.username, link)
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || '"اختبار القرآن" <halaqa@abdeljawad.com>',
+        from: process.env.SMTP_FROM || '"اختبار القرآن" <noreply@example.com>',
         to: email,
         subject: 'إعادة تعيين كلمة المرور',
         text: `مرحبًا ${user.username}\n\nلاستعادة كلمة المرور، افتح الرابط التالي خلال ساعة:\n${link}\n\nإذا لم تطلب ذلك فتجاهل الرسالة.`

@@ -35,11 +35,11 @@ NODE_ENV=production
 PORT=4000
 DATABASE_URL=postgres://$DB_USER:password@localhost:5432/$DB_NAME
 JWT_SECRET=$(openssl rand -base64 32)
-SMTP_USER=halaqa@abdeljawad.com
+SMTP_USER=your-smtp-email@domain.com
 SMTP_PASS=your-smtp-password-here
-SMTP_HOST=abdeljawad.com
+SMTP_HOST=your-smtp-host.com
 SMTP_PORT=587
-SMTP_FROM="اختبار القرآن" <halaqa@abdeljawad.com>
+SMTP_FROM="اختبار القرآن" <your-smtp-email@domain.com>
 RESET_BASE_URL=https://halaqa.abdeljawad.com
 EOF
 
