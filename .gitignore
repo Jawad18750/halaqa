@@ -54,6 +54,11 @@ pdf_extracted.txt
 quran-tester-deployment.zip
 halaqa_src_*.zip
 _artifact_src/
+quran-tester-deployment/
+
+# Local deployment/source staging
+_deploy_artifact_*/
+_deploy_src_*/
 
 # Logs and temporary files
 *.log
