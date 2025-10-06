@@ -322,4 +322,13 @@ select.input { appearance: none; }
 
 .clamp { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; overflow-wrap: anywhere; }
 .clamp--collapsed { -webkit-line-clamp: var(--clamp-lines, 2); line-clamp: var(--clamp-lines, 2); max-height: calc(1.4em * var(--clamp-lines, 2)); }
+
+/* Mobile overflow hotfix overrides */
+@media (max-width: 640px) {
+  html, body, #root, .container { max-width: 100vw; overflow-x: hidden; }
+  .card, .profile-card { width: 100%; box-sizing: border-box; overflow: hidden; }
+  .profile-header { max-width: 100%; overflow: hidden; }
+  .profile-table-wrapper { max-width: 100vw; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  img, video { max-width: 100%; height: auto; }
+}
 .clamp-toggle { margin-top: 6px; padding: 6px 10px; font-size: 12px; }
