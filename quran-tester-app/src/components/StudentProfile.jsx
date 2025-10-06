@@ -123,10 +123,10 @@ export default function StudentProfile({ student, onBack }) {
         h1{font-size:18px;margin:0 0 10px}
       `
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
-      html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><img src="/logo.svg" width="24" height="24" style="display:inline-block"/><h1 style="margin:0">${title}</h1></div>`
-      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center">
+      html += `<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px"><img src="/quran.png" width="24" height="24" style="display:inline-block;border-radius:6px"/><h1 style="margin:0">${title}</h1></div>`
+      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;justify-items:center;text-align:center">
         <div style="display:flex;align-items:center;gap:10px"><img src="${photoSrc}" width="56" height="56" style="border-radius:10px;border:1px solid #ccd3db;object-fit:cover"/></div>
-        <div style="display:grid;gap:4px">
+        <div style="display:grid;gap:4px;justify-items:center">
           <div><strong>الاسم:</strong> ${student.name}</div>
           <div><strong>الرقم:</strong> ${student.number}</div>
           <div><strong>تاريخ الميلاد:</strong> ${dob || '—'}</div>
@@ -166,7 +166,7 @@ export default function StudentProfile({ student, onBack }) {
         thead th{background:#f3f6fa}
       `
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title><style>${styles}</style></head><body>`
-      html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px"><img src="/logo.svg" width="26" height="26" style="display:inline-block"/><h1>${title}</h1></div>`
+      html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px"><img src="/quran.png" width="26" height="26" style="display:inline-block;border-radius:6px"/><h1>${title}</h1></div>`
       html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center">
         <div><img src="${photoSrc}" width="72" height="72" style="border-radius:12px;border:1px solid #ccd3db;object-fit:cover"/></div>
         <div style="display:grid;gap:6px">

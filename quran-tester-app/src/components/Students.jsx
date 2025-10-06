@@ -156,7 +156,15 @@ export default function Students({ onSelect, onProfile }) {
   })
   const apiBase = getApiUrl()
   const placeholder = '/profile-placeholder.svg'
-  const photoSrc = (s) => s?.photo_url ? (s.photo_url.startsWith('http') ? s.photo_url : `${apiBase}${s.photo_url}`) : placeholder
+  function photoSrc(s){
+    if (!s?.photo_url) return placeholder
+    let url = s.photo_url
+    if (!url.includes('?')) {
+      const ver = s?.updated_at ? new Date(s.updated_at).getTime() : Date.now()
+      url = `${url}?v=${ver}`
+    }
+    return url.startsWith('http') ? url : `${apiBase}${url}`
+  }
 
   return (
     <div className="container" style={{ width: '100%', maxWidth: 900 }}>
@@ -214,7 +222,7 @@ export default function Students({ onSelect, onProfile }) {
                 {filtered.map(s => (
                   <tr key={s.id} className={editingId===s.id ? 'updated' : ''}>
                     <td>
-                      <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={48} height={48} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = '/profile-placeholder.svg' } }} />
+                    <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={48} height={48} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = '/profile-placeholder.svg' } }} />
                     </td>
                     <td>{editingId === s.id ? (
                       <input className="input" type="number" value={editNumber} onChange={e => setEditNumber(e.target.value)} />
