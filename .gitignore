@@ -53,12 +53,16 @@ pdf_extracted.txt
 # Deployment packages and artifacts
 quran-tester-deployment.zip
 halaqa_src_*.zip
+halaqa_source_*.zip
 _artifact_src/
 quran-tester-deployment/
 
 # Local deployment/source staging
 _deploy_artifact_*/
 _deploy_src_*/
+
+# Frontend backup data snapshots
+quran-tester-app/public/quran-thumun-data.json.backup.*
 
 # Logs and temporary files
 *.log

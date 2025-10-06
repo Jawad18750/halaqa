@@ -111,8 +111,15 @@ router.post('/:id/photo', upload.single('photo'), async (req, res) => {
     fs.writeFileSync(path.join(studentDir, 'avatar-128.jpg'), out128)
 
     const baseUrl = `/uploads/students/${id}`
+    const photoUrl = `${baseUrl}/avatar-256.jpg?v=${Date.now()}`
+    const { rows } = await pool.query(
+      `update students set photo_url=$1, updated_at=now() where id=$2 and user_id=$3
+       returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+      [photoUrl, id, req.user.id]
+    )
     return res.json({
       ok: true,
+      student: rows[0],
       files: {
         '128': `${baseUrl}/avatar-128.jpg`,
         '256': `${baseUrl}/avatar-256.jpg`,

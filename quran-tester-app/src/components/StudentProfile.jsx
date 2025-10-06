@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { sessions, students, getApiUrl } from '../api'
+import AvatarCropper from './AvatarCropper'
 
 export default function StudentProfile({ student, onBack }) {
   const [list, setList] = useState([])
@@ -31,6 +32,13 @@ export default function StudentProfile({ student, onBack }) {
     setDob(toDateOnly(student?.date_of_birth))
   }, [student?.date_of_birth])
   const [photoUrl, setPhotoUrl] = useState(student?.photo_url || '')
+  useEffect(() => {
+    try {
+      const ver = student?.updated_at ? new Date(student.updated_at).getTime() : Date.now()
+      const base = student?.photo_url || ''
+      if (base) setPhotoUrl(`${base}${base.includes('?') ? '&' : '?'}v=${ver}`)
+    } catch {}
+  }, [student?.photo_url, student?.updated_at])
 
   async function load() {
     setLoading(true); setError('')
@@ -56,12 +64,21 @@ export default function StudentProfile({ student, onBack }) {
     } catch (e) { setError(e.message) }
   }
 
-  async function onUpload(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const [showCropper, setShowCropper] = useState(false)
+  const [pendingFile, setPendingFile] = useState(null)
+  function onPick(e){
+    const f = e.target.files?.[0]
+    if (!f) return
+    setPendingFile(f)
+    setShowCropper(true)
+  }
+  async function onCropped(file){
     try {
       const { student: s } = await students.uploadPhoto(student.id, file)
-      setPhotoUrl(s.photo_url || '')
+      const ver = Date.now()
+      setPhotoUrl(s.photo_url ? `${s.photo_url}?v=${ver}` : '')
+      setShowCropper(false)
+      setPendingFile(null)
     } catch (e) { setError(e.message) }
   }
 
@@ -106,7 +123,15 @@ export default function StudentProfile({ student, onBack }) {
         h1{font-size:18px;margin:0 0 10px}
       `
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
-      html += `<h1>${title}</h1>`
+      html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><img src="/logo.svg" width="24" height="24" style="display:inline-block"/><h1 style="margin:0">${title}</h1></div>`
+      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center">
+        <div style="display:flex;align-items:center;gap:10px"><img src="${photoSrc}" width="56" height="56" style="border-radius:10px;border:1px solid #ccd3db;object-fit:cover"/></div>
+        <div style="display:grid;gap:4px">
+          <div><strong>الاسم:</strong> ${student.name}</div>
+          <div><strong>الرقم:</strong> ${student.number}</div>
+          <div><strong>تاريخ الميلاد:</strong> ${dob || '—'}</div>
+        </div>
+      </div>`
       html += '<table><thead><tr>'+
         '<th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
         '</tr></thead><tbody>'
@@ -135,13 +160,21 @@ export default function StudentProfile({ student, onBack }) {
       const styles = `
         @page { size: A4; margin: 16mm }
         body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial;color:#111}
-        h1{font-size:20px;margin:0 0 12px;text-align:center}
+        h1{font-size:20px;margin:0;text-align:center}
         table{border-collapse:collapse;width:100%}
         th,td{border:1px solid #ccd3db;padding:6px 8px;text-align:center}
         thead th{background:#f3f6fa}
       `
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title><style>${styles}</style></head><body>`
-      html += `<h1>${title}</h1>`
+      html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px"><img src="/logo.svg" width="26" height="26" style="display:inline-block"/><h1>${title}</h1></div>`
+      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center">
+        <div><img src="${photoSrc}" width="72" height="72" style="border-radius:12px;border:1px solid #ccd3db;object-fit:cover"/></div>
+        <div style="display:grid;gap:6px">
+          <div><strong>الاسم:</strong> ${student.name}</div>
+          <div><strong>الرقم:</strong> ${student.number}</div>
+          <div><strong>تاريخ الميلاد:</strong> ${dob || '—'}</div>
+        </div>
+      </div>`
       html += '<table><thead><tr>'+
         '<th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
         '</tr></thead><tbody>'
@@ -172,19 +205,22 @@ export default function StudentProfile({ student, onBack }) {
           <div style={{ marginTop:6 }}>
             <label className="btn" style={{ padding:'6px 10px', fontSize:12 }}>
               تحميل صورة
-              <input type="file" accept="image/*" onChange={onUpload} style={{ display:'none' }} />
+              <input type="file" accept="image/*" onChange={onPick} style={{ display:'none' }} />
             </label>
           </div>
         </div>
         <div style={{ display:'grid', gap:6, minWidth: 0 }}>
           <div style={{ fontSize:18, fontWeight:700 }}>{student.name}</div>
           <div className="tag">رقم الطالب: {student.number}</div>
-          <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', gap:8, alignItems:'center', minWidth: 0 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', gap:8, alignItems:'center', minWidth: 0, paddingInline: 10 }}>
             <span className="info-label" style={{ whiteSpace:'nowrap' }}>تاريخ الميلاد:</span>
-            <input className="input" type="date" value={dob || ''} onChange={e => setDob(e.target.value)} onBlur={saveDob} style={{ width:'100%', minWidth:0 }} />
+            <input className="input" type="date" value={dob || ''} onChange={e => setDob(e.target.value)} onBlur={saveDob} style={{ width:'100%', minWidth:0, paddingInline: 10 }} />
           </div>
         </div>
       </div>
+      {showCropper && pendingFile && (
+        <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null) }} onCropped={onCropped} />
+      )}
 
       <div className="card profile-card" style={{ marginTop:12 }}>
         <h2 style={{ marginTop:0, color:'var(--muted)' }}>سجل الطالب</h2>

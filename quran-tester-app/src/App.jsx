@@ -15,7 +15,7 @@ import { auth, getToken } from './api'
 function App() {
   const [user, setUser] = useState(null)
   const [selectedStudent, setSelectedStudent] = useState(null)
-  const [view, setView] = useState('dashboard') // dashboard | students | test | studentHistory | weekly | about | privacy
+  const [view, setView] = useState('dashboard') // dashboard | students | test | studentHistory | weekly | about | privacy | freestyle
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [thumuns, setThumuns] = useState([])
   const [naqza, setNaqza] = useState(1)
@@ -119,8 +119,20 @@ function App() {
     const num = Number(hizb || 0)
     return num > 0 ? Math.floor((num - 1) / 5) + 1 : null
   }
+  function naqzaName(n){
+    const num = Number(n || 0)
+    if (!num || !thumuns.length) return ''
+    const first = thumuns.filter(t => t.naqza === num).sort((a,b)=>a.id-b.id)[0]
+    return first?.name || ''
+  }
+  function juzName(n){
+    const num = Number(n || 0)
+    if (!num) return ''
+    return JUZ_NAMES[num-1] || `الجزء ${num}`
+  }
   const filtered = useMemo(() => {
     if (!thumuns.length) return []
+    // Guest free mode on landing
     if (!user) {
       if (guestMode === 'juz' && juz) return thumuns.filter(t => t.juz === Number(juz))
       if (guestMode === 'five_hizb' && guestFiveHizb) return thumuns.filter(t => fiveHizbGroupOf(t.hizb) === Number(guestFiveHizb))
@@ -129,9 +141,19 @@ function App() {
       if (guestMode === 'full') return thumuns
       return thumuns.filter(t => t.naqza === Number(naqza))
     }
+    // Logged-in Freestyle should follow the same guestMode logic
+    if (view === 'freestyle') {
+      if (guestMode === 'juz' && juz) return thumuns.filter(t => t.juz === Number(juz))
+      if (guestMode === 'five_hizb' && guestFiveHizb) return thumuns.filter(t => fiveHizbGroupOf(t.hizb) === Number(guestFiveHizb))
+      if (guestMode === 'quarter' && guestQuarter) return thumuns.filter(t => Number(t.quranQuarter || Math.floor((t.id-1)/120)+1) === Number(guestQuarter))
+      if (guestMode === 'half' && guestHalf) return thumuns.filter(t => Number(t.quranHalf || Math.floor((t.id-1)/240)+1) === Number(guestHalf))
+      if (guestMode === 'full') return thumuns
+      return thumuns.filter(t => t.naqza === Number(naqza))
+    }
+    // Default (e.g., Test view) uses student's current naqza unless a juz is chosen
     if (juz) return thumuns.filter(t => t.juz === Number(juz))
     return thumuns.filter(t => t.naqza === Number(naqza))
-  }, [thumuns, naqza, juz, user, guestMode, guestFiveHizb, guestQuarter, guestHalf])
+  }, [thumuns, naqza, juz, user, view, guestMode, guestFiveHizb, guestQuarter, guestHalf])
 
   function pickRandom() {
     if (!filtered.length) return
@@ -141,6 +163,9 @@ function App() {
     const idx = Math.floor(Math.random() * base.length)
     setCurrent(base[idx])
   }
+
+  // Reset current selection whenever filtering inputs change (so it can't stay stuck on an old mode)
+  useEffect(() => { setCurrent(null) }, [view, guestMode, naqza, juz, guestFiveHizb, guestQuarter, guestHalf, thumuns])
 
   return (
     <>
@@ -278,7 +303,7 @@ function App() {
                 <button className="btn" onClick={() => { setSelectedStudent(null); setView('students') }}>
                   ← الرجوع
                 </button>
-                <button className="btn" onClick={() => setView('studentHistory')}>
+                <button className="btn" onClick={() => setView('students')}>
                   <i className="fa-solid fa-clock-rotate-left" style={{ marginInlineStart:6 }}></i>
                   سجل الطالب
                 </button>
@@ -291,6 +316,102 @@ function App() {
           )}
           {view === 'weekly' && (
             <WeeklyOverview onBack={() => setView('students')} />
+          )}
+          {view === 'freestyle' && (
+            <div className="stage" style={{ width:'100%', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', paddingInline: 16, minHeight: '70vh' }}>
+              {/* Reuse the guest-mode randomizer UI for logged-in users */}
+              <div className="controls" style={{ maxWidth: 720, width: '100%', display:'grid', gridTemplateColumns:'1fr', justifyItems:'center', gap:10 }}>
+                <label aria-label="الوضع">
+                  الوضع:
+                  <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input" style={{ width: 240 }}>
+                    <option value="naqza">حسب النقزة</option>
+                    <option value="juz">حسب الجزء</option>
+                    <option value="five_hizb">خمسة أحزاب</option>
+                    <option value="quarter">ربع القرآن</option>
+                    <option value="half">نصف القرآن</option>
+                    <option value="full">القرآن كامل</option>
+                  </select>
+                  <div className="hint">اختر طريقة التصفية المناسبة</div>
+                </label>
+                {guestMode === 'naqza' && (
+                  <label aria-label="النقزة">
+                    النقزة:
+                    <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input" style={{ width: 260 }}>
+                      {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
+                        <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
+                      ))}
+                    </select>
+                    <div className="hint">اختر النقزة</div>
+                  </label>
+                )}
+                {guestMode === 'juz' && (
+                  <label aria-label="الجزء">
+                    الجزء:
+                    <select value={juz} onChange={e => setJuz(e.target.value)} className="input" style={{ width: 200 }}>
+                      <option value="">—</option>
+                      {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
+                        <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
+                      ))}
+                    </select>
+                    <div className="hint">اختر رقم الجزء</div>
+                  </label>
+                )}
+                {guestMode === 'five_hizb' && (
+                  <label aria-label="خمسة أحزاب">
+                    المجموعة:
+                    <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input" style={{ width: 220 }}>
+                      <option value="">—</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
+                        <option key={n} value={n}>{`الأحزاب ${((n-1)*5+1)}–${n*5}`}</option>
+                      ))}
+                    </select>
+                    <div className="hint">اختر مجموعة ٥ أحزاب</div>
+                  </label>
+                )}
+                {guestMode === 'quarter' && (
+                  <label aria-label="ربع القرآن">
+                    الربع:
+                    <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input" style={{ width: 220 }}>
+                      <option value="">—</option>
+                      <option value="1">الربع الأول</option>
+                      <option value="2">الربع الثاني</option>
+                      <option value="3">الربع الثالث</option>
+                      <option value="4">الربع الرابع</option>
+                    </select>
+                    <div className="hint">اختر ربع القرآن</div>
+                  </label>
+                )}
+                {guestMode === 'half' && (
+                  <label aria-label="نصف القرآن">
+                    النصف:
+                    <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input" style={{ width: 220 }}>
+                      <option value="">—</option>
+                      <option value="1">النصف الأول</option>
+                      <option value="2">النصف الثاني</option>
+                    </select>
+                    <div className="hint">اختر نصف القرآن</div>
+                  </label>
+                )}
+                <button className="btn btn--primary" style={{ gridColumn: '1 / -1', justifySelf:'center' }} onClick={pickRandom} disabled={loading || !filtered.length}>اختر ثُمُناً عشوائياً</button>
+              </div>
+              <div className="meta" style={{ marginTop: 8 }}>{loading ? 'جاري التحميل…' : (filtered.length ? `عدد الأثمان المتاحة: ${filtered.length.toLocaleString('ar-EG-u-nu-latn')}` : 'لا توجد أثمان متاحة')}</div>
+              {current && (
+                <div ref={resultRef} className={`card appear ${highlight ? 'pulse-outline' : ''}`} style={{ marginTop: 16, maxWidth: 720 }}>
+                  <div style={{ fontSize: 18, marginBottom: 8 }}>الثُمُن رقم {current.id}</div>
+                  <div className="phrase">{current.name || '—'}</div>
+                  <div style={{ display:'flex', justifyContent:'center', gap:8, marginTop:4 }}>
+                    <button className="btn" onClick={pickRandom}>اختيار جديد</button>
+                  </div>
+                  <div className="info-grid">
+                    <Info label="السورة" value={`${current.surah || '—'}${current.surahNumber ? ` (رقم ${current.surahNumber})` : ''}`} />
+                    <Info label="الحزب" value={current.hizb ?? '—'} />
+                    <Info label="الربع" value={current.quarter ?? '—'} />
+                    <Info label="الجزء" value={current.juz ? `${current.juz} - ${juzName(current.juz)}` : '—'} />
+                    <Info label="النقزة" value={current.naqza ? `${current.naqza} - ${naqzaName(current.naqza)}` : '—'} />
+                  </div>
+                </div>
+              )}
+            </div>
           )}
           {view === 'about' && (
             <About onBack={() => setView('dashboard')} />

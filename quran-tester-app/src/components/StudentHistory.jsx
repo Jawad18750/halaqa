@@ -39,7 +39,7 @@ export default function StudentHistory({ student, onBack }) {
         <div style={{ marginTop: 12, display:'grid', gap:8 }}>
           {list.length === 0 && <div>لا يوجد سجلات بعد.</div>}
           {list.map(item => (
-            <div key={item.id} className="card" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(130px, 1fr))', gap:8 }}>
+            <div key={item.id} className="card student-history-card">
               <Cell label="الأسبوع">{new Date(item.week_start_date).toLocaleDateString('ar-EG-u-nu-latn')}</Cell>
               <Cell label="اليوم">{dayName(item.attempt_day)}</Cell>
               <Cell label="الثمن"><Clamp text={formatThumun(item.thumun_id, thumuns)} /></Cell>
@@ -92,7 +92,7 @@ function grade(score){
   if (s >= 80) return 'جيد جدًا'
   if (s >= 70) return 'جيد'
   if (s >= 60) return 'مقبول'
-  return 'ضعيف'
+  return 'راسب'
 }
 
 function formatThumun(id, thumuns){

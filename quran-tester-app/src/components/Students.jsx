@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import AvatarCropper from './AvatarCropper'
 import { students, getApiUrl } from '../api'
 
 export default function Students({ onSelect, onProfile }) {
@@ -12,6 +13,9 @@ export default function Students({ onSelect, onProfile }) {
   const [editName, setEditName] = useState('')
   const [editNotes, setEditNotes] = useState('')
   const [editNaqza, setEditNaqza] = useState(20)
+  const [showCropper, setShowCropper] = useState(false)
+  const [pendingStudentId, setPendingStudentId] = useState(null)
+  const [pendingFile, setPendingFile] = useState(null)
 
   const [number, setNumber] = useState('')
   const [name, setName] = useState('')
@@ -118,6 +122,33 @@ export default function Students({ onSelect, onProfile }) {
     return first && first.name ? `${n} - ${first.name}` : String(n)
   }
 
+  async function onPickPhoto(s, file) {
+    if (!file) return
+    setPendingStudentId(s.id)
+    setPendingFile(file)
+    setShowCropper(true)
+  }
+
+  async function onCropped(file) {
+    try {
+      const form = new FormData()
+      form.append('photo', file)
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/students/${pendingStudentId}/photo`, {
+        method: 'POST',
+        headers: { Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '' },
+        body: form
+      })
+      if (!res.ok) throw new Error('رفع الصورة فشل')
+      await res.json()
+      setShowCropper(false)
+      setPendingStudentId(null)
+      setPendingFile(null)
+      showToast('تم تحديث الصورة')
+    } catch (e) {
+      setError(String(e.message || e))
+    }
+  }
+
   const filtered = list.filter(s => {
     if (!query.trim()) return true
     const q = query.trim()
@@ -213,7 +244,9 @@ export default function Students({ onSelect, onProfile }) {
                         </>
                       ) : (
                         <>
-                          <button className="btn btn--primary" onClick={(e) => { e.stopPropagation(); onSelect(s) }} style={{ marginInlineEnd:6 }}>اختبار</button>
+                          <button className="icon-btn" onClick={(e) => { e.stopPropagation(); onSelect(s) }} title="اختبار" style={{ marginInlineEnd:6 }}>
+                            <i className="fa-solid fa-play"></i>
+                          </button>
                           <button className="icon-btn" onClick={() => startEdit(s)} title="تعديل" style={{ marginInlineEnd:6 }}>
                             <i className="fa-solid fa-pen"></i>
                           </button>
@@ -270,9 +303,16 @@ export default function Students({ onSelect, onProfile }) {
                     </>
                   ) : (
                     <>
-                      <button className="icon-btn btn--primary" onClick={() => onSelect(s)} title="اختبار"><i className="fa-solid fa-play"></i></button>
-                      <button className="icon-btn" onClick={() => startEdit(s)} title="تعديل"><i className="fa-solid fa-pen"></i></button>
-                      <button className="icon-btn" onClick={async () => { try { const ok = await confirmModal('تأكيد الحذف','هل تريد حذف الطالب؟'); if (!ok) return; await students.remove(s.id); showToast('تم الحذف'); load() } catch(e){ setError(String(e.message||e)) } }} title="حذف"><i className="fa-solid fa-trash"></i></button>
+                      {/* removed per request: photo upload/crop happens in profile page only */}
+                      <button className="icon-btn" onClick={() => onSelect(s)} title="اختبار" style={{ marginInlineEnd:6 }}>
+                        <i className="fa-solid fa-play"></i>
+                      </button>
+                      <button className="icon-btn" onClick={() => startEdit(s)} title="تعديل" style={{ marginInlineEnd:6 }}>
+                        <i className="fa-solid fa-pen"></i>
+                      </button>
+                      <button className="icon-btn" onClick={async () => { try { const ok = await confirmModal('تأكيد الحذف','هل تريد حذف الطالب؟'); if (!ok) return; await students.remove(s.id); showToast('تم الحذف'); load() } catch(e){ setError(String(e.message||e)) } }} title="حذف">
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
                     </>
                   )}
                 </div>
@@ -283,6 +323,7 @@ export default function Students({ onSelect, onProfile }) {
         )}
       </div>
       {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
+      {showCropper && pendingFile && <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null); setPendingStudentId(null) }} onCropped={onCropped} />}
       <ConfirmModal />
     </div>
   )

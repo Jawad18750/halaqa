@@ -122,7 +122,7 @@ export default function TestView({ student, thumuns, onDone }) {
   }
 
   return (
-    <div className="test-container" style={{ padding:16, display:'grid', gap:16, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
+    <div className="test-container" style={{ padding:16, display:'grid', gap:16, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
       <div className="card appear" style={{ display:'grid', gap:8, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
         <div className="info-grid info-grid--fit">
           <Info label="الطالب" value={`${student.name}`} />
@@ -193,7 +193,7 @@ export default function TestView({ student, thumuns, onDone }) {
       </div>
 
       {current && (
-        <div className="card appear" style={{ display:'grid', gap:10, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
+        <div className="card appear" style={{ display:'grid', gap:10, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
           <div className="phrase" style={{ marginBottom:0 }}>الثُمُن رقم {current.id}</div>
           <div className="phrase">{current.name}</div>
           <div className="info-grid">
@@ -207,8 +207,8 @@ export default function TestView({ student, thumuns, onDone }) {
         </div>
       )}
 
-      <div className="card appear" style={{ display:'grid', gap:12, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
-        <div className="info-grid info-grid--fit">
+      <div className="card appear" style={{ display:'grid', gap:12, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
+        <div className="info-grid" style={{ gridTemplateColumns:'repeat(2, minmax(0,1fr))', alignItems:'stretch' }}>
           <div className="info">
             <div className="info-label">الفتحة</div>
             <div className="info-value">{fatha} / 3</div>
