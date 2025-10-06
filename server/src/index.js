@@ -32,6 +32,19 @@ app.options('*', cors(corsOptions))
 app.use((req, res, next) => { res.setHeader('Vary', 'Origin'); next() })
 app.use(express.json())
 
+// Static serving for uploaded images
+import path from 'path'
+import fs from 'fs'
+const uploadsRoot = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.resolve(process.cwd(), 'src', 'uploads')
+try { fs.mkdirSync(uploadsRoot, { recursive: true }) } catch {}
+app.use('/uploads', express.static(uploadsRoot, {
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+  }
+}))
+
 // Minimal request logger to diagnose hangs
 app.use((req, _res, next) => {
   console.log(`[req] ${req.method} ${req.url}`)
@@ -58,13 +71,6 @@ app.use((req, res, next) => {
   }
   next()
 })
-
-// Static uploads (student photos)
-import path from 'path'
-import { fileURLToPath } from 'url'
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Global error guard to always respond JSON and include CORS when possible
 app.use((err, req, res, next) => {

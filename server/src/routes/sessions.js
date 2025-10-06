@@ -118,12 +118,12 @@ router.post('/', async (req, res) => {
       return res.status(504).json({ error: 'session save timeout or failed', details: msg })
     }
 
-  // Progression: decrement current_naqza on every pass (no weekly restriction)
+  // Progression: increment current_naqza on every pass (no weekly restriction)
     if (passed) {
       try {
         await withTimeout(
           pool.query(
-            `update students set current_naqza = greatest(1, current_naqza - 1), updated_at=now()
+            `update students set current_naqza = current_naqza + 1, updated_at=now()
              where id=$1 and user_id=$2`,
             [studentId, req.user.id]
           ),

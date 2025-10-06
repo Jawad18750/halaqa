@@ -2,23 +2,26 @@ import { Router } from 'express'
 import { pool } from '../lib/db.js'
 import { requireAuth } from '../middleware/auth.js'
 import multer from 'multer'
-import path from 'path'
+import sharp from 'sharp'
 import fs from 'fs'
+import path from 'path'
 
 const router = Router()
 router.use(requireAuth)
 
-// Multer storage to uploads/students
-const uploadDir = path.resolve(path.join(process.cwd(), 'src', 'uploads', 'students'))
-fs.mkdirSync(uploadDir, { recursive: true })
+// Image upload setup
+const uploadsRoot = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.resolve(process.cwd(), 'src', 'uploads')
+try { fs.mkdirSync(uploadsRoot, { recursive: true }) } catch {}
+const studentsRoot = path.join(uploadsRoot, 'students')
+try { fs.mkdirSync(studentsRoot, { recursive: true }) } catch {}
+
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, uploadDir),
-    filename: (req, _file, cb) => cb(null, `${req.params.id}.jpg`)
-  }),
-  limits: { fileSize: 2 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const ok = ['image/jpeg','image/png'].includes(file.mimetype)
+    const ok = ['image/jpeg','image/png','image/webp','image/heic','image/heif'].includes(file.mimetype)
     cb(ok ? null : new Error('invalid file type'), ok)
   }
 })
@@ -82,22 +85,44 @@ router.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
-// Upload student photo (jpeg/png ≤ 2MB)
+// Upload and process profile photo
 router.post('/:id/photo', upload.single('photo'), async (req, res) => {
   const { id } = req.params
+  const owned = await pool.query('select id from students where user_id=$1 and id=$2', [req.user.id, id])
+  if (!owned.rows.length) return res.status(404).json({ error: 'not found' })
+  if (!req.file) return res.status(400).json({ error: 'no file uploaded' })
+
+  const studentDir = path.join(studentsRoot, id)
+  try { fs.mkdirSync(studentDir, { recursive: true }) } catch {}
+
   try {
-    console.log('[students.photo] hit', id, 'file?', !!req.file)
-    const rel = `/uploads/students/${id}.jpg`
-    const { rows } = await pool.query(
-      `update students set photo_url=$1, updated_at=now() where id=$2 and user_id=$3 returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
-      [rel, id, req.user.id]
-    )
-    if (!rows.length) return res.status(404).json({ error: 'not found' })
-    res.json({ student: rows[0] })
+    const base = sharp(req.file.buffer, { limitInputPixels: 268402689 }) // ~16k x 16k guard
+      .rotate()
+      .resize({ width: 1024, height: 1024, fit: 'cover', position: 'centre', withoutEnlargement: true })
+      .withMetadata({ orientation: 1 })
+
+    // Generate sizes
+    const out512 = await base.clone().jpeg({ quality: 82, mozjpeg: true }).resize(512, 512).toBuffer()
+    const out256 = await base.clone().jpeg({ quality: 82, mozjpeg: true }).resize(256, 256).toBuffer()
+    const out128 = await base.clone().jpeg({ quality: 82, mozjpeg: true }).resize(128, 128).toBuffer()
+
+    fs.writeFileSync(path.join(studentDir, 'avatar-512.jpg'), out512)
+    fs.writeFileSync(path.join(studentDir, 'avatar-256.jpg'), out256)
+    fs.writeFileSync(path.join(studentDir, 'avatar-128.jpg'), out128)
+
+    const baseUrl = `/uploads/students/${id}`
+    return res.json({
+      ok: true,
+      files: {
+        '128': `${baseUrl}/avatar-128.jpg`,
+        '256': `${baseUrl}/avatar-256.jpg`,
+        '512': `${baseUrl}/avatar-512.jpg`
+      }
+    })
   } catch (e) {
-    res.status(400).json({ error: e.message || 'upload failed' })
+    console.error('[students.photo] error', e?.message)
+    return res.status(500).json({ error: 'failed to process image' })
   }
 })
 
 export default router
-
