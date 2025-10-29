@@ -37,6 +37,7 @@ export default function WeeklyOverview({ onBack }) {
       day: dayName(item.attempt_day),
       mode: item.mode === 'naqza' ? 'النقزة' : (item.mode === 'juz' ? 'الجزء' : item.mode),
       thumun: formatThumun(item.thumun_id, thumuns),
+      naqza: formatNaqzaForThumun(item.thumun_id, thumuns),
       fatha: num(item.fatha_prompts),
       taradud: num(item.taradud_count),
       result: item.passed ? 'ناجح' : 'راسب',
@@ -52,9 +53,9 @@ export default function WeeklyOverview({ onBack }) {
       const styles = `table{border-collapse:collapse;width:100%;direction:rtl;font-family:'IBM Plex Sans Arabic',Arial}th,td{border:1px solid #ccd3db;padding:8px;text-align:center}thead th{background:#f3f6fa;font-weight:700}h1{font-size:18px;margin:0 0 10px}`
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
       html += `<h1>${title}</h1>`
-      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
+      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
       for (const r of rows) {
-        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
+        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const blob = new Blob(["\ufeff" + html], { type: 'application/vnd.ms-excel;charset=utf-8' })
@@ -76,9 +77,9 @@ export default function WeeklyOverview({ onBack }) {
       const styles = `@page{size:A4;margin:16mm}body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial;color:#111}h1{font-size:20px;margin:0 0 12px;text-align:center}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd3db;padding:6px 8px;text-align:center}thead th{background:#f3f6fa}`
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title><style>${styles}</style></head><body>`
       html += `<h1>${title}</h1>`
-      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
+      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
       for (const r of rows) {
-        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
+        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const win = window.open('', '_blank')
@@ -110,38 +111,78 @@ export default function WeeklyOverview({ onBack }) {
       </div>
       <h2 style={{ textAlign:'center', marginTop:0 }}>نظرة زمنية — من {from} إلى {to}</h2>
       <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap', marginTop:8 }}>
-        <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
+        <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8, whiteSpace:'nowrap' }}>
           من:
           <input className="input" type="date" value={from} onChange={e=>setFrom(e.target.value)} />
         </label>
-        <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
+        <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8, whiteSpace:'nowrap' }}>
           إلى:
           <input className="input" type="date" value={to} onChange={e=>setTo(e.target.value)} />
         </label>
       </div>
-      <div style={{ display:'flex', gap:8, justifyContent:'flex-end', marginTop:8 }}>
+      <div className="mobile-center" style={{ display:'flex', gap:8, justifyContent:'flex-end', marginTop:8 }}>
         <button className="btn" onClick={exportWeeklyPDF}>تصدير PDF</button>
         <button className="btn" onClick={exportWeeklyExcel}>تصدير Excel</button>
       </div>
       {error && <div style={{ color:'crimson' }}>{error}</div>}
       {loading ? 'جاري التحميل…' : (
-        <div style={{ marginTop: 12, display:'grid', gap:8 }}>
-          {data.sessions.length === 0 && <div>لا يوجد سجلات هذا الأسبوع.</div>}
-          {data.sessions.map(item => (
-            <div key={item.id} className="card" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(130px, 1fr))', gap:8 }}>
-              <Cell label="الطالب">{num(item.student_number)} — {item.student_name}</Cell>
-              <Cell label="اليوم">{dayName(item.attempt_day)}</Cell>
-              <Cell label="الوضع">{item.mode === 'naqza' ? 'النقزة' : 'الجزء'}</Cell>
-              <Cell label="الثمن">{formatThumun(item.thumun_id, thumuns)}</Cell>
-              <Cell label="الفتحة/التردد">{num(item.fatha_prompts)} / {num(item.taradud_count)}</Cell>
-              <Cell label="النتيجة">
-                <Clamp text={`${item.passed ? 'ناجح' : 'راسب'} — ${num(item.score)} — ${grade(item.score)}`} lines={2} />
-                <div style={{ fontSize:12, color:'var(--muted)' }}>
-                  <EditableTime row={item} onSaved={() => { setLoading(true); sessions.overview(from,to).then(r=>{ setData({ weekStartDate:r.from, sessions:r.sessions }); setLoading(false) }).catch(()=>setLoading(false)) }} />
-                </div>
-              </Cell>
+        <div className="card profile-card" style={{ marginTop:12 }}>
+          {data.sessions.length === 0 ? (
+            <div>لا يوجد سجلات هذا الأسبوع.</div>
+          ) : (
+            <div className="profile-table-wrapper">
+              <table className="responsive-table profile-table">
+                <thead>
+                  <tr>
+                    <th>الطالب</th>
+                    <th>اليوم</th>
+                    <th>الوضع</th>
+                    <th>الثمن</th>
+                    <th>النقزة</th>
+                    <th>الفتحة</th>
+                    <th>التردد</th>
+                    <th>النتيجة</th>
+                    <th>الدرجة</th>
+                    <th>التاريخ/الوقت</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.sessions.map(item => {
+                    const r = {
+                      student: `${num(item.student_number)} — ${item.student_name}`,
+                      day: dayName(item.attempt_day),
+                      mode: item.mode === 'naqza' ? 'النقزة' : (item.mode === 'juz' ? 'الجزء' : item.mode),
+                      thumun: formatThumun(item.thumun_id, thumuns),
+                      naqza: formatNaqzaForThumun(item.thumun_id, thumuns),
+                      fatha: num(item.fatha_prompts),
+                      taradud: num(item.taradud_count),
+                      result: item.passed ? 'ناجح' : 'راسب',
+                      score: num(item.score),
+                      at: new Date(item.created_at).toLocaleString('ar-EG-u-nu-latn')
+                    }
+                    return (
+                      <tr key={item.id}>
+                        <td>{r.student}</td>
+                        <td>{r.day}</td>
+                        <td>{r.mode}</td>
+                        <td>{r.thumun}</td>
+                        <td>{r.naqza || '—'}</td>
+                        <td>{r.fatha}</td>
+                        <td>{r.taradud}</td>
+                        <td>{r.result}</td>
+                        <td>{r.score}</td>
+                        <td>{r.at}</td>
+                        <td>
+                          <EditableTime row={item} onSaved={() => { setLoading(true); sessions.overview(from,to).then(r=>{ setData({ weekStartDate:r.from, sessions:r.sessions }); setLoading(false) }).catch(()=>setLoading(false)) }} />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
@@ -189,6 +230,18 @@ function formatThumun(id, thumuns){
   const t = thumuns.find(x => x.id === Number(id))
   if (!t) return num(id)
   return `${num(t.id)} - ${t.name}`
+}
+
+function naqzaName(naqza, thumuns){
+  const first = thumuns.find(x => x.naqza === Number(naqza))
+  return first?.name || ''
+}
+
+function formatNaqzaForThumun(id, thumuns){
+  const t = thumuns.find(x => x.id === Number(id))
+  if (!t || !t.naqza) return ''
+  const label = naqzaName(t.naqza, thumuns)
+  return label ? `${num(t.naqza)} - ${label}` : num(t.naqza)
 }
 
 function EditableTime({ row, onSaved }){

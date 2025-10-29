@@ -271,6 +271,8 @@ select.input { appearance: none; }
   .profile-header { grid-template-columns: 80px 1fr; }
   .profile-table { min-width: 640px; }
   .card { margin-left: auto; margin-right: auto; }
+  /* Center export button rows on small screens */
+  .mobile-center { justify-content: center !important; text-align: center; }
 }
 
 /* Fine-tune for small iPhone widths (e.g., 390px) */

@@ -40,6 +40,26 @@ export default function StudentProfile({ student, onBack }) {
     } catch {}
   }, [student?.photo_url, student?.updated_at])
 
+  // Thumun dataset for labeling
+  const [thumuns, setThumuns] = useState([])
+  useEffect(() => {
+    fetch('/quran-thumun-data.json').then(r=>r.json()).then(d=>setThumuns(d.thumuns||[])).catch(()=>{})
+  }, [])
+
+  function formatThumunCell(id){
+    const t = thumuns.find(x => x.id === Number(id))
+    if (!t) return String(id ?? '')
+    try { return `${Number(t.id).toLocaleString('ar-EG-u-nu-latn')} - ${t.name}` } catch { return `${t.id} - ${t.name}` }
+  }
+  function formatNaqzaCell(id){
+    const t = thumuns.find(x => x.id === Number(id))
+    const n = t?.naqza
+    if (!n) return ''
+    const first = thumuns.find(x => x.naqza === Number(n))
+    const nm = first?.name || ''
+    try { return nm ? `${Number(n).toLocaleString('ar-EG-u-nu-latn')} - ${nm}` : String(n) } catch { return nm ? `${n} - ${nm}` : String(n) }
+  }
+
   async function load() {
     setLoading(true); setError('')
     try {
@@ -101,15 +121,27 @@ export default function StudentProfile({ student, onBack }) {
   }
 
   function buildRows() {
-    return list.map(r => ({
-      date: new Date(r.attempt_at || r.created_at).toLocaleString('ar-EG-u-nu-latn'),
-      thumun: String(r.thumun_id ?? ''),
-      mode: modeLabel(r.mode),
-      fatha: String(r.fatha_prompts ?? ''),
-      taradud: String(r.taradud_count ?? ''),
-      result: r.passed ? 'نجح' : 'فشل',
-      score: String(r.score ?? '')
-    }))
+    return list.map(r => {
+      const t = thumuns.find(x => x.id === Number(r.thumun_id))
+      const thumunLabel = t ? `${Number(t.id).toLocaleString('ar-EG-u-nu-latn')} - ${t.name}` : String(r.thumun_id ?? '')
+      const naqzaVal = t?.naqza
+      const naqzaLabel = (() => {
+        if (!naqzaVal) return ''
+        const first = thumuns.find(x => x.naqza === Number(naqzaVal))
+        const nm = first?.name || ''
+        return nm ? `${Number(naqzaVal).toLocaleString('ar-EG-u-nu-latn')} - ${nm}` : String(naqzaVal)
+      })()
+      return {
+        date: new Date(r.attempt_at || r.created_at).toLocaleString('ar-EG-u-nu-latn'),
+        thumunLabel,
+        naqza: naqzaLabel,
+        mode: modeLabel(r.mode),
+        fatha: String(r.fatha_prompts ?? ''),
+        taradud: String(r.taradud_count ?? ''),
+        result: r.passed ? 'نجح' : 'فشل',
+        score: String(r.score ?? '')
+      }
+    })
   }
 
   function exportExcel() {
@@ -133,10 +165,10 @@ export default function StudentProfile({ student, onBack }) {
         </div>
       </div>`
       html += '<table><thead><tr>'+
-        '<th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
+        '<th>التاريخ</th><th>الثمن</th><th>النقزة</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
         '</tr></thead><tbody>'
       for (const r of rows) {
-        html += `<tr><td>${r.date}</td><td>${r.thumun}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
+        html += `<tr><td>${r.date}</td><td>${r.thumunLabel}</td><td>${r.naqza}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const blob = new Blob(["\ufeff" + html], { type: 'application/vnd.ms-excel;charset=utf-8' })
@@ -176,10 +208,10 @@ export default function StudentProfile({ student, onBack }) {
         </div>
       </div>`
       html += '<table><thead><tr>'+
-        '<th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
+        '<th>التاريخ</th><th>الثمن</th><th>النقزة</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
         '</tr></thead><tbody>'
       for (const r of rows) {
-        html += `<tr><td>${r.date}</td><td>${r.thumun}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
+        html += `<tr><td>${r.date}</td><td>${r.thumunLabel}</td><td>${r.naqza}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const win = window.open('', '_blank')
@@ -225,7 +257,7 @@ export default function StudentProfile({ student, onBack }) {
       <div className="card profile-card" style={{ marginTop:12 }}>
         <h2 style={{ marginTop:0, color:'var(--muted)' }}>سجل الطالب</h2>
         {error && <div style={{ color:'crimson', marginBottom:8 }}>{error}</div>}
-        <div style={{ display:'flex', gap:8, justifyContent:'flex-end', marginBottom:8 }}>
+        <div className="mobile-center" style={{ display:'flex', gap:8, justifyContent:'flex-end', marginBottom:8 }}>
           <button className="btn" onClick={exportPDF} title="تصدير PDF">تصدير PDF</button>
           <button className="btn" onClick={exportExcel} title="تصدير Excel">تصدير Excel</button>
         </div>
@@ -236,6 +268,7 @@ export default function StudentProfile({ student, onBack }) {
                 <tr>
                   <th>التاريخ</th>
                   <th>الثمن</th>
+                  <th>النقزة</th>
                   <th>الوضع</th>
                   <th>الفتحة</th>
                   <th>التردد</th>
@@ -250,7 +283,8 @@ export default function StudentProfile({ student, onBack }) {
                     <td>
                       <EditableTime row={r} onSaved={load} onError={setError} />
                     </td>
-                    <td>{r.thumun_id}</td>
+                    <td>{formatThumunCell(r.thumun_id)}</td>
+                    <td>{formatNaqzaCell(r.thumun_id) || '—'}</td>
                     <td>{modeLabel(r.mode)}</td>
                     <td>{r.fatha_prompts}</td>
                     <td>{r.taradud_count}</td>

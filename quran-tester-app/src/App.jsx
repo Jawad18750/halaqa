@@ -12,6 +12,16 @@ import Privacy from './components/Privacy'
 import ResetPassword from './components/ResetPassword'
 import { auth, getToken } from './api'
 
+// Apply persisted UI settings before first render to avoid layout flicker
+try {
+  const initialTheme = localStorage.getItem('theme') || 'light'
+  document.documentElement.dataset.theme = initialTheme
+  const initialFontScale = Number(localStorage.getItem('fontScale') || 1)
+  document.documentElement.style.setProperty('--font-scale', String(initialFontScale))
+  const initialContrast = localStorage.getItem('contrast') === '1'
+  document.documentElement.dataset.contrast = initialContrast ? 'high' : 'normal'
+} catch {}
+
 function App() {
   const [user, setUser] = useState(null)
   const [selectedStudent, setSelectedStudent] = useState(null)
@@ -308,7 +318,7 @@ function App() {
                   سجل الطالب
                 </button>
               </div>
-              <TestView student={selectedStudent} thumuns={thumuns} onDone={() => { setView('studentHistory') }} />
+              <TestView student={selectedStudent} thumuns={thumuns} onDone={() => { setView('students') }} />
             </>
           )}
           {view === 'studentHistory' && selectedStudent && (
