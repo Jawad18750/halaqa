@@ -6,6 +6,16 @@ General
 - Prefer minimal edits over refactors; reuse existing components and styles.
 - Use absolute paths in tool calls and file references.
 
+Tech Guardrails
+- Frontend stack: React 19 + Vite with built-in hooks; no new state managers or UI kits without approval.
+- Data fetching goes through `src/api.js` using native fetch; do not add axios/GraphQL clients.
+- Styling lives in `index.css` (Cairo font, CSS variables, utility classes); avoid Tailwind, styled-components, or new preprocessors.
+- Tables use `@tanstack/react-table`; reuse existing helpers instead of adding grid libraries.
+- PDF/Excel exports are handcrafted (DOM/Blob); don’t introduce jsPDF/xlsx libraries unless requested.
+- Icons rely on Font Awesome classes already wired; no alternative icon packs.
+- Backend: Express + `pg` + raw SQL migrations (`server/src/db`); skip ORMs/framework swaps.
+- File uploads already managed with multer(memory)+sharp; keep this pipeline.
+
 Frontend (quran-tester-app)
 - Dev: cd /Volumes/ExtremeSSD/Projects/QuranTester/quran-tester-app && npm install && npm run dev (5173)
 - API base: VITE_API_URL=http://localhost:4000
