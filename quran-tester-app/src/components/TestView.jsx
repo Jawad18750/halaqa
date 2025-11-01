@@ -227,8 +227,8 @@ export default function TestView({ student, thumuns, onDone }) {
           </div>
         </div>
         <div style={{ display:'flex', justifyContent:'center', gap:8 }}>
-          <button className="btn btn--primary" disabled={!current || saving || fatha >= 4} onClick={async () => { await finalize(true); showToast('تم التسجيل: نجح') }}>نجح</button>
-          <button className="btn" disabled={!current || saving} onClick={async () => { await finalize(false); showToast('تم التسجيل: فشل') }}>فشل</button>
+          <button className="btn btn--primary" disabled={!current || saving || fatha >= 4} onClick={async () => { if (!confirm('تأكيد تسجيل النتيجة: نجح؟')) return; await finalize(true); showToast('تم التسجيل: نجح') }}>نجح</button>
+          <button className="btn" disabled={!current || saving} onClick={async () => { if (!confirm('تأكيد تسجيل النتيجة: فشل؟')) return; await finalize(false); showToast('تم التسجيل: فشل') }}>فشل</button>
         </div>
         {error && <div style={{ color:'crimson' }}>{error}</div>}
       </div>

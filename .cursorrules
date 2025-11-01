@@ -1,0 +1,46 @@
+QuranTester Cursor Rules (concise)
+
+General
+- Keep UI Arabic; write commit messages in English.
+- Never commit secrets. Use .env (SMTP_*, DATABASE_URL, JWT_SECRET). Ensure .env is gitignored.
+- Prefer minimal edits over refactors; reuse existing components and styles.
+- Use absolute paths in tool calls and file references.
+
+Frontend (quran-tester-app)
+- Dev: cd /Volumes/ExtremeSSD/Projects/QuranTester/quran-tester-app && npm install && npm run dev (5173)
+- API base: VITE_API_URL=http://localhost:4000
+- Exports: use public/quran.png in PDF/Excel headers.
+- Display: show Thumun as "id - name" and include Naqza in UI and exports.
+- Free mode controls: single vertical column, centered; unify card/control width (~720px).
+- Mobile: prevent horizontal overflow; cards full width.
+
+Backend (server)
+- Dev: cd /Volumes/ExtremeSSD/Projects/QuranTester/server && npm install && npm run dev (PORT=4000)
+- DB: docker compose up -d, then npm run migrate; npm run seed (optional).
+- Auth: login by username or email; email-based password reset via /auth/forgot and /auth/reset.
+- Uploads: POST /students/:id/photo → multer(memory)+sharp to 128/256/512 JPEG; served under /uploads.
+- Sessions: on pass, increment current_naqza; date-range overview at GET /sessions/overview?from=YYYY-MM-DD&to=YYYY-MM-DD.
+- Removed field: Do NOT add "notes" back anywhere (UI/API/DB).
+
+Database & Migrations
+- Path: /Volumes/ExtremeSSD/Projects/QuranTester/server/src/db/migrations
+- Apply with: cd server && npm run migrate
+
+Scoring Policy (for UI labels)
+- Pass/fail based ONLY on Fatha: <4 pass, ≥4 fail. Grade is descriptive.
+
+Security & Ops
+- If port 4000 is busy: lsof -ti:4000 | xargs kill -9
+- Serve uploads with long cache headers; do not expose filesystem paths.
+- Don’t log sensitive env values.
+
+Git Workflow
+- Branch: main. Small, focused commits.
+- If README was edited on GitHub: git pull --rebase origin main before push.
+- Push: git push origin main
+
+Cursor Execution Preferences
+- Prefer semantic code search over broad grep; avoid noisy terminal greps.
+- Use edit tools to change files; avoid ad-hoc terminal-based file mutations.
+- Keep changes minimal, readable, and lint-clean. Avoid adding new deps unless required.
+

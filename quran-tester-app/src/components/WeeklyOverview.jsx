@@ -48,14 +48,33 @@ export default function WeeklyOverview({ onBack }) {
 
   function exportWeeklyExcel() {
     try {
-      const rows = buildRows()
+      // Group by student and include only the latest attempt within the selected range
+      const grouped = new Map()
+      for (const s of (data.sessions || [])) {
+        const key = s.student_id
+        const prev = grouped.get(key)
+        if (!prev || new Date(s.created_at) > new Date(prev.created_at)) grouped.set(key, s)
+      }
+      const rows = Array.from(grouped.values()).map(item => ({
+        number: Number(item.student_number || 0),
+        name: item.student_name || '',
+        day: dayName(item.attempt_day),
+        mode: item.mode === 'naqza' ? 'النقزة' : (item.mode === 'juz' ? 'الجزء' : item.mode),
+        thumun: formatThumun(item.thumun_id, thumuns),
+        naqza: formatNaqzaForThumun(item.thumun_id, thumuns),
+        fatha: num(item.fatha_prompts),
+        taradud: num(item.taradud_count),
+        result: item.passed ? 'نجح' : 'راسب',
+        score: num(item.score),
+        at: new Date(item.created_at).toLocaleString('ar-EG-u-nu-latn')
+      })).sort((a,b) => (a.number||0) - (b.number||0))
       const title = `نظرة أسبوعية — ${data.weekStartDate ? new Date(data.weekStartDate).toLocaleDateString('ar-EG-u-nu-latn') : ''}`
       const styles = `table{border-collapse:collapse;width:100%;direction:rtl;font-family:'IBM Plex Sans Arabic',Arial}th,td{border:1px solid #ccd3db;padding:8px;text-align:center}thead th{background:#f3f6fa;font-weight:700}h1{font-size:18px;margin:0 0 10px}`
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
       html += `<h1>${title}</h1>`
-      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
+      html += '<table><thead><tr><th>الرقم</th><th>الاسم</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
       for (const r of rows) {
-        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
+        html += `<tr><td>${num(r.number)}</td><td>${r.name}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const blob = new Blob(["\ufeff" + html], { type: 'application/vnd.ms-excel;charset=utf-8' })
@@ -72,14 +91,38 @@ export default function WeeklyOverview({ onBack }) {
 
   function exportWeeklyPDF() {
     try {
-      const rows = buildRows()
+      // Group by student: display latest attempt, sort by earliest attempt in the range
+      const latestByStudent = new Map()
+      const earliestAt = new Map()
+      for (const s of (data.sessions || [])) {
+        const key = s.student_id
+        const prev = latestByStudent.get(key)
+        if (!prev || new Date(s.created_at) > new Date(prev.created_at)) latestByStudent.set(key, s)
+        const prevEarliest = earliestAt.get(key)
+        if (!prevEarliest || new Date(s.created_at) < new Date(prevEarliest)) earliestAt.set(key, s.created_at)
+      }
+      const rows = Array.from(latestByStudent.values()).map(item => ({
+        number: Number(item.student_number || 0),
+        name: item.student_name || '',
+        day: dayName(item.attempt_day),
+        mode: item.mode === 'naqza' ? 'النقزة' : (item.mode === 'juz' ? 'الجزء' : item.mode),
+        thumun: formatThumun(item.thumun_id, thumuns),
+        naqza: formatNaqzaForThumun(item.thumun_id, thumuns),
+        fatha: num(item.fatha_prompts),
+        taradud: num(item.taradud_count),
+        result: item.passed ? 'نجح' : 'راسب',
+        score: num(item.score),
+        at: new Date(item.created_at).toLocaleString('ar-EG-u-nu-latn'),
+        sortAt: new Date(earliestAt.get(item.student_id) || item.created_at).getTime()
+      })).sort((a,b) => a.sortAt - b.sortAt)
       const title = `نظرة أسبوعية — بداية الأسبوع: ${data.weekStartDate ? new Date(data.weekStartDate).toLocaleDateString('ar-EG-u-nu-latn') : ''}`
       const styles = `@page{size:A4;margin:16mm}body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial;color:#111}h1{font-size:20px;margin:0 0 12px;text-align:center}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd3db;padding:6px 8px;text-align:center}thead th{background:#f3f6fa}`
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title><style>${styles}</style></head><body>`
       html += `<h1>${title}</h1>`
-      html += '<table><thead><tr><th>الطالب</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
+      html += '<table><thead><tr><th>التسلسل</th><th>الاسم</th><th>اليوم</th><th>الوضع</th><th>الثمن</th><th>النقزة</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th><th>التاريخ/الوقت</th></tr></thead><tbody>'
+      let idx = 1
       for (const r of rows) {
-        html += `<tr><td>${r.student}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
+        html += `<tr><td>${num(idx++)}</td><td>${num(r.number)} — ${r.name}</td><td>${r.day}</td><td>${r.mode}</td><td>${r.thumun}</td><td>${r.naqza}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td><td>${r.at}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const win = window.open('', '_blank')
