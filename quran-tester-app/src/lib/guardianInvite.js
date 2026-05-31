@@ -7,6 +7,18 @@ import {
 
 const BOT_USERNAME = 'Halaqa_Test_bot'
 
+export function buildGuardianDeepLink(code) {
+  const normalized = normalizeLinkCode(code)
+  if (!normalized || !/^\d{6}$/.test(normalized)) return null
+  return `https://t.me/${BOT_USERNAME}?start=${normalized}`
+}
+
+export function resolveInviteLinks({ deepLink, code }) {
+  const formattedCode = code ? formatLinkCodeForDisplay(code) : null
+  const resolvedDeepLink = deepLink || buildGuardianDeepLink(code)
+  return { formattedCode, deepLink: resolvedDeepLink }
+}
+
 export const INVITE_CHANNELS = {
   whatsapp: { id: 'whatsapp', label: 'واتساب', icon: 'fa-brands fa-whatsapp' },
   telegram: { id: 'telegram', label: 'Telegram', icon: 'fa-brands fa-telegram' },
@@ -29,14 +41,14 @@ export function validateInviteParams({ studentName, code, deepLink }) {
   if (!student) {
     return { ok: false, error: 'يجب تحديد اسم الطالب قبل إرسال الدعوة.' }
   }
-  const formattedCode = code ? formatLinkCodeForDisplay(code) : null
+  const { formattedCode, deepLink: resolvedDeepLink } = resolveInviteLinks({ deepLink, code })
   if (!formattedCode) {
     return { ok: false, error: 'رمز الربط غير متوفر — أعد إنشاء الدعوة.' }
   }
-  if (!deepLink && !formattedCode) {
+  if (!resolvedDeepLink && !formattedCode) {
     return { ok: false, error: 'تعذر إنشاء دعوة كاملة — لا يوجد رابط أو رمز ربط.' }
   }
-  return { ok: true, student, formattedCode }
+  return { ok: true, student, formattedCode, deepLink: resolvedDeepLink }
 }
 
 function greetingLine(guardianName) {
@@ -54,38 +66,30 @@ function buildTelegramCopyInvite({ guardianName, studentName, deepLink, formatte
       `يسرّنا دعوتكم لمتابعة نتائج اختبارات الطالب: ${studentName}`,
       'وذلك حتى تصلكم نتائجه في القرآن الكريم مباشرة بعد كل اختبار.',
     ],
+    'سيتم إرسال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
   ]
 
   if (deepLink) {
     blocks.push(
-      'سيتم إرسال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
       [
-        '✅ طريقة الربط:',
-        '1. اضغطوا على الرابط أدناه.',
-        '2. عند فتح Telegram، اضغطوا «Start» أو «ابدأ».',
-        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
-      ],
-      [
-        '🔗 رابط الربط:',
+        '🔗 رابط الربط المباشر:',
         deepLink,
+        'اضغطوا الرابط، ثم «Start» أو «ابدأ» في Telegram، وستُربطون تلقائيًا.',
       ],
       [
-        'أو يمكنكم الربط يدويًا:',
+        '✅ أو يمكنكم الربط يدويًا:',
         `افتحوا البوت @${BOT_USERNAME} وأرسلوا رمز الربط التالي:`,
         formattedCode,
       ],
     )
   } else {
-    blocks.push(
-      'سيتم إرسال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
-      [
-        '✅ طريقة الربط:',
-        `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
-        '2. أرسلوا رمز الربط التالي:',
-        formattedCode,
-        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
-      ],
-    )
+    blocks.push([
+      '✅ طريقة الربط:',
+      `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
+      '2. أرسلوا رمز الربط التالي:',
+      formattedCode,
+      '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+    ])
   }
 
   blocks.push(
@@ -104,38 +108,30 @@ function buildWhatsAppInvite({ guardianName, studentName, deepLink, formattedCod
       `يسرّنا دعوتكم لمتابعة نتائج اختبارات الطالب: *${studentName}*`,
       'حتى تصلكم نتائجه في القرآن الكريم مباشرة بعد كل اختبار.',
     ],
+    'سيتم استقبال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
   ]
 
   if (deepLink) {
     blocks.push(
-      'سيتم استقبال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
       [
-        '*طريقة الربط:*',
-        '1. اضغطوا على الرابط أدناه.',
-        '2. عند فتح Telegram، اضغطوا «Start» أو «ابدأ».',
-        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
-      ],
-      [
-        '*رابط الربط:*',
+        '*🔗 رابط الربط المباشر:*',
         deepLink,
+        'اضغطوا الرابط، ثم «Start» أو «ابدأ» في Telegram، وستُربطون تلقائيًا.',
       ],
       [
-        '*أو يمكنكم الربط يدويًا:*',
+        '*✅ أو يمكنكم الربط يدويًا:*',
         `افتحوا البوت @${BOT_USERNAME} وأرسلوا رمز الربط التالي:`,
         `*${formattedCode}*`,
       ],
     )
   } else {
-    blocks.push(
-      'سيتم استقبال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
-      [
-        '*طريقة الربط:*',
-        `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
-        '2. أرسلوا رمز الربط التالي:',
-        `*${formattedCode}*`,
-        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
-      ],
-    )
+    blocks.push([
+      '*طريقة الربط:*',
+      `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
+      '2. أرسلوا رمز الربط التالي:',
+      `*${formattedCode}*`,
+      '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+    ])
   }
 
   blocks.push(
@@ -169,7 +165,7 @@ export function buildInviteMessageForChannel(channel, params) {
   const base = {
     guardianName: params.guardianName,
     studentName: validation.student,
-    deepLink: params.deepLink || null,
+    deepLink: validation.deepLink,
     formattedCode: validation.formattedCode,
     sheikhName: params.sheikhName,
     masjidName: params.masjidName,
@@ -211,6 +207,11 @@ export function buildTelegramShareUrl(deepLink, message) {
 
 export function getInviteUrl(channel, { phoneE164, message, deepLink, inviteParams }) {
   let text = message
+  let resolvedDeepLink = deepLink
+  if (inviteParams) {
+    const links = resolveInviteLinks({ deepLink: inviteParams.deepLink, code: inviteParams.code })
+    resolvedDeepLink = links.deepLink
+  }
   if (!text && inviteParams) {
     try {
       text = buildInviteMessageForChannel(channel, inviteParams)
@@ -225,20 +226,26 @@ export function getInviteUrl(channel, { phoneE164, message, deepLink, invitePara
     case 'sms':
       return buildSmsInviteUrl(phoneE164, text)
     case 'telegram':
-      return buildTelegramShareUrl(deepLink, text)
+      return buildTelegramShareUrl(resolvedDeepLink, text)
     default:
       return null
   }
 }
 
 export function openGuardianInvite(channel, { phoneE164, message, deepLink, inviteParams }) {
+  let resolvedDeepLink = deepLink
+  if (inviteParams) {
+    const links = resolveInviteLinks({ deepLink: inviteParams.deepLink, code: inviteParams.code })
+    resolvedDeepLink = links.deepLink
+    inviteParams = { ...inviteParams, deepLink: links.deepLink }
+  }
   try {
     if (inviteParams && !message) buildInviteMessageForChannel(channel, inviteParams)
   } catch (e) {
     return { channel, url: null, ok: false, error: e.message }
   }
 
-  const url = getInviteUrl(channel, { phoneE164, message, deepLink, inviteParams })
+  const url = getInviteUrl(channel, { phoneE164, message, deepLink: resolvedDeepLink, inviteParams })
   if (!url) return { channel, url: null, ok: false, error: 'تعذر فتح الدعوة' }
 
   if (channel === 'sms') {

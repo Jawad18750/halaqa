@@ -318,10 +318,8 @@ export async function createLinkCode(userId, guardianId) {
     [userId, guardianId, code, expiresAt.toISOString()]
   )
 
-  const botUsername = (process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '')
-  const deepLink = botUsername
-    ? `https://t.me/${botUsername}?start=${code}`
-    : null
+  const botUsername = (process.env.TELEGRAM_BOT_USERNAME || 'Halaqa_Test_bot').replace(/^@/, '')
+  const deepLink = `https://t.me/${botUsername}?start=${code}`
 
   return { code, expiresAt: expiresAt.toISOString(), deepLink }
 }
