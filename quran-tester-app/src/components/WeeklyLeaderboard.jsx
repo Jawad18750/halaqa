@@ -1,17 +1,29 @@
 import { useEffect, useMemo, useState } from 'react'
-import { sessions, students } from '../api'
-import { modeLabel, rankLabel, formatThumunId, formatLocaleDateTime } from '../lib/labels.js'
+import { sessions, students, guardians, getApiUrl } from '../api'
+import { modeLabel, formatThumunId } from '../lib/labels.js'
+import { isTelegramActive } from '../lib/guardianUi.js'
+import { buildHalaqaSignature } from '../lib/messageContext.js'
+import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 import PageHeader from './ui/PageHeader.jsx'
-import SectionCard from './ui/SectionCard.jsx'
-import StatTile from './ui/StatTile.jsx'
 import EmptyState from './ui/EmptyState.jsx'
+import Toast from './ui/Toast.jsx'
+import GuardianMessageSheet from './ui/GuardianMessageSheet.jsx'
+import LeaderboardPodium from './ui/LeaderboardPodium.jsx'
+import LeaderboardRankRow from './ui/LeaderboardRankRow.jsx'
 
 export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
+  const { sheikhName, masjidName } = useMessageSettings()
   const [rows, setRows] = useState([])
   const [studentList, setStudentList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
   const [thumuns, setThumuns] = useState([])
+  const [query, setQuery] = useState('')
+  const [notifyingId, setNotifyingId] = useState(null)
+  const [messageTargets, setMessageTargets] = useState([])
+  const [messageDraft, setMessageDraft] = useState('')
+  const [showMessageSheet, setShowMessageSheet] = useState(false)
   const [from, setFrom] = useState(() => {
     const d = new Date()
     d.setDate(d.getDate() - 6)
@@ -59,9 +71,27 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
     } catch {}
   }
 
+  const studentById = useMemo(() => {
+    const map = new Map()
+    for (const s of studentList) map.set(s.id, s)
+    return map
+  }, [studentList])
+
   function openProfile(id) {
-    const s = studentList.find(x => x.id === id)
+    const s = studentById.get(id)
     if (s && onOpenStudent) onOpenStudent(s, 'students')
+  }
+
+  function photoFor(id) {
+    const s = studentById.get(id)
+    if (!s?.photo_url) return null
+    let url = s.photo_url
+    if (!url.includes('?')) {
+      const ver = s.updated_at ? new Date(s.updated_at).getTime() : Date.now()
+      url = `${url}?v=${ver}`
+    }
+    const apiBase = getApiUrl()
+    return url.startsWith('http') ? url : `${apiBase}${url}`
   }
 
   const leaderboard = useMemo(() => {
@@ -119,108 +149,207 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
     return list.map((x, idx) => ({ ...x, rank: idx + 1 }))
   }, [rows])
 
-  return (
-    <div className="stack">
-      <PageHeader title="لوحة الصدارة الأسبوعية" onBack={onBack} />
-      <div className="filter-bar">
-        <label className="field" style={{ flex: 1, minWidth: 140 }}>
-          <span className="field__label">من</span>
-          <input className="input" type="date" value={from} onChange={e => setFrom(e.target.value)} />
-        </label>
-        <label className="field" style={{ flex: 1, minWidth: 140 }}>
-          <span className="field__label">إلى</span>
-          <input className="input" type="date" value={to} onChange={e => setTo(e.target.value)} />
-        </label>
-        <button type="button" className="btn btn--sm" onClick={useCurrentWeek}>هذا الأسبوع</button>
-      </div>
+  const filtered = useMemo(() => {
+    const q = query.trim()
+    if (!q) return leaderboard
+    return leaderboard.filter(item =>
+      String(item.student_number).includes(q) ||
+      (item.student_name || '').includes(q)
+    )
+  }, [leaderboard, query])
 
-      <SectionCard>
-        <div className="stat-grid stat-grid--fit">
-          <StatTile label="عدد الطلاب" value={num(leaderboard.length)} />
-          <StatTile label="إجمالي المحاولات" value={num(rows.length)} />
-          <StatTile label="متوسط عام" value={num1(average(leaderboard.map(x => x.avgScore)))} />
-          <StatTile label="نسبة النجاح" value={`${num1(average(leaderboard.map(x => x.passRate)))}%`} />
+  const summary = useMemo(() => ({
+    students: leaderboard.length,
+    attempts: rows.length,
+    avgScore: average(leaderboard.map(x => x.avgScore)),
+    passRate: average(leaderboard.map(x => x.passRate)),
+  }), [leaderboard, rows.length])
+
+  const topThree = useMemo(() => filtered.filter(x => x.rank <= 3), [filtered])
+  const rest = useMemo(() => filtered.filter(x => x.rank > 3), [filtered])
+  const showPodium = !query.trim() && topThree.length > 0
+
+  async function notifyParent(item) {
+    setNotifyingId(item.id)
+    try {
+      const { guardians: list } = await guardians.forStudent(item.id)
+      const linked = (list || []).filter(isTelegramActive)
+      if (!linked.length) {
+        setToast('لا يوجد ولي مربوط — أرسل دعوة Telegram أولاً')
+        return
+      }
+      const rangeLabel = formatRangeLabel(from, to)
+      setMessageDraft(buildLeaderboardMessage(item, rangeLabel, { sheikhName, masjidName }))
+      setMessageTargets(linked)
+      setShowMessageSheet(true)
+    } catch (e) {
+      setToast(e.message || 'تعذر تحميل أولياء الأمور')
+    } finally {
+      setNotifyingId(null)
+    }
+  }
+
+  return (
+    <div className="leaderboard-page stack">
+      <PageHeader
+        title="لوحة الصدارة"
+        subtitle={formatRangeLabel(from, to)}
+        onBack={onBack}
+      />
+
+      {toast && <Toast message={toast} onDone={() => setToast('')} />}
+
+      <section className="leaderboard-panel leaderboard-panel--filter">
+        <div className="leaderboard-filter">
+          <div className="leaderboard-filter__dates">
+            <label className="leaderboard-filter__date">
+              <span className="leaderboard-filter__date-label">من</span>
+              <input className="input" type="date" value={from} onChange={e => setFrom(e.target.value)} />
+            </label>
+            <span className="leaderboard-filter__sep" aria-hidden>—</span>
+            <label className="leaderboard-filter__date">
+              <span className="leaderboard-filter__date-label">إلى</span>
+              <input className="input" type="date" value={to} onChange={e => setTo(e.target.value)} />
+            </label>
+          </div>
+          <button type="button" className="btn btn--ghost btn--sm leaderboard-filter__week" onClick={useCurrentWeek}>
+            <i className="fa-solid fa-calendar-week" aria-hidden />
+            هذا الأسبوع
+          </button>
         </div>
-      </SectionCard>
+
+        <div className="students-search leaderboard-filter__search">
+          <i className="fa-solid fa-magnifying-glass" aria-hidden />
+          <input
+            className="students-search__input"
+            placeholder="بحث بالاسم أو الرقم"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            aria-label="بحث في الترتيب"
+          />
+          {query && (
+            <button type="button" className="students-search__clear" aria-label="مسح" onClick={() => setQuery('')}>
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
+        </div>
+      </section>
+
+      {!loading && leaderboard.length > 0 && (
+        <section className="leaderboard-summary" aria-label="ملخص الفترة">
+          <div className="leaderboard-summary__item">
+            <span className="leaderboard-summary__value">{num(summary.students)}</span>
+            <span className="leaderboard-summary__label">طلاب</span>
+          </div>
+          <div className="leaderboard-summary__item">
+            <span className="leaderboard-summary__value">{num(summary.attempts)}</span>
+            <span className="leaderboard-summary__label">محاولات</span>
+          </div>
+          <div className="leaderboard-summary__item leaderboard-summary__item--accent">
+            <span className="leaderboard-summary__value">{num1(summary.avgScore)}</span>
+            <span className="leaderboard-summary__label">متوسط</span>
+          </div>
+          <div className="leaderboard-summary__item leaderboard-summary__item--ok">
+            <span className="leaderboard-summary__value">{num1(summary.passRate)}%</span>
+            <span className="leaderboard-summary__label">نجاح</span>
+          </div>
+        </section>
+      )}
 
       {error && <div className="alert alert--error">{error}</div>}
-      {loading ? <div className="loading">جاري التحميل…</div> : (
-        <SectionCard>
-          {leaderboard.length === 0 ? (
-            <EmptyState title="لا توجد بيانات لهذه الفترة" />
-          ) : (
-            <>
-              <div className="desktop-only table-wrapper">
-                <table className="responsive-table">
-                  <thead>
-                    <tr>
-                      <th>الترتيب</th>
-                      <th>الطالب</th>
-                      <th>المتوسط</th>
-                      <th>أفضل درجة</th>
-                      <th>المحاولات</th>
-                      <th>النجاح</th>
-                      <th>الوضع الغالب</th>
-                      <th>الثمن الغالب</th>
-                      <th>آخر محاولة</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboard.map(item => (
-                      <tr
-                        key={item.id}
-                        className="clickable-row"
-                        onClick={() => openProfile(item.id)}
-                        style={{ cursor: onOpenStudent ? 'pointer' : undefined }}
-                      >
-                        <td>{rankLabel(item.rank)}</td>
-                        <td>{`${num(item.student_number)} — ${item.student_name}`}</td>
-                        <td>{num1(item.avgScore)}</td>
-                        <td>{num(item.bestScore)}</td>
-                        <td>{num(item.attempts)}</td>
-                        <td>{`${num(item.passes)} / ${num(item.fails)} (${num1(item.passRate)}%)`}</td>
-                        <td>{modeLabel(item.dominantMode)}</td>
-                        <td>{formatThumunId(item.dominantThumun, thumuns)}</td>
-                        <td>{item.lastAttemptAt ? formatLocaleDateTime(new Date(item.lastAttemptAt).toISOString()) : '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
 
-              <div className="mobile-cards">
-                {leaderboard.map(item => (
-                  <div
-                    key={item.id}
-                    className="student-card clickable-row"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => openProfile(item.id)}
-                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(item.id) } }}
-                    style={{ display: 'grid', gap: 8 }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                      <span className="tag">{rankLabel(item.rank)}</span>
-                      <strong style={{ textAlign: 'right' }}>{`${num(item.student_number)} — ${item.student_name}`}</strong>
-                    </div>
-                    <div className="info-grid info-grid--fit">
-                      <StatTile label="المتوسط" value={num1(item.avgScore)} />
-                      <StatTile label="أفضل درجة" value={num(item.bestScore)} />
-                      <StatTile label="المحاولات" value={num(item.attempts)} />
-                      <StatTile label="النجاح" value={`${num1(item.passRate)}%`} />
-                      <StatTile label="الوضع الغالب" value={modeLabel(item.dominantMode)} />
-                      <StatTile label="الثمن الغالب" value={formatThumunId(item.dominantThumun, thumuns)} />
-                      <StatTile label="آخر محاولة" value={item.lastAttemptAt ? formatLocaleDateTime(new Date(item.lastAttemptAt).toISOString()) : '—'} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
+      {loading ? (
+        <div className="loading">جاري التحميل…</div>
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title={query.trim() ? 'لا نتائج' : 'لا توجد بيانات لهذه الفترة'}
+          subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : 'غيّر الفترة أو انتظر اختبارات جديدة'}
+        />
+      ) : (
+        <>
+          {showPodium && (
+            <LeaderboardPodium
+              entries={topThree}
+              onOpenStudent={openProfile}
+              photoFor={photoFor}
+            />
           )}
-        </SectionCard>
+
+          <section className="leaderboard-list-panel">
+            {showPodium && rest.length > 0 && (
+              <h2 className="leaderboard-list-panel__title">باقي الترتيب</h2>
+            )}
+            {!showPodium && filtered.length > 0 && (
+              <h2 className="leaderboard-list-panel__title">
+                {query.trim() ? `${filtered.length} نتيجة` : `${filtered.length} طالب`}
+              </h2>
+            )}
+
+            <div className="leaderboard-list">
+              {(showPodium ? rest : filtered).map(item => (
+                <LeaderboardRankRow
+                  key={item.id}
+                  item={item}
+                  thumuns={thumuns}
+                  modeLabel={modeLabel}
+                  formatThumunId={formatThumunId}
+                  onOpenStudent={openProfile}
+                  onNotifyParent={notifyParent}
+                  notifying={notifyingId}
+                />
+              ))}
+            </div>
+          </section>
+        </>
       )}
+
+      <GuardianMessageSheet
+        open={showMessageSheet}
+        guardians={messageTargets}
+        initialMessage={messageDraft}
+        title="إرسال نتيجة لولي الأمر"
+        onClose={() => setShowMessageSheet(false)}
+        onToast={msg => setToast(msg)}
+      />
     </div>
   )
+}
+
+function buildLeaderboardMessage(item, rangeLabel, { sheikhName, masjidName } = {}) {
+  const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
+  const lines = [
+    '🏆 نتيجة لوحة الصدارة',
+    '━━━━━━━━━━━━━━',
+    '',
+    `👤 الطالب: ${item.student_name}`,
+    `📅 الفترة: ${rangeLabel}`,
+    '',
+    `🥇 المركز: ${item.rank}`,
+    `📊 المتوسط: ${num1(item.avgScore)}`,
+    `⭐ أفضل درجة: ${num(item.bestScore)}`,
+    `📝 المحاولات: ${num(item.attempts)}`,
+    `✅ نسبة النجاح: ${num1(item.passRate)}%`,
+    '',
+    halaqaFooter ? '💡 رسالة من حلقة الاختبار — لا حاجة للرد.' : '💡 رسالة من حلقة اختبار القرآن — لا حاجة للرد.',
+  ]
+  if (halaqaFooter) {
+    lines.push(halaqaFooter)
+    lines.push('')
+  }
+  lines.push(`🤲 بارك الله في ${item.student_name} 🤲`)
+  return lines.join('\n')
+}
+
+function formatRangeLabel(from, to) {
+  if (!from && !to) return 'اختر الفترة'
+  try {
+    const opts = { day: 'numeric', month: 'short' }
+    const f = from ? new Date(`${from}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
+    const t = to ? new Date(`${to}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
+    return `${f} — ${t}`
+  } catch {
+    return `${from} — ${to}`
+  }
 }
 
 function toDateOnly(v) {

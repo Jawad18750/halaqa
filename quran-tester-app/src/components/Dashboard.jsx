@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { sessions, students } from '../api'
+import { sessions, students, guardians } from '../api'
 import { formatNaqza } from '../lib/labels.js'
+import { guardianCoverageStats } from '../lib/guardianUi.js'
 import PageHeader from './ui/PageHeader.jsx'
 import DashboardWidget from './ui/DashboardWidget.jsx'
 import DashboardStudentRow from './ui/DashboardStudentRow.jsx'
+import QuickAccessGrid from './ui/QuickAccessGrid.jsx'
+import AnnouncementList from './ui/AnnouncementList.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 
 const AT_RISK_RECENT_LIMIT = 5
@@ -14,12 +17,13 @@ const IMPROVER_WINDOW_SIZE = 3
 const INITIAL_LIST_LIMIT = 3
 const RANK_TONES = ['gold', 'silver', 'bronze']
 
-export default function Dashboard({ onNavigate, onOpenStudent }) {
+export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
   const [week, setWeek] = useState(null)
   const [list, setList] = useState([])
   const [remaining, setRemaining] = useState(0)
   const [thumunList, setThumunList] = useState([])
   const [overviewSessions, setOverviewSessions] = useState([])
+  const [guardianList, setGuardianList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAllNotTested, setShowAllNotTested] = useState(false)
@@ -30,14 +34,16 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
     setLoading(true)
     setError('')
     try {
-      const [w, studentsRes, overview] = await Promise.all([
+      const [w, studentsRes, overview, guardiansRes] = await Promise.all([
         sessions.weekly(),
         students.list(),
         sessions.overview().catch(() => ({ sessions: [] })),
+        guardians.list().catch(() => ({ guardians: [] })),
       ])
       const s = studentsRes?.students || []
       setWeek(w)
       setList(s)
+      setGuardianList(guardiansRes?.guardians || [])
       setOverviewSessions(Array.isArray(overview?.sessions) ? overview.sessions : [])
       const testedIds = new Set(w?.sessions?.map(x => x.student_id))
       setRemaining(Math.max(0, (s?.length || 0) - testedIds.size))
@@ -45,6 +51,7 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
       setWeek(null)
       setList([])
       setOverviewSessions([])
+      setGuardianList([])
       setRemaining(0)
       setError(e?.message || 'تعذر تحميل البيانات')
     } finally {
@@ -138,6 +145,113 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
     const percent = target > 0 ? Math.min(100, Math.round((completed / target) * 100)) : 0
     return { target, completed, percent }
   }, [list.length, testedStudentIds])
+
+  const guardianMetrics = useMemo(
+    () => guardianCoverageStats(guardianList, list),
+    [guardianList, list]
+  )
+
+  const guardianLinkPercent = useMemo(() => {
+    if (!guardianMetrics.total) return 0
+    return Math.min(100, Math.round((guardianMetrics.linked / guardianMetrics.total) * 100))
+  }, [guardianMetrics.linked, guardianMetrics.total])
+
+  const quickAccessItems = useMemo(() => [
+    {
+      id: 'students',
+      label: 'الطلاب',
+      hint: `${list.length.toLocaleString('ar-EG-u-nu-latn')} طالب`,
+      icon: 'fa-solid fa-users',
+      tone: 'default',
+      onClick: () => onNavigate?.('students'),
+    },
+    {
+      id: 'add-student',
+      label: 'إضافة طالب',
+      hint: 'مع أولياء الأمور',
+      icon: 'fa-solid fa-user-plus',
+      tone: 'accent',
+      featured: true,
+      onClick: () => onAddStudent?.(),
+    },
+    {
+      id: 'guardians',
+      label: 'أولياء الأمور',
+      hint: guardianMetrics.needsInvite
+        ? `${guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')} بحاجة دعوة`
+        : `${guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')} مربوط Telegram`,
+      icon: 'fa-solid fa-user-group',
+      tone: 'telegram',
+      badge: guardianMetrics.needsInvite || null,
+      featured: guardianMetrics.needsInvite > 0,
+      onClick: () => onNavigate?.('guardians'),
+    },
+    {
+      id: 'broadcast',
+      label: 'رسائل Telegram',
+      hint: 'بث جماعي',
+      icon: 'fa-brands fa-telegram',
+      tone: 'telegram-soft',
+      onClick: () => onNavigate?.('broadcast'),
+    },
+    {
+      id: 'weekly',
+      label: 'نظرة زمنية',
+      hint: 'جلسات وجداول',
+      icon: 'fa-solid fa-chart-column',
+      tone: 'default',
+      onClick: () => onNavigate?.('weekly'),
+    },
+    {
+      id: 'leaderboard',
+      label: 'لوحة الصدارة',
+      hint: 'ترتيب الأسبوع',
+      icon: 'fa-solid fa-trophy',
+      tone: 'gold',
+      onClick: () => onNavigate?.('leaderboard'),
+    },
+  ], [list.length, guardianMetrics.needsInvite, guardianMetrics.linked, onNavigate, onAddStudent])
+
+  const announcements = useMemo(() => {
+    const items = []
+    if (guardianMetrics.needsInvite > 0) {
+      items.push({
+        id: 'invite-guardians',
+        tone: 'warn',
+        icon: 'fa-brands fa-telegram',
+        title: `${guardianMetrics.needsInvite} ولي بحاجة دعوة Telegram`,
+        body: 'أرسل دعوة عبر واتساب أو Telegram أو SMS — ولي الأمر يضغط Start في البوت مرة واحدة لتصله النتائج تلقائياً.',
+        action: 'guardians',
+        actionLabel: 'إدارة الدعوات',
+      })
+    }
+    if (guardianMetrics.studentsWithoutGuardian > 0) {
+      items.push({
+        id: 'students-no-guardian',
+        tone: 'info',
+        icon: 'fa-solid fa-user-plus',
+        title: `${guardianMetrics.studentsWithoutGuardian} طالب بدون ولي أمر`,
+        body: 'اربط أولياء الأمور عند إضافة طالب جديد أو من ملف الطالب لتفعيل إشعارات النتائج.',
+        action: 'addStudent',
+        actionLabel: 'إضافة طالب',
+      })
+    }
+    items.push({
+      id: 'feature-telegram',
+      tone: 'telegram',
+      icon: 'fa-solid fa-bell',
+      title: 'ميزة جديدة: إشعارات أولياء الأمور',
+      body: 'بعد كل اختبار، يُرسل ملخص النتيجة تلقائياً لأولياء الأمور المربوطين عبر Telegram.',
+      action: 'guardians',
+      actionLabel: 'تعرّف على الميزة',
+    })
+    return items
+  }, [guardianMetrics])
+
+  function handleAnnouncementAction(action) {
+    if (action === 'addStudent') onAddStudent?.()
+    else onNavigate?.(action)
+  }
 
   const passCount = countPass(week)
   const failCount = countFail(week)
@@ -239,6 +353,28 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
         </div>
       </section>
 
+      {announcements.length > 0 && (
+        <section className="dash-announcements appear">
+          <div className="dash-section-head">
+            <h2 className="dash-section-head__title">
+              <i className="fa-solid fa-bullhorn" aria-hidden />
+              إعلانات
+            </h2>
+          </div>
+          <AnnouncementList items={announcements} onAction={handleAnnouncementAction} />
+        </section>
+      )}
+
+      <section className="dash-quick appear">
+        <div className="dash-section-head">
+          <h2 className="dash-section-head__title">
+            <i className="fa-solid fa-bolt" aria-hidden />
+            وصول سريع
+          </h2>
+        </div>
+        <QuickAccessGrid items={quickAccessItems} />
+      </section>
+
       <div className="dash-grid">
         <DashboardWidget title="نظرة عامة" icon="fa-gauge-high" variant="default">
           <div className="dash-overview">
@@ -261,6 +397,110 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
               <span className="dash-overview__value dash-overview__value--sm">
                 {formatNaqza(mostTestedNaqza(week), thumunList, naqzaLabels)}
               </span>
+            </div>
+          </div>
+        </DashboardWidget>
+
+        <DashboardWidget
+          title="أولياء الأمور و Telegram"
+          icon="fa-user-group"
+          variant="default"
+          badge={guardianMetrics.needsInvite || null}
+          className="dash-grid__full dash-widget--telegram"
+          actions={(
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('guardians')}>
+              إدارة
+            </button>
+          )}
+        >
+          <div className="dash-guardians">
+            <div className="dash-guardians__hero">
+              <div className="dash-guardians__ring" aria-hidden="true">
+                <svg viewBox="0 0 44 44" className="dash-guardians__ring-svg">
+                  <circle className="dash-guardians__ring-track" cx="22" cy="22" r="18" />
+                  <circle
+                    className="dash-guardians__ring-fill"
+                    cx="22"
+                    cy="22"
+                    r="18"
+                    style={{ strokeDashoffset: `${113 - (113 * guardianLinkPercent) / 100}` }}
+                  />
+                </svg>
+                <span className="dash-guardians__ring-label">{guardianLinkPercent}%</span>
+              </div>
+              <div className="dash-guardians__hero-text">
+                <p className="dash-guardians__headline">
+                  <strong>{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</strong>
+                  <span> من </span>
+                  <strong>{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</strong>
+                  <span> ولي مربوط Telegram</span>
+                </p>
+                <p className="meta dash-guardians__sub">
+                  {guardianMetrics.needsInvite > 0
+                    ? `${guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')} ولي بحاجة دعوة`
+                    : guardianMetrics.total === 0
+                      ? 'أضف أولياء الأمور عند إنشاء الطلاب'
+                      : 'جميع أولياء الأمور مربوطون'}
+                </p>
+              </div>
+            </div>
+
+            <div className="dash-guardians__kpis">
+              <div className="dash-guardians__kpi">
+                <span className="dash-guardians__kpi-value">{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__kpi-label">أولياء</span>
+              </div>
+              <div className="dash-guardians__kpi dash-guardians__kpi--ok">
+                <span className="dash-guardians__kpi-value">{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__kpi-label">مربوط</span>
+              </div>
+              <div className={`dash-guardians__kpi ${guardianMetrics.needsInvite > 0 ? 'dash-guardians__kpi--warn' : ''}`}>
+                <span className="dash-guardians__kpi-value">{guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__kpi-label">بحاجة دعوة</span>
+              </div>
+              <div className={`dash-guardians__kpi ${guardianMetrics.studentsWithoutGuardian > 0 ? 'dash-guardians__kpi--info' : ''}`}>
+                <span className="dash-guardians__kpi-value">{guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__kpi-label">طلاب بدون ولي</span>
+              </div>
+            </div>
+
+            <ol className="dash-guardians__flow">
+              <li className="dash-guardians__flow-step">
+                <span className="dash-guardians__flow-num">1</span>
+                <span>اربط ولي الأمر</span>
+              </li>
+              <li className="dash-guardians__flow-step">
+                <span className="dash-guardians__flow-num">2</span>
+                <span>أرسل الدعوة</span>
+              </li>
+              <li className="dash-guardians__flow-step">
+                <span className="dash-guardians__flow-num">3</span>
+                <span>Start في البوت</span>
+              </li>
+            </ol>
+
+            <div className="dash-guardians__actions">
+              {guardianMetrics.needsInvite > 0 ? (
+                <button type="button" className="btn btn--primary btn--sm dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
+                  <i className="fa-brands fa-telegram" />
+                  إرسال دعوات ({guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')})
+                </button>
+              ) : (
+                <button type="button" className="btn btn--primary btn--sm dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
+                  <i className="fa-solid fa-user-group" />
+                  إدارة أولياء الأمور
+                </button>
+              )}
+              <button type="button" className="btn btn--ghost btn--sm dash-guardians__action" onClick={() => onNavigate?.('broadcast')}>
+                <i className="fa-brands fa-telegram" />
+                رسائل Telegram
+              </button>
+              {guardianMetrics.studentsWithoutGuardian > 0 && (
+                <button type="button" className="btn btn--ghost btn--sm dash-guardians__action dash-guardians__action--wide" onClick={() => onAddStudent?.()}>
+                  <i className="fa-solid fa-user-plus" />
+                  إضافة طالب مع ولي
+                </button>
+              )}
             </div>
           </div>
         </DashboardWidget>
@@ -360,33 +600,63 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
 
         <DashboardWidget title="تقدم هدف الأسبوع" icon="fa-bullseye" variant="goal" className="dash-grid__full">
           <div className="dash-goal">
-            <div className="dash-goal__stats">
-              <div className="dash-goal__stat">
-                <span className="dash-goal__stat-label">الهدف</span>
-                <span className="dash-goal__stat-value">{weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}</span>
+            <div className="dash-goal__layout">
+              <div className="dash-goal__ring" aria-hidden="true">
+                <svg viewBox="0 0 44 44" className="dash-goal__ring-svg">
+                  <circle className="dash-goal__ring-track" cx="22" cy="22" r="18" />
+                  <circle
+                    className="dash-goal__ring-fill"
+                    cx="22"
+                    cy="22"
+                    r="18"
+                    style={{ strokeDashoffset: `${113 - (113 * weeklyGoal.percent) / 100}` }}
+                  />
+                </svg>
+                <span className="dash-goal__ring-label">{weeklyGoal.percent}%</span>
               </div>
-              <div className="dash-goal__stat">
-                <span className="dash-goal__stat-label">المكتمل</span>
-                <span className="dash-goal__stat-value">{weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')}</span>
-              </div>
-              <div className="dash-goal__stat dash-goal__stat--highlight">
-                <span className="dash-goal__stat-label">نسبة الإنجاز</span>
-                <span className="dash-goal__stat-value">{weeklyGoal.percent}%</span>
+
+              <div className="dash-goal__body">
+                <div className="dash-goal__headline">
+                  <strong>
+                    {weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')}
+                    <span className="dash-goal__headline-sep">/</span>
+                    {weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}
+                  </strong>
+                  <span className="meta">طالب اُختبر هذا الأسبوع</span>
+                </div>
+
+                <div className="dash-goal__metrics">
+                  <div className="dash-goal__metric">
+                    <span className="dash-goal__metric-value">{weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}</span>
+                    <span className="dash-goal__metric-label">الهدف</span>
+                  </div>
+                  <div className="dash-goal__metric dash-goal__metric--ok">
+                    <span className="dash-goal__metric-value">{weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')}</span>
+                    <span className="dash-goal__metric-label">المكتمل</span>
+                  </div>
+                  <div className="dash-goal__metric dash-goal__metric--accent">
+                    <span className="dash-goal__metric-value">{remaining.toLocaleString('ar-EG-u-nu-latn')}</span>
+                    <span className="dash-goal__metric-label">متبقٍ</span>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div
-              className="dash-progress dash-progress--lg"
+              className="dash-progress dash-progress--lg dash-goal__bar"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={weeklyGoal.percent}
+              aria-label="تقدم هدف الأسبوع"
             >
               <span className="dash-progress__fill" style={{ width: `${weeklyGoal.percent}%` }} />
             </div>
-            <p className="dash-goal__hint meta">
+
+            <p className="dash-goal__hint">
               {weeklyGoal.percent >= 100
                 ? 'تم اختبار جميع الطلاب هذا الأسبوع — أحسنت!'
-                : `متبقٍ ${remaining.toLocaleString('ar-EG-u-nu-latn')} طالب${remaining === 1 ? '' : ''} لإكمال الهدف`}
+                : `متبقٍ ${remaining.toLocaleString('ar-EG-u-nu-latn')} طالب لإكمال الهدف`}
             </p>
           </div>
         </DashboardWidget>

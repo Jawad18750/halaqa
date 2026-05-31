@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { pool } from '../lib/db.js'
 import { requireAuth } from '../middleware/auth.js'
 import { getThumunById } from '../lib/thumunData.js'
+import { notifySessionResult } from '../lib/notificationService.js'
 
 const router = Router()
 router.use(requireAuth)
@@ -152,7 +153,21 @@ router.post('/', async (req, res) => {
       }
     }
 
-    return res.status(201).json({ session: rows[0], student: updatedStudent })
+    const sessionRow = rows[0]
+    const studentForNotify = updatedStudent || (await pool.query(
+      'select id, name, current_naqza from students where id=$1 and user_id=$2',
+      [studentId, req.user.id]
+    )).rows[0]
+
+    setImmediate(() => {
+      notifySessionResult({
+        userId: req.user.id,
+        sessionRow,
+        studentRow: studentForNotify,
+      }).catch(e => console.error('[sessions] notify failed', e.message))
+    })
+
+    return res.status(201).json({ session: sessionRow, student: updatedStudent })
   } catch (e) {
     console.error('[sessions] unhandled', e)
     return res.status(500).json({ error: 'internal error', details: e?.message || '' })

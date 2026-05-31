@@ -47,6 +47,7 @@ export default function Backup({ onBack }) {
             students: json.students?.length || 0,
             sessions: json.sessions?.length || 0,
             photos: json.photos ? Object.keys(json.photos).length : 0,
+            guardians: json.guardians?.length || 0,
           },
           raw: json,
         })
@@ -80,7 +81,7 @@ export default function Backup({ onBack }) {
       <PageHeader title="النسخ الاحتياطي" subtitle="تصدير واستيراد بيانات الحلقة" onBack={onBack} />
 
       <SectionCard title="تنزيل نسخة احتياطية">
-        <p className="meta">ملف JSON يحتوي على الطلاب، الجلسات، والصور (Base64).</p>
+        <p className="meta">ملف JSON يحتوي على الطلاب، الجلسات، أولياء الأمور، والصور (Base64).</p>
         <button type="button" className="btn btn--primary" onClick={handleExport} disabled={exporting}>
           {exporting ? 'جاري التحضير…' : 'تنزيل النسخة الاحتياطية'}
         </button>
@@ -99,6 +100,9 @@ export default function Backup({ onBack }) {
             <StatTile label="طلاب" value={info.counts.students ?? 0} />
             <StatTile label="جلسات" value={info.counts.sessions ?? 0} />
             <StatTile label="صور" value={info.counts.photos ?? 0} />
+            {(info.counts.guardians != null) && (
+              <StatTile label="أولياء" value={info.counts.guardians ?? 0} />
+            )}
           </div>
         )}
         <button type="button" className="btn btn--primary" style={{ marginTop: 12 }} onClick={handleImport} disabled={importing || !info}>

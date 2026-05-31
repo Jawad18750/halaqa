@@ -54,6 +54,9 @@ export const auth = {
   async me() {
     return await request('/auth/me')
   },
+  async updateSettings(input) {
+    return await request('/auth/settings', { method: 'PATCH', body: JSON.stringify(input) })
+  },
   async forgot(email) {
     return await request('/auth/forgot', { method: 'POST', body: JSON.stringify({ email }) })
   },
@@ -108,6 +111,58 @@ export const sessions = {
 
 export function getToken() { return token }
 export function getApiUrl() { return API_URL }
+
+// Guardians
+export const guardians = {
+  async list() { return await request('/guardians') },
+  async create(input) { return await request('/guardians', { method: 'POST', body: JSON.stringify(input) }) },
+  async update(id, input) { return await request(`/guardians/${id}`, { method: 'PATCH', body: JSON.stringify(input) }) },
+  async remove(id) { return await request(`/guardians/${id}`, { method: 'DELETE' }) },
+  async forStudent(studentId) { return await request(`/guardians/students/${studentId}/guardians`) },
+  async linkToStudent(studentId, input) {
+    return await request(`/guardians/students/${studentId}/guardians`, { method: 'POST', body: JSON.stringify(input) })
+  },
+  async updateLink(linkId, input) {
+    return await request(`/guardians/links/${linkId}`, { method: 'PATCH', body: JSON.stringify(input) })
+  },
+  async removeLink(linkId) { return await request(`/guardians/links/${linkId}`, { method: 'DELETE' }) },
+  async createLinkCode(guardianId) {
+    return await request(`/guardians/${guardianId}/link-code`, { method: 'POST', body: '{}' })
+  },
+}
+
+// Notifications
+export const notifications = {
+  async broadcast(message, targetType, targetId, targetIds) {
+    return await request('/notifications/broadcast', {
+      method: 'POST',
+      body: JSON.stringify({ message, targetType, targetId: targetId || null, targetIds: targetIds || null }),
+    })
+  },
+  async sendToGuardians(message, guardianIds) {
+    return await request('/notifications/broadcast', {
+      method: 'POST',
+      body: JSON.stringify({ message, targetType: 'guardians', targetIds: guardianIds }),
+    })
+  },
+  async log(limit = 50, studentId) {
+    const params = new URLSearchParams()
+    if (limit) params.set('limit', String(limit))
+    if (studentId) params.set('studentId', studentId)
+    const qs = params.toString() ? `?${params.toString()}` : ''
+    return await request(`/notifications/log${qs}`)
+  },
+  async listFamilies() { return await request('/notifications/families') },
+  async createFamily(name, studentIds) {
+    return await request('/notifications/families', {
+      method: 'POST',
+      body: JSON.stringify({ name, studentIds }),
+    })
+  },
+  async removeFamily(id) {
+    return await request(`/notifications/families/${id}`, { method: 'DELETE' })
+  },
+}
 
 // Backup (export/import)
 export const backup = {

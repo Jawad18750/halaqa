@@ -6,6 +6,11 @@ import authRoutes from './routes/auth.js'
 import studentRoutes from './routes/students.js'
 import sessionRoutes from './routes/sessions.js'
 import backupRoutes from './routes/backup.js'
+import guardianRoutes from './routes/guardians.js'
+import telegramRoutes from './routes/telegram.js'
+import notificationRoutes from './routes/notifications.js'
+import { registerWebhookOnStartup } from './lib/telegramBot.js'
+import { startTelegramPolling, stopTelegramPolling } from './lib/telegramPolling.js'
 
 const app = express()
 
@@ -24,7 +29,7 @@ function isAllowedOrigin(origin) {
 const corsOptions = {
   origin: (origin, cb) => cb(null, isAllowedOrigin(origin)),
   methods: ['GET','POST','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  allowedHeaders: ['Content-Type','Authorization','X-Telegram-Bot-Api-Secret-Token'],
   maxAge: 86400,
 }
 app.use(cors(corsOptions))
@@ -65,10 +70,14 @@ app.use('/auth', authRoutes)
 app.use('/students', studentRoutes)
 app.use('/sessions', sessionRoutes)
 app.use('/backup', backupRoutes)
+app.use('/guardians', guardianRoutes)
+app.use('/notifications', notificationRoutes)
+app.use('/telegram', telegramRoutes)
 
 // 404 handler for API routes to help debug missing endpoints
 app.use((req, res, next) => {
-  if (req.path.startsWith('/auth') || req.path.startsWith('/students') || req.path.startsWith('/sessions')) {
+  const prefixes = ['/auth', '/students', '/sessions', '/guardians', '/notifications', '/telegram', '/backup']
+  if (prefixes.some(p => req.path.startsWith(p))) {
     return res.status(404).type('text/plain').send(`Not Found: ${req.method} ${req.path}`)
   }
   next()
@@ -88,5 +97,15 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 4000
 app.listen(port, () => {
   console.log(`Halaqa server listening on http://localhost:${port}`)
+  registerWebhookOnStartup()
+    .then(mode => {
+      if (mode === 'polling') {
+        return startTelegramPolling()
+      }
+    })
+    .catch(e => console.error('[telegram] startup', e.message))
 })
+
+process.on('SIGTERM', () => stopTelegramPolling())
+process.on('SIGINT', () => stopTelegramPolling())
 

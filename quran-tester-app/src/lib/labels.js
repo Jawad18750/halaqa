@@ -18,6 +18,9 @@ export const VIEW_TITLES = {
   about: 'عن التطبيق',
   privacy: 'الخصوصية',
   backup: 'النسخ الاحتياطي',
+  guardians: 'أولياء الأمور',
+  broadcast: 'رسائل Telegram',
+  addStudent: 'إضافة طالب',
   reset: 'إعادة تعيين كلمة المرور',
 }
 

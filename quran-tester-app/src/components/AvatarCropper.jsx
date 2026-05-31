@@ -81,10 +81,10 @@ export default function AvatarCropper({ file, onCancel, onCropped }) {
   }
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
-      <div className="modal" style={{ width: 'min(520px, 92vw)' }}>
-        <h3 style={{ marginTop: 0 }}>قص الصورة</h3>
-        <div style={{ position: 'relative', width: '100%', height: 320, background: '#111', borderRadius: 12, overflow: 'hidden', willChange: 'transform' }}>
+    <div className="avatar-cropper" role="dialog" aria-modal="true" aria-label="قص الصورة">
+      <div className="avatar-cropper__panel">
+        <h3 className="avatar-cropper__title">قص الصورة</h3>
+        <div className="avatar-cropper__stage">
           <Cropper
             image={previewSrc}
             crop={crop}
@@ -100,10 +100,21 @@ export default function AvatarCropper({ file, onCancel, onCropped }) {
             showGrid={false}
           />
         </div>
-        <div className="actions" style={{ display:'flex', gap:8, justifyContent:'flex-end', marginTop:12 }}>
-          <input type="range" min="1" max="4" step="0.01" value={zoom} onChange={e => setZoom(Number(e.target.value))} style={{ flex: 1 }} />
-          <button className="btn" onClick={onCancel}>إلغاء</button>
-          <button className="btn btn--primary" onClick={exportCanvas}>حفظ</button>
+        <div className="avatar-cropper__controls">
+          <input
+            type="range"
+            className="avatar-cropper__zoom"
+            min="1"
+            max="4"
+            step="0.01"
+            value={zoom}
+            onChange={e => setZoom(Number(e.target.value))}
+            aria-label="تكبير"
+          />
+          <div className="avatar-cropper__actions">
+            <button type="button" className="btn btn--ghost" onClick={onCancel}>إلغاء</button>
+            <button type="button" className="btn btn--primary" onClick={exportCanvas}>حفظ</button>
+          </div>
         </div>
       </div>
     </div>

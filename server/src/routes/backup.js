@@ -56,6 +56,31 @@ router.get('/export', async (req, res) => {
     )
     const sessions = sessionsQ.rows
 
+    const guardiansQ = await pool.query(
+      `select id, name, phone_e164, notes, created_at, updated_at
+       from guardians where user_id=$1 order by name asc`,
+      [req.user.id]
+    )
+    const guardians = guardiansQ.rows
+
+    const guardianStudentsQ = await pool.query(
+      `select gs.id, gs.guardian_id, gs.student_id, gs.relationship, gs.is_primary, gs.notify_on_result
+       from guardian_students gs
+       join guardians g on g.id = gs.guardian_id
+       where g.user_id = $1`,
+      [req.user.id]
+    )
+    const guardianStudents = guardianStudentsQ.rows
+
+    const guardianTelegramQ = await pool.query(
+      `select gt.guardian_id, gt.telegram_chat_id, gt.telegram_username, gt.linked_at, gt.opt_out
+       from guardian_telegram gt
+       join guardians g on g.id = gt.guardian_id
+       where g.user_id = $1`,
+      [req.user.id]
+    )
+    const guardianTelegram = guardianTelegramQ.rows
+
     const photos = {}
     if (includePhotos) {
       for (const s of students) {
@@ -65,12 +90,20 @@ router.get('/export', async (req, res) => {
     }
 
     const payload = {
-      version: 'halaqa-backup-v1',
+      version: 'halaqa-backup-v2',
       exportedAt: new Date().toISOString(),
       user,
-      counts: { students: students.length, sessions: sessions.length, photos: Object.keys(photos).length },
+      counts: {
+        students: students.length,
+        sessions: sessions.length,
+        photos: Object.keys(photos).length,
+        guardians: guardians.length,
+      },
       students,
       sessions,
+      guardians,
+      guardianStudents,
+      guardianTelegram,
       photos: includePhotos ? photos : undefined
     }
 
@@ -87,17 +120,24 @@ router.get('/export', async (req, res) => {
 
 router.post('/import', async (req, res) => {
   const payload = req.body || {}
-  if (!payload || payload.version !== 'halaqa-backup-v1') {
+  const version = payload?.version
+  if (!payload || (version !== 'halaqa-backup-v1' && version !== 'halaqa-backup-v2')) {
     return res.status(400).json({ error: 'invalid or unsupported backup version' })
   }
   const students = Array.isArray(payload.students) ? payload.students : []
   const sessions = Array.isArray(payload.sessions) ? payload.sessions : []
   const photos = payload.photos && typeof payload.photos === 'object' ? payload.photos : {}
+  const guardians = version === 'halaqa-backup-v2' && Array.isArray(payload.guardians) ? payload.guardians : []
+  const guardianStudents = version === 'halaqa-backup-v2' && Array.isArray(payload.guardianStudents) ? payload.guardianStudents : []
+  const guardianTelegram = version === 'halaqa-backup-v2' && Array.isArray(payload.guardianTelegram) ? payload.guardianTelegram : []
 
   const stats = {
     students: { inserted: 0, updated: 0, skipped: 0, conflicts: 0 },
     sessions: { inserted: 0, updated: 0, skipped: 0, conflicts: 0 },
-    photos: { saved: 0 }
+    photos: { saved: 0 },
+    guardians: { inserted: 0, updated: 0, skipped: 0 },
+    guardianStudents: { inserted: 0, updated: 0, skipped: 0 },
+    guardianTelegram: { inserted: 0, updated: 0, skipped: 0 },
   }
 
   const client = await pool.connect()
@@ -213,6 +253,83 @@ router.post('/import', async (req, res) => {
       }
       if (result.rows[0]?.inserted) stats.sessions.inserted++
       else stats.sessions.updated++
+    }
+
+    // Upsert guardians (v2)
+    for (const g of guardians) {
+      if (!g?.id || !g?.name || !g?.phone_e164) { stats.guardians.skipped++; continue }
+      const created = g.created_at || new Date().toISOString()
+      const updated = g.updated_at || created
+      const result = await client.query(
+        `insert into guardians(id, user_id, name, phone_e164, notes, created_at, updated_at)
+         values($1,$2,$3,$4,$5,$6,$7)
+         on conflict (id) do update set
+           name=excluded.name,
+           phone_e164=excluded.phone_e164,
+           notes=excluded.notes,
+           updated_at=excluded.updated_at
+         where guardians.user_id = excluded.user_id
+         returning xmax = 0 as inserted`,
+        [g.id, req.user.id, g.name, g.phone_e164, g.notes || null, created, updated]
+      )
+      if (!result.rowCount) { stats.guardians.skipped++; continue }
+      if (result.rows[0]?.inserted) stats.guardians.inserted++
+      else stats.guardians.updated++
+    }
+
+    for (const gs of guardianStudents) {
+      if (!gs?.id || !gs?.guardian_id || !gs?.student_id) { stats.guardianStudents.skipped++; continue }
+      const ownedG = await client.query(
+        'select 1 from guardians where id=$1 and user_id=$2',
+        [gs.guardian_id, req.user.id]
+      )
+      const ownedS = await client.query(
+        'select 1 from students where id=$1 and user_id=$2',
+        [gs.student_id, req.user.id]
+      )
+      if (!ownedG.rows.length || !ownedS.rows.length) { stats.guardianStudents.skipped++; continue }
+      const result = await client.query(
+        `insert into guardian_students(id, guardian_id, student_id, relationship, is_primary, notify_on_result)
+         values($1,$2,$3,$4,$5,$6)
+         on conflict (id) do update set
+           relationship=excluded.relationship,
+           is_primary=excluded.is_primary,
+           notify_on_result=excluded.notify_on_result
+         returning xmax = 0 as inserted`,
+        [gs.id, gs.guardian_id, gs.student_id, gs.relationship || null, !!gs.is_primary, !!gs.notify_on_result]
+      )
+      if (!result.rowCount) { stats.guardianStudents.skipped++; continue }
+      if (result.rows[0]?.inserted) stats.guardianStudents.inserted++
+      else stats.guardianStudents.updated++
+    }
+
+    for (const gt of guardianTelegram) {
+      if (!gt?.guardian_id || gt.telegram_chat_id == null) { stats.guardianTelegram.skipped++; continue }
+      const ownedG = await client.query(
+        'select 1 from guardians where id=$1 and user_id=$2',
+        [gt.guardian_id, req.user.id]
+      )
+      if (!ownedG.rows.length) { stats.guardianTelegram.skipped++; continue }
+      const result = await client.query(
+        `insert into guardian_telegram(guardian_id, telegram_chat_id, telegram_username, linked_at, opt_out)
+         values($1,$2,$3,$4,$5)
+         on conflict (guardian_id) do update set
+           telegram_chat_id=excluded.telegram_chat_id,
+           telegram_username=excluded.telegram_username,
+           linked_at=excluded.linked_at,
+           opt_out=excluded.opt_out
+         returning xmax = 0 as inserted`,
+        [
+          gt.guardian_id,
+          gt.telegram_chat_id,
+          gt.telegram_username || null,
+          gt.linked_at || new Date().toISOString(),
+          !!gt.opt_out,
+        ]
+      )
+      if (!result.rowCount) { stats.guardianTelegram.skipped++; continue }
+      if (result.rows[0]?.inserted) stats.guardianTelegram.inserted++
+      else stats.guardianTelegram.updated++
     }
 
     // Save photos and update photo_url

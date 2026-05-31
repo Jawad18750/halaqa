@@ -10,8 +10,13 @@ import About from './components/About'
 import Privacy from './components/Privacy'
 import ResetPassword from './components/ResetPassword'
 import Backup from './components/Backup'
+import GuardiansManage from './components/GuardiansManage'
+import Broadcast from './components/Broadcast'
+import AddStudent from './components/AddStudent'
 import FreestyleRandomizer from './components/FreestyleRandomizer'
+import Settings from './components/Settings'
 import AppShell from './components/layout/AppShell'
+import { MessageSettingsProvider } from './lib/MessageSettingsContext.jsx'
 import { auth, getToken } from './api'
 
 try {
@@ -99,6 +104,15 @@ export default function App() {
     setReturnView(null)
   }
 
+  function goAddStudent() {
+    setView('addStudent')
+    setSelectedStudent(null)
+  }
+
+  function goBackFromAddStudent() {
+    goStudentsList()
+  }
+
   function goStudentProfile() {
     setView('students')
   }
@@ -153,12 +167,14 @@ export default function App() {
     return (
       <div key={viewKey} className={`page motion-page ${WIDE_VIEWS.has(view) ? 'page--wide' : ''}`}>
         {view === 'dashboard' && (
-          <Dashboard onNavigate={navigate} onOpenStudent={openStudent} />
+          <Dashboard onNavigate={navigate} onOpenStudent={openStudent} onAddStudent={goAddStudent} />
         )}
         {view === 'students' && !selectedStudent && (
           <Students
             onSelect={s => openStudent(s, 'test')}
             onProfile={s => openStudent(s, 'students')}
+            onAddStudent={goAddStudent}
+            onNavigate={navigate}
           />
         )}
         {view === 'students' && selectedStudent && (
@@ -202,6 +218,21 @@ export default function App() {
         {view === 'about' && <About onBack={goDashboard} />}
         {view === 'privacy' && <Privacy onBack={goDashboard} />}
         {view === 'backup' && <Backup onBack={goDashboard} />}
+        {view === 'settings' && (
+          <Settings user={user} onBack={goDashboard} onSaved={setUser} />
+        )}
+        {view === 'guardians' && (
+          <GuardiansManage onBack={goDashboard} onOpenStudent={openStudent} />
+        )}
+        {view === 'addStudent' && (
+          <AddStudent
+            thumuns={thumuns}
+            onBack={goBackFromAddStudent}
+            onOpenStudent={openStudent}
+            onNavigate={navigate}
+          />
+        )}
+        {view === 'broadcast' && <Broadcast onBack={goDashboard} />}
       </div>
     )
   }
@@ -211,7 +242,8 @@ export default function App() {
     : null
 
   return (
-    <AppShell
+    <MessageSettingsProvider user={user}>
+      <AppShell
       theme={theme}
       view={view}
       user={user}
@@ -232,5 +264,6 @@ export default function App() {
     >
       {renderContent()}
     </AppShell>
+    </MessageSettingsProvider>
   )
 }

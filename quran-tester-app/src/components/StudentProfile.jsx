@@ -15,6 +15,7 @@ import SectionCard from './ui/SectionCard.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import SessionCard from './ui/SessionCard.jsx'
 import StudentHubHeader, { computeStudentStats } from './ui/StudentHubHeader.jsx'
+import GuardianSection from './GuardianSection.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import Toast from './ui/Toast.jsx'
 
@@ -199,6 +200,10 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
       {showCropper && pendingFile && (
         <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null) }} onCropped={onCropped} />
       )}
+
+      <SectionCard title="أولياء الأمور">
+        <GuardianSection student={student} onToast={showToast} />
+      </SectionCard>
 
       <SectionCard
         title="آخر المحاولات"

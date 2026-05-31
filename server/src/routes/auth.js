@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import { pool } from '../lib/db.js'
+import { getUserSettings, updateUserSettings } from '../lib/userSettings.js'
 
 const router = Router()
 
@@ -46,7 +47,7 @@ router.post(
     try {
       const hash = await bcrypt.hash(password, 10)
       const { rows } = await pool.query(
-        'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email',
+        'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email, sheikh_name, masjid_name',
         [username, hash, email || null]
       )
       const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
@@ -64,12 +65,23 @@ router.post(
   async (req, res) => {
   const { username, password } = req.body || {}
   if (!username || !password) return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبة' })
-  const { rows } = await pool.query('select id, username, password_hash from users where username=$1 or email=$1', [username])
+  const { rows } = await pool.query(
+    'select id, username, password_hash, sheikh_name, masjid_name from users where username=$1 or email=$1',
+    [username]
+  )
   if (!rows.length) return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' })
   const ok = await bcrypt.compare(password, rows[0].password_hash)
   if (!ok) return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' })
   const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
-  res.json({ token, user: { id: rows[0].id, username: rows[0].username } })
+  res.json({
+    token,
+    user: {
+      id: rows[0].id,
+      username: rows[0].username,
+      sheikh_name: rows[0].sheikh_name || '',
+      masjid_name: rows[0].masjid_name || '',
+    },
+  })
 })
 
 router.get('/me', async (req, res) => {
@@ -78,11 +90,25 @@ router.get('/me', async (req, res) => {
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
     if (!token) return res.status(401).json({ error: 'Unauthorized' })
     const payload = jwt.verify(token, process.env.JWT_SECRET)
-    const { rows } = await pool.query('select id, username from users where id = $1', [payload.sub])
-    if (!rows.length) return res.status(401).json({ error: 'Unauthorized' })
-    res.json({ user: rows[0] })
+    const user = await getUserSettings(payload.sub)
+    if (!user) return res.status(401).json({ error: 'Unauthorized' })
+    res.json({ user })
   } catch {
     res.status(401).json({ error: 'غير مصرح' })
+  }
+})
+
+router.patch('/settings', async (req, res) => {
+  try {
+    const auth = req.headers.authorization || ''
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    if (!token) return res.status(401).json({ error: 'Unauthorized' })
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+    const { sheikh_name, masjid_name } = req.body || {}
+    const user = await updateUserSettings(payload.sub, { sheikh_name, masjid_name })
+    res.json({ user })
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message || 'تعذر حفظ الإعدادات' })
   }
 })
 

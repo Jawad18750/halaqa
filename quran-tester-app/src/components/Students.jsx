@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { students, sessions, getApiUrl } from '../api'
+import { students, sessions, guardians, getApiUrl } from '../api'
 import { buildNaqzaLabels } from '../lib/labels.js'
+import { guardianCoverageStats } from '../lib/guardianUi.js'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import StudentListItem from './ui/StudentListItem.jsx'
@@ -12,12 +13,12 @@ const WEEK_FILTERS = [
   { id: 'tested', label: 'مُختبر' },
 ]
 
-export default function Students({ onSelect, onProfile }) {
+export default function Students({ onSelect, onProfile, onAddStudent, onNavigate }) {
   const [list, setList] = useState([])
+  const [guardianList, setGuardianList] = useState([])
   const [testedIds, setTestedIds] = useState(new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showAdd, setShowAdd] = useState(false)
   const [query, setQuery] = useState('')
   const [weekFilter, setWeekFilter] = useState('all')
   const [editingId, setEditingId] = useState(null)
@@ -29,14 +30,13 @@ export default function Students({ onSelect, onProfile }) {
   const [thumuns, setThumuns] = useState([])
   const listRef = useRef(null)
 
-  const [number, setNumber] = useState('')
-  const [name, setName] = useState('')
-  const [dobAdd, setDobAdd] = useState('')
-  const [photoFile, setPhotoFile] = useState(null)
-  const [photoPreview, setPhotoPreview] = useState('')
-  
   const naqzaLabels = buildNaqzaLabels(thumuns)
   const placeholder = '/profile-placeholder.svg'
+
+  const guardianMetrics = useMemo(
+    () => guardianCoverageStats(guardianList, list),
+    [guardianList, list]
+  )
 
   function showToast(msg) { setToast(msg) }
 
@@ -53,11 +53,13 @@ export default function Students({ onSelect, onProfile }) {
     setLoading(true)
     setError('')
     try {
-      const [studentsRes, weekly] = await Promise.all([
+      const [studentsRes, weekly, guardiansRes] = await Promise.all([
         students.list(),
         sessions.weekly().catch(() => ({ sessions: [] })),
+        guardians.list().catch(() => ({ guardians: [] })),
       ])
       setList(studentsRes?.students || [])
+      setGuardianList(guardiansRes?.guardians || [])
       setTestedIds(new Set((weekly?.sessions || []).map(s => s.student_id)))
     } catch (e) {
       setError(e.message)
@@ -71,42 +73,6 @@ export default function Students({ onSelect, onProfile }) {
   useEffect(() => {
     fetch('/quran-thumun-data.json').then(r => r.json()).then(d => setThumuns(d.thumuns || [])).catch(() => {})
   }, [])
-
-  function toDateOnly(v) {
-    if (!v) return ''
-    if (typeof v === 'string') {
-      const m = v.match(/^\d{4}-\d{2}-\d{2}/)
-      if (m) return m[0]
-      if (v.includes('T')) return v.split('T')[0]
-    }
-    try {
-      const d = new Date(v)
-      if (!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-    } catch {}
-    return ''
-  }
-
-  async function addStudent(e) {
-    e.preventDefault()
-    setError('')
-    try {
-      const { student: created } = await students.create({ number: Number(number), name: name.trim() })
-      if (dobAdd) {
-        const dateOnly = toDateOnly(dobAdd)
-        if (dateOnly) await students.update(created.id, { date_of_birth: dateOnly })
-      }
-      if (photoFile && photoFile.size <= 2 * 1024 * 1024 && /^(image\/jpeg|image\/png)$/i.test(photoFile.type)) {
-          await students.uploadPhoto(created.id, photoFile)
-      }
-      if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
-      setNumber(''); setName(''); setDobAdd(''); setPhotoFile(null); setPhotoPreview('')
-      setShowAdd(false)
-      showToast('تمت إضافة الطالب')
-      load()
-    } catch (e) {
-      setError(e.message)
-    }
-  }
 
   function startEdit(s) {
     setEditingId(s.id)
@@ -171,6 +137,38 @@ export default function Students({ onSelect, onProfile }) {
 
   return (
     <div className="students-page">
+      {!loading && list.length > 0 && (
+        <section className="students-guardian-strip" aria-label="أولياء الأمور و Telegram">
+          <div className="students-guardian-strip__main">
+            <span className="students-guardian-strip__icon" aria-hidden>
+              <i className="fa-brands fa-telegram" />
+            </span>
+            <div className="students-guardian-strip__text">
+              <strong>إشعارات أولياء الأمور</strong>
+              <p className="meta">
+                {guardianMetrics.studentsWithoutGuardian > 0
+                  ? `${guardianMetrics.studentsWithoutGuardian} طالب بدون ولي · `
+                  : ''}
+                {guardianMetrics.needsInvite > 0
+                  ? `${guardianMetrics.needsInvite} ولي بحاجة دعوة Telegram`
+                  : 'جميع أولياء الأمور المربوطين جاهزون'}
+              </p>
+            </div>
+          </div>
+          <div className="students-guardian-strip__actions">
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('guardians')}>
+              <i className="fa-solid fa-user-group" /> أولياء الأمور
+            </button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('broadcast')}>
+              <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
+            </button>
+            <button type="button" className="btn btn--primary btn--sm" onClick={() => onAddStudent?.()}>
+              <i className="fa-solid fa-user-plus" /> إضافة طالب
+            </button>
+          </div>
+        </section>
+      )}
+
       <div className="students-toolbar">
         <div className="students-toolbar__row">
           <div className="students-search">
@@ -190,11 +188,11 @@ export default function Students({ onSelect, onProfile }) {
           </div>
           <button
             type="button"
-            className={`btn btn--primary students-toolbar__add ${showAdd ? 'btn--ghost' : ''}`}
-            aria-label={showAdd ? 'إغلاق' : 'إضافة طالب'}
-            onClick={() => setShowAdd(v => !v)}
+            className="btn btn--primary students-toolbar__add"
+            aria-label="إضافة طالب"
+            onClick={() => onAddStudent?.()}
           >
-            <i className={`fa-solid ${showAdd ? 'fa-xmark' : 'fa-plus'}`} />
+            <i className="fa-solid fa-plus" />
           </button>
         </div>
 
@@ -220,37 +218,6 @@ export default function Students({ onSelect, onProfile }) {
         </p>
       </div>
 
-        {showAdd && (
-        <form className="add-student-sheet" onSubmit={addStudent}>
-          <h3 className="add-student-sheet__title">طالب جديد</h3>
-          <label className="field">
-            <span className="field__label">الرقم</span>
-            <input className="input" type="number" value={number} onChange={e => setNumber(e.target.value)} required autoFocus />
-          </label>
-          <label className="field">
-            <span className="field__label">الاسم</span>
-            <input className="input" value={name} onChange={e => setName(e.target.value)} required />
-          </label>
-          <label className="field">
-            <span className="field__label">تاريخ الميلاد</span>
-            <input className="input" type="date" value={dobAdd} onChange={e => setDobAdd(e.target.value)} />
-          </label>
-          <div className="add-student-panel__photo">
-            <img src={photoPreview || placeholder} alt="" width={48} height={48} className="student-item__avatar" />
-            <label className="btn btn--sm btn--ghost">
-              صورة
-              <input type="file" accept="image/jpeg,image/png" hidden onChange={(e) => {
-                const f = e.target.files?.[0]
-                setPhotoFile(f || null)
-                if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
-                setPhotoPreview(f ? URL.createObjectURL(f) : '')
-              }} />
-              </label>
-          </div>
-          <button type="submit" className="btn btn--primary">إضافة الطالب</button>
-        </form>
-        )}
-
       {error && <div className="alert alert--error">{error}</div>}
 
       {loading ? (
@@ -259,6 +226,11 @@ export default function Students({ onSelect, onProfile }) {
         <EmptyState
           title={query.trim() || weekFilter !== 'all' ? 'لا نتائج' : 'لا يوجد طلاب'}
           subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : weekFilter === 'pending' ? 'جميع الطلاب اُختبروا هذا الأسبوع' : undefined}
+          action={!query.trim() && weekFilter === 'all' && (
+            <button type="button" className="btn btn--primary btn--sm" onClick={() => onAddStudent?.()}>
+              <i className="fa-solid fa-user-plus" /> إضافة أول طالب
+            </button>
+          )}
         />
       ) : (
         <ul className="student-list-panel" ref={listRef}>

@@ -8,6 +8,7 @@ const NAV_GROUPS = [
     items: [
       { view: 'dashboard', icon: 'fa-gauge', label: 'الرئيسية' },
       { view: 'students', icon: 'fa-users', label: 'الطلاب' },
+      { view: 'guardians', icon: 'fa-user-group', label: 'أولياء الأمور' },
       { view: 'freestyle', icon: 'fa-wand-magic-sparkles', label: 'الوضع الحر' },
     ],
   },
@@ -21,7 +22,9 @@ const NAV_GROUPS = [
   {
     label: 'إعدادات',
     items: [
+      { view: 'settings', icon: 'fa-gear', label: 'إعدادات الحلقة' },
       { view: 'backup', icon: 'fa-cloud-arrow-down', label: 'النسخ الاحتياطي' },
+      { view: 'broadcast', icon: 'fa-paper-plane', label: 'رسائل Telegram' },
       { view: 'about', icon: 'fa-circle-info', label: 'عن التطبيق' },
       { view: 'privacy', icon: 'fa-user-shield', label: 'الخصوصية' },
     ],
