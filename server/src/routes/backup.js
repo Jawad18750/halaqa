@@ -181,17 +181,18 @@ router.post('/import', async (req, res) => {
       const owned = await client.query('select 1 from students where id=$1 and user_id=$2', [sess.student_id, req.user.id])
       if (!owned.rows.length) { stats.sessions.skipped++; continue }
       const created = sess.created_at || new Date().toISOString()
+      const updated = sess.updated_at || sess.attempt_at || created
       const result = await client.query(
         `insert into sessions(
            id, student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
            selected_five_hizb, selected_quran_quarter, selected_quran_half,
            thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score,
-           attempt_at, created_at
+           attempt_at, created_at, updated_at
          ) values (
            $1,$2,$3,$4,$5,$6,$7,
            $8,$9,$10,
            $11,$12,$13,$14,$15,$16,$17,$18,$19,
-           $20,$21
+           $20,$21,$22
          )
          on conflict (id) do update set
            week_start_date=excluded.week_start_date,
@@ -211,14 +212,15 @@ router.post('/import', async (req, res) => {
            taradud_count=excluded.taradud_count,
            passed=excluded.passed,
            score=excluded.score,
-           attempt_at=excluded.attempt_at
+           attempt_at=excluded.attempt_at,
+           updated_at=excluded.updated_at
          where exists (
            select 1 from students st
-           where st.id = sessions.student_id and st.user_id = $22
+           where st.id = sessions.student_id and st.user_id = $23
          )
          and exists (
            select 1 from students st
-           where st.id = excluded.student_id and st.user_id = $22
+           where st.id = excluded.student_id and st.user_id = $23
          )
          returning xmax = 0 as inserted`,
         [
@@ -243,6 +245,7 @@ router.post('/import', async (req, res) => {
           sess.score ?? 0,
           sess.attempt_at || created,
           created,
+          updated,
           req.user.id
         ]
       )
