@@ -130,9 +130,9 @@ export default function TestView({ student, thumuns, onDone }) {
           <Info label="النقزة الحالية" value={formatNaqza(student.current_naqza)} />
         </div>
         <div style={{ display:'flex', gap:8, alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
-          <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
-            الوضع:
-            <select className="input" value={mode} onChange={e => setMode(e.target.value)} style={{ width:160 }}>
+          <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
+            <span>الوضع:</span>
+            <select className="input select-center" value={mode} onChange={e => setMode(e.target.value)} style={{ width:160 }}>
               <option value="naqza">حسب النقزة</option>
               <option value="juz">حسب الجزء</option>
               <option value="five_hizb">خمسة أحزاب</option>
@@ -142,9 +142,9 @@ export default function TestView({ student, thumuns, onDone }) {
             </select>
           </label>
           {mode === 'juz' && (
-            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
-              الجزء:
-              <select className="input" value={juz} onChange={e => setJuz(e.target.value)} style={{ width:120 }}>
+            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
+              <span>الجزء:</span>
+              <select className="input select-center" value={juz} onChange={e => setJuz(e.target.value)} style={{ width:120 }}>
                 <option value="">—</option>
                 {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>{n}</option>
@@ -153,9 +153,9 @@ export default function TestView({ student, thumuns, onDone }) {
             </label>
           )}
           {mode === 'five_hizb' && (
-            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
-              المجموعة:
-              <select className="input" value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} style={{ width:140 }}>
+            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
+              <span>المجموعة:</span>
+              <select className="input select-center" value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} style={{ width:140 }}>
                 <option value="">—</option>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>{fiveHizbLabel(n)}</option>
@@ -164,9 +164,9 @@ export default function TestView({ student, thumuns, onDone }) {
             </label>
           )}
           {mode === 'quarter' && (
-            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
-              الربع:
-              <select className="input" value={quranQuarter} onChange={e => setQuranQuarter(e.target.value)} style={{ width:140 }}>
+            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
+              <span>الربع:</span>
+              <select className="input select-center" value={quranQuarter} onChange={e => setQuranQuarter(e.target.value)} style={{ width:140 }}>
                 <option value="">—</option>
                 {QUARTER_LABELS.map((lbl, idx) => (
                   <option key={idx+1} value={idx+1}>{lbl}</option>
@@ -175,9 +175,9 @@ export default function TestView({ student, thumuns, onDone }) {
             </label>
           )}
           {mode === 'half' && (
-            <label className="info-label" style={{ display:'inline-flex', alignItems:'center', gap:8 }}>
-              النصف:
-              <select className="input" value={quranHalf} onChange={e => setQuranHalf(e.target.value)} style={{ width:140 }}>
+            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
+              <span>النصف:</span>
+              <select className="input select-center" value={quranHalf} onChange={e => setQuranHalf(e.target.value)} style={{ width:140 }}>
                 <option value="">—</option>
                 {HALF_LABELS.map((lbl, idx) => (
                   <option key={idx+1} value={idx+1}>{lbl}</option>

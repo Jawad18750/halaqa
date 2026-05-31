@@ -5,12 +5,16 @@ import StudentProfile from './components/StudentProfile'
 import TestView from './components/TestView'
 import StudentHistory from './components/StudentHistory'
 import WeeklyOverview from './components/WeeklyOverview'
+import WeeklyLeaderboard from './components/WeeklyLeaderboard'
 import Drawer from './components/Drawer'
 import Dashboard from './components/Dashboard'
 import About from './components/About'
 import Privacy from './components/Privacy'
 import ResetPassword from './components/ResetPassword'
+import Backup from './components/Backup'
 import { auth, getToken } from './api'
+
+const BUILD_TAG = import.meta.env.VITE_BUILD_TAG || 'dev'
 
 // Apply persisted UI settings before first render to avoid layout flicker
 try {
@@ -25,7 +29,7 @@ try {
 function App() {
   const [user, setUser] = useState(null)
   const [selectedStudent, setSelectedStudent] = useState(null)
-  const [view, setView] = useState('dashboard') // dashboard | students | test | studentHistory | weekly | about | privacy | freestyle
+  const [view, setView] = useState('dashboard') // dashboard | students | test | studentHistory | weekly | leaderboard | about | privacy | freestyle | backup
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [thumuns, setThumuns] = useState([])
   const [naqza, setNaqza] = useState(1)
@@ -203,9 +207,9 @@ function App() {
         <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingInline: 16, minHeight: '70vh' }}>
           {/* Free randomizer for guests */}
           <div className="controls" style={{ maxWidth: 720, width: '100%', display:'grid', gridTemplateColumns:'1fr', justifyItems:'center', gap:10 }}>
-            <label aria-label="الوضع">
-              الوضع:
-              <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input" style={{ width: 240 }}>
+            <label className="label-stack-center" aria-label="الوضع">
+              <span>الوضع:</span>
+              <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input select-center" style={{ width: 240 }}>
                 <option value="naqza">حسب النقزة</option>
                 <option value="juz">حسب الجزء</option>
                 <option value="five_hizb">خمسة أحزاب</option>
@@ -216,9 +220,9 @@ function App() {
               <div className="hint">اختر طريقة التصفية المناسبة</div>
             </label>
             {guestMode === 'naqza' && (
-              <label aria-label="النقزة">
-                النقزة:
-                <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input" style={{ width: 260 }}>
+              <label className="label-stack-center" aria-label="النقزة">
+                <span>النقزة:</span>
+                <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input select-center" style={{ width: 260 }}>
                   {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
                     <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
                   ))}
@@ -227,9 +231,9 @@ function App() {
               </label>
             )}
             {guestMode === 'juz' && (
-              <label aria-label="الجزء">
-                الجزء:
-                <select value={juz} onChange={e => setJuz(e.target.value)} className="input" style={{ width: 200 }}>
+              <label className="label-stack-center" aria-label="الجزء">
+                <span>الجزء:</span>
+                <select value={juz} onChange={e => setJuz(e.target.value)} className="input select-center" style={{ width: 200 }}>
                   <option value="">—</option>
                   {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
                     <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
@@ -239,9 +243,9 @@ function App() {
               </label>
             )}
             {guestMode === 'five_hizb' && (
-              <label aria-label="خمسة أحزاب">
-                المجموعة:
-                <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input" style={{ width: 220 }}>
+              <label className="label-stack-center" aria-label="خمسة أحزاب">
+                <span>المجموعة:</span>
+                <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input select-center" style={{ width: 220 }}>
                   <option value="">—</option>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
                     <option key={n} value={n}>{`الأحزاب ${((n-1)*5+1)}–${n*5}`}</option>
@@ -251,9 +255,9 @@ function App() {
               </label>
             )}
             {guestMode === 'quarter' && (
-              <label aria-label="ربع القرآن">
-                الربع:
-                <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input" style={{ width: 220 }}>
+              <label className="label-stack-center" aria-label="ربع القرآن">
+                <span>الربع:</span>
+                <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input select-center" style={{ width: 220 }}>
                   <option value="">—</option>
                   <option value="1">الربع الأول</option>
                   <option value="2">الربع الثاني</option>
@@ -264,9 +268,9 @@ function App() {
               </label>
             )}
             {guestMode === 'half' && (
-              <label aria-label="نصف القرآن">
-                النصف:
-                <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input" style={{ width: 220 }}>
+              <label className="label-stack-center" aria-label="نصف القرآن">
+                <span>النصف:</span>
+                <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input select-center" style={{ width: 220 }}>
                   <option value="">—</option>
                   <option value="1">النصف الأول</option>
                   <option value="2">النصف الثاني</option>
@@ -299,7 +303,7 @@ function App() {
       ) : (
         <div className="stage" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'center' }}>
           {view === 'dashboard' && (
-            <Dashboard />
+            <Dashboard onNavigate={setView} />
           )}
           {view === 'students' && !selectedStudent && (
             <Students onSelect={(s) => { setSelectedStudent(s); setView('test') }} onProfile={(s) => { setSelectedStudent(s); setView('students') }} />
@@ -327,13 +331,16 @@ function App() {
           {view === 'weekly' && (
             <WeeklyOverview onBack={() => setView('students')} />
           )}
+          {view === 'leaderboard' && (
+            <WeeklyLeaderboard onBack={() => setView('dashboard')} />
+          )}
           {view === 'freestyle' && (
             <div className="stage" style={{ width:'100%', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', paddingInline: 16, minHeight: '70vh' }}>
               {/* Reuse the guest-mode randomizer UI for logged-in users */}
               <div className="controls" style={{ maxWidth: 720, width: '100%', display:'grid', gridTemplateColumns:'1fr', justifyItems:'center', gap:10 }}>
-                <label aria-label="الوضع">
-                  الوضع:
-                  <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input" style={{ width: 240 }}>
+                <label className="label-stack-center" aria-label="الوضع">
+                  <span>الوضع:</span>
+                  <select value={guestMode} onChange={e => { setGuestMode(e.target.value); setJuz(''); setGuestFiveHizb(''); setGuestQuarter(''); setGuestHalf(''); setCurrent(null) }} className="input select-center" style={{ width: 240 }}>
                     <option value="naqza">حسب النقزة</option>
                     <option value="juz">حسب الجزء</option>
                     <option value="five_hizb">خمسة أحزاب</option>
@@ -344,9 +351,9 @@ function App() {
                   <div className="hint">اختر طريقة التصفية المناسبة</div>
                 </label>
                 {guestMode === 'naqza' && (
-                  <label aria-label="النقزة">
-                    النقزة:
-                    <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input" style={{ width: 260 }}>
+                  <label className="label-stack-center" aria-label="النقزة">
+                    <span>النقزة:</span>
+                    <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input select-center" style={{ width: 260 }}>
                       {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
                         <option key={n} value={n}>{`${n} - ${NAQZA_LABELS[n-1]}`}</option>
                       ))}
@@ -355,9 +362,9 @@ function App() {
                   </label>
                 )}
                 {guestMode === 'juz' && (
-                  <label aria-label="الجزء">
-                    الجزء:
-                    <select value={juz} onChange={e => setJuz(e.target.value)} className="input" style={{ width: 200 }}>
+                  <label className="label-stack-center" aria-label="الجزء">
+                    <span>الجزء:</span>
+                    <select value={juz} onChange={e => setJuz(e.target.value)} className="input select-center" style={{ width: 200 }}>
                       <option value="">—</option>
                       {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
                         <option key={n} value={n}>{`${n} - ${JUZ_NAMES[n-1]}`}</option>
@@ -367,9 +374,9 @@ function App() {
                   </label>
                 )}
                 {guestMode === 'five_hizb' && (
-                  <label aria-label="خمسة أحزاب">
-                    المجموعة:
-                    <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input" style={{ width: 220 }}>
+                  <label className="label-stack-center" aria-label="خمسة أحزاب">
+                    <span>المجموعة:</span>
+                    <select value={guestFiveHizb} onChange={e => setGuestFiveHizb(e.target.value)} className="input select-center" style={{ width: 220 }}>
                       <option value="">—</option>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
                         <option key={n} value={n}>{`الأحزاب ${((n-1)*5+1)}–${n*5}`}</option>
@@ -379,9 +386,9 @@ function App() {
                   </label>
                 )}
                 {guestMode === 'quarter' && (
-                  <label aria-label="ربع القرآن">
-                    الربع:
-                    <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input" style={{ width: 220 }}>
+                  <label className="label-stack-center" aria-label="ربع القرآن">
+                    <span>الربع:</span>
+                    <select value={guestQuarter} onChange={e => setGuestQuarter(e.target.value)} className="input select-center" style={{ width: 220 }}>
                       <option value="">—</option>
                       <option value="1">الربع الأول</option>
                       <option value="2">الربع الثاني</option>
@@ -392,9 +399,9 @@ function App() {
                   </label>
                 )}
                 {guestMode === 'half' && (
-                  <label aria-label="نصف القرآن">
-                    النصف:
-                    <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input" style={{ width: 220 }}>
+                  <label className="label-stack-center" aria-label="نصف القرآن">
+                    <span>النصف:</span>
+                    <select value={guestHalf} onChange={e => setGuestHalf(e.target.value)} className="input select-center" style={{ width: 220 }}>
                       <option value="">—</option>
                       <option value="1">النصف الأول</option>
                       <option value="2">النصف الثاني</option>
@@ -429,6 +436,9 @@ function App() {
           {view === 'privacy' && (
             <Privacy onBack={() => setView('dashboard')} />
           )}
+          {view === 'backup' && (
+            <Backup onBack={() => setView('dashboard')} />
+          )}
           {view === 'reset' && (
             <ResetPassword />
           )}
@@ -457,6 +467,9 @@ function App() {
       onNavigate={(v) => setView(v)}
       onLogout={() => { auth.logout(); setUser(null); setView('dashboard'); setSelectedStudent(null) }}
     />
+    <div style={{ position:'fixed', insetInlineStart:8, bottom:6, fontSize:10, color:'var(--muted)', opacity:0.8, pointerEvents:'none' }}>
+      الإصدار: {BUILD_TAG}
+    </div>
     </>
   )
 }

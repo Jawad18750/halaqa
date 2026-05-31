@@ -7,24 +7,61 @@ import { pool } from '../lib/db.js'
 
 const router = Router()
 
-router.post('/register', async (req, res) => {
-  const { username, password, email } = req.body || {}
-  if (!username || !password) return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبة' })
-  try {
-    const hash = await bcrypt.hash(password, 10)
-    const { rows } = await pool.query(
-      'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email',
-      [username, hash, email || null]
-    )
-    const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
-    res.json({ token, user: rows[0] })
-  } catch (e) {
-    if (String(e.message).includes('unique')) return res.status(409).json({ error: 'اسم المستخدم موجود بالفعل' })
-    res.status(500).json({ error: 'تعذر إنشاء الحساب' })
-  }
-})
+// In-memory rate limiter for auth endpoints (per-IP, per-route, fixed window).
+const authRateStore = new Map()
+function getClientIp(req) {
+  const xff = (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim()
+  return xff || req.ip || 'unknown'
+}
+function createAuthRateLimit({ key, windowMs, max }) {
+  return (req, res, next) => {
+    const now = Date.now()
+    const ip = getClientIp(req)
+    const bucketKey = `${key}:${ip}`
+    const current = authRateStore.get(bucketKey)
 
-router.post('/login', async (req, res) => {
+    if (!current || current.expiresAt <= now) {
+      authRateStore.set(bucketKey, { count: 1, expiresAt: now + windowMs })
+      return next()
+    }
+
+    if (current.count >= max) {
+      const retryAfter = Math.max(1, Math.ceil((current.expiresAt - now) / 1000))
+      res.setHeader('Retry-After', String(retryAfter))
+      return res.status(429).json({ error: 'عدد محاولات كبير، حاول لاحقا' })
+    }
+
+    current.count += 1
+    authRateStore.set(bucketKey, current)
+    next()
+  }
+}
+
+router.post(
+  '/register',
+  createAuthRateLimit({ key: 'auth:register', windowMs: 15 * 60 * 1000, max: 20 }),
+  async (req, res) => {
+    const { username, password, email } = req.body || {}
+    if (!username || !password) return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبة' })
+    try {
+      const hash = await bcrypt.hash(password, 10)
+      const { rows } = await pool.query(
+        'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email',
+        [username, hash, email || null]
+      )
+      const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
+      res.json({ token, user: rows[0] })
+    } catch (e) {
+      if (String(e.message).includes('unique')) return res.status(409).json({ error: 'اسم المستخدم موجود بالفعل' })
+      res.status(500).json({ error: 'تعذر إنشاء الحساب' })
+    }
+  }
+)
+
+router.post(
+  '/login',
+  createAuthRateLimit({ key: 'auth:login', windowMs: 15 * 60 * 1000, max: 40 }),
+  async (req, res) => {
   const { username, password } = req.body || {}
   if (!username || !password) return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبة' })
   const { rows } = await pool.query('select id, username, password_hash from users where username=$1 or email=$1', [username])
@@ -52,15 +89,23 @@ router.get('/me', async (req, res) => {
 export default router
 
 // Forgot/reset endpoints (defined after export for clarity but part of same router)
-const transporter = nodemailer.createTransport({
+const allowInvalidSmtpCerts = String(process.env.SMTP_ALLOW_INVALID_CERTS || '') === '1'
+const transportOptions = {
   host: process.env.SMTP_HOST || 'abdeljawad.com',
   port: Number(process.env.SMTP_PORT || 587),
-  secure: false,
-  auth: { user: process.env.SMTP_USER || '', pass: process.env.SMTP_PASS || '' },
-  tls: { rejectUnauthorized: false }
-})
+  secure: String(process.env.SMTP_SECURE || '') === '1',
+  tls: { rejectUnauthorized: !allowInvalidSmtpCerts }
+}
+// Only set auth when BOTH user+pass exist. If not, omit auth completely (prevents "Missing credentials" errors).
+if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  transportOptions.auth = { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+}
+const transporter = nodemailer.createTransport(transportOptions)
 
-router.post('/forgot', async (req, res) => {
+router.post(
+  '/forgot',
+  createAuthRateLimit({ key: 'auth:forgot', windowMs: 15 * 60 * 1000, max: 20 }),
+  async (req, res) => {
   try {
     const { email } = req.body || {}
     if (!email) return res.status(400).json({ error: 'البريد الإلكتروني مطلوب' })
@@ -74,7 +119,6 @@ router.post('/forgot', async (req, res) => {
     await pool.query('insert into password_resets(user_id, token_hash, expires_at) values($1,$2,$3)', [user.id, tokenHash, expires.toISOString()])
     const base = process.env.RESET_BASE_URL || 'http://localhost:5173'
     const link = `${base}/reset?token=${token}`
-    console.log('[auth/forgot] reset link for', user.username, link)
     try {
       await transporter.sendMail({
         from: process.env.SMTP_FROM || '"اختبار القرآن" <noreply@example.com>',
@@ -85,8 +129,8 @@ router.post('/forgot', async (req, res) => {
       res.json({ ok: true })
     } catch (mailErr) {
       console.error('[auth/forgot] mail send failed', mailErr?.message)
-      // In dev, still return ok and include link hint (do not leak in prod).
-      res.json({ ok: true, devLink: link })
+      // Keep response generic to avoid leaking reset link material.
+      res.json({ ok: true })
     }
   } catch (e) {
     console.error('[auth/forgot] error', e?.message)
@@ -95,7 +139,10 @@ router.post('/forgot', async (req, res) => {
   }
 })
 
-router.post('/reset', async (req, res) => {
+router.post(
+  '/reset',
+  createAuthRateLimit({ key: 'auth:reset', windowMs: 15 * 60 * 1000, max: 20 }),
+  async (req, res) => {
   try {
     const { token, password } = req.body || {}
     if (!token || !password) return res.status(400).json({ error: 'رمز الاستعادة وكلمة المرور مطلوبان' })

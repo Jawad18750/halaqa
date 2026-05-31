@@ -5,6 +5,7 @@ import { pool } from './lib/db.js'
 import authRoutes from './routes/auth.js'
 import studentRoutes from './routes/students.js'
 import sessionRoutes from './routes/sessions.js'
+import backupRoutes from './routes/backup.js'
 
 const app = express()
 
@@ -63,6 +64,7 @@ app.get('/health', async (req, res) => {
 app.use('/auth', authRoutes)
 app.use('/students', studentRoutes)
 app.use('/sessions', sessionRoutes)
+app.use('/backup', backupRoutes)
 
 // 404 handler for API routes to help debug missing endpoints
 app.use((req, res, next) => {

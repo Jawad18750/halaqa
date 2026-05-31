@@ -36,11 +36,25 @@ export default function ResetPassword() {
         <form onSubmit={submit} style={{ display:'grid', gap:10 }}>
           <label style={{ display:'grid', gap:6 }}>
             <span style={{ fontSize:13, color:'var(--muted)' }}>كلمة المرور الجديدة</span>
-            <input className="input" type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
+            <input
+              className="input"
+              type="password"
+              value={password}
+              onChange={e=>setPassword(e.target.value)}
+              autoComplete="new-password"
+              required
+            />
           </label>
           <label style={{ display:'grid', gap:6 }}>
             <span style={{ fontSize:13, color:'var(--muted)' }}>تأكيد كلمة المرور</span>
-            <input className="input" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} required />
+            <input
+              className="input"
+              type="password"
+              value={confirm}
+              onChange={e=>setConfirm(e.target.value)}
+              autoComplete="new-password"
+              required
+            />
           </label>
           {err && <div style={{ color:'crimson' }}>{err}</div>}
           {msg && <div style={{ color:'seagreen' }}>{msg}</div>}

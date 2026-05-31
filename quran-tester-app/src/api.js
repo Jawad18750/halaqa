@@ -1,4 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+const DEBUG_API =
+  (import.meta.env?.DEV ?? false) ||
+  String(import.meta.env?.VITE_DEBUG_API || '') === '1'
 
 let token = localStorage.getItem('token') || ''
 
@@ -12,7 +15,7 @@ async function request(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const url = `${API_URL}${path}`
-  console.log('API request →', options.method || 'GET', url)
+  if (DEBUG_API) console.log('API request →', options.method || 'GET', url)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort('timeout'), 15000)
   try {
@@ -105,5 +108,29 @@ export const sessions = {
 
 export function getToken() { return token }
 export function getApiUrl() { return API_URL }
+
+// Backup (export/import)
+export const backup = {
+  async exportWithPhotos() {
+    const url = `${API_URL}/backup/export?photos=1`
+    const headers = token ? { Authorization: `Bearer ${token}` } : {}
+    const res = await fetch(url, { headers })
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      throw new Error(text || 'فشل تنزيل النسخة الاحتياطية')
+    }
+    const disposition = res.headers.get('content-disposition') || ''
+    const match = disposition.match(/filename=\"?([^\";]+)\"?/i)
+    const filename = match ? match[1] : 'halaqa-backup.json'
+    const blob = await res.blob()
+    return { blob, filename }
+  },
+  async importBackup(data) {
+    return await request('/backup/import', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+  }
+}
 
 

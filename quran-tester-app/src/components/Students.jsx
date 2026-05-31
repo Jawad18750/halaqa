@@ -222,7 +222,7 @@ export default function Students({ onSelect, onProfile }) {
                 {filtered.map(s => (
                   <tr key={s.id} className={editingId===s.id ? 'updated' : ''}>
                     <td>
-                    <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={48} height={48} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = '/profile-placeholder.svg' } }} />
+                      <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={48} height={48} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = '/profile-placeholder.svg' } }} />
                     </td>
                     <td>{editingId === s.id ? (
                       <input className="input" type="number" value={editNumber} onChange={e => setEditNumber(e.target.value)} />

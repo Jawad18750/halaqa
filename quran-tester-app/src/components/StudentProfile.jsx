@@ -132,14 +132,14 @@ export default function StudentProfile({ student, onBack }) {
         return nm ? `${Number(naqzaVal).toLocaleString('ar-EG-u-nu-latn')} - ${nm}` : String(naqzaVal)
       })()
       return {
-        date: new Date(r.attempt_at || r.created_at).toLocaleString('ar-EG-u-nu-latn'),
+      date: new Date(r.attempt_at || r.created_at).toLocaleString('ar-EG-u-nu-latn'),
         thumunLabel,
         naqza: naqzaLabel,
-        mode: modeLabel(r.mode),
-        fatha: String(r.fatha_prompts ?? ''),
-        taradud: String(r.taradud_count ?? ''),
-        result: r.passed ? 'نجح' : 'فشل',
-        score: String(r.score ?? '')
+      mode: modeLabel(r.mode),
+      fatha: String(r.fatha_prompts ?? ''),
+      taradud: String(r.taradud_count ?? ''),
+      result: r.passed ? 'نجح' : 'فشل',
+      score: String(r.score ?? '')
       }
     })
   }

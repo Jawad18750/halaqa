@@ -113,7 +113,7 @@ export default function WeeklyOverview({ onBack }) {
         result: item.passed ? 'نجح' : 'راسب',
         score: num(item.score),
         at: new Date(item.created_at).toLocaleString('ar-EG-u-nu-latn'),
-        sortAt: new Date(earliestAt.get(item.student_id) || item.created_at).getTime()
+        sortAt: new Date(item.created_at).getTime()
       })).sort((a,b) => a.sortAt - b.sortAt)
       const title = `نظرة أسبوعية — بداية الأسبوع: ${data.weekStartDate ? new Date(data.weekStartDate).toLocaleDateString('ar-EG-u-nu-latn') : ''}`
       const styles = `@page{size:A4;margin:16mm}body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial;color:#111}h1{font-size:20px;margin:0 0 12px;text-align:center}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd3db;padding:6px 8px;text-align:center}thead th{background:#f3f6fa}`
@@ -217,7 +217,7 @@ export default function WeeklyOverview({ onBack }) {
                         <td>{r.score}</td>
                         <td>{r.at}</td>
                         <td>
-                          <EditableTime row={item} onSaved={() => { setLoading(true); sessions.overview(from,to).then(r=>{ setData({ weekStartDate:r.from, sessions:r.sessions }); setLoading(false) }).catch(()=>setLoading(false)) }} />
+                  <EditableTime row={item} onSaved={() => { setLoading(true); sessions.overview(from,to).then(r=>{ setData({ weekStartDate:r.from, sessions:r.sessions }); setLoading(false) }).catch(()=>setLoading(false)) }} />
                         </td>
                       </tr>
                     )

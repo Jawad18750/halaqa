@@ -31,17 +31,37 @@ export default function Auth({ onAuthed }) {
       <form onSubmit={submit} style={{ display:'grid', gridTemplateColumns:'1fr', gap: 10 }}>
         <label style={{ display:'grid', gap:6 }}>
           <span style={{ fontSize:13, color:'var(--muted)' }}>اسم المستخدم</span>
-          <input className="input" value={username} onChange={e => setUsername(e.target.value)} required />
+          <input
+            className="input"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            autoComplete="username"
+            required
+          />
         </label>
         {mode === 'register' && (
           <label style={{ display:'grid', gap:6 }}>
             <span style={{ fontSize:13, color:'var(--muted)' }}>البريد الإلكتروني</span>
-            <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+            <input
+              className="input"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
           </label>
         )}
         <label style={{ display:'grid', gap:6 }}>
           <span style={{ fontSize:13, color:'var(--muted)' }}>كلمة المرور</span>
-          <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <input
+            className="input"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+            required
+          />
         </label>
         {error && <div style={{ color: 'crimson' }}>{error}</div>}
         <button type="submit" className="btn btn--primary" style={{ width:'100%' }}>{mode === 'login' ? 'دخول' : 'تسجيل'}</button>
@@ -56,7 +76,14 @@ export default function Auth({ onAuthed }) {
         <form onSubmit={async (e)=>{ e.preventDefault(); setError(''); setForgotMsg(''); try { await auth.forgot(forgotEmail.trim()); setForgotMsg('تم إرسال رابط الاستعادة (إن وجد) إلى بريدك.'); } catch(err){ setError(err.message) } }} style={{ display:'grid', gap:10, marginTop:8 }}>
           <label style={{ display:'grid', gap:6 }}>
             <span style={{ fontSize:13, color:'var(--muted)' }}>البريد الإلكتروني</span>
-            <input className="input" type="email" value={forgotEmail} onChange={e=>setForgotEmail(e.target.value)} required />
+            <input
+              className="input"
+              type="email"
+              value={forgotEmail}
+              onChange={e=>setForgotEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
           </label>
           {forgotMsg && <div style={{ color:'var(--muted)' }}>{forgotMsg}</div>}
           <div style={{ display:'flex', gap:8 }}>
