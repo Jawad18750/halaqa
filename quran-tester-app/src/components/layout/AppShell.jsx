@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import TopBar from './TopBar.jsx'
 import A11yPanel from './A11yPanel.jsx'
 import SiteFooter from './SiteFooter.jsx'
@@ -10,6 +11,7 @@ export default function AppShell({
   theme,
   view,
   user,
+  contextLabel,
   drawerOpen,
   onBrandClick,
   onMenuClick,
@@ -25,12 +27,30 @@ export default function AppShell({
   wide,
   children,
 }) {
+  useEffect(() => {
+    if (!drawerOpen) return undefined
+
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') onDrawerClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [drawerOpen, onDrawerClose])
+
   return (
     <div className="app-shell">
       <TopBar
         theme={theme}
         view={view}
         user={user}
+        contextLabel={contextLabel}
         onBrandClick={onBrandClick}
         onMenuClick={onMenuClick}
         onThemeToggle={onThemeToggle}

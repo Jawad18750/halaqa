@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { sessions, getApiUrl } from '../api'
+import { sessions, students, getApiUrl } from '../api'
 import {
   QUARTER_LABELS,
   HALF_LABELS,
+  buildNaqzaLabels,
   formatNaqza,
   formatJuz,
   fiveHizbLabel,
@@ -28,8 +29,9 @@ const MODES = [
   { id: 'full', label: 'كامل' },
 ]
 
-export default function TestView({ student, thumuns, onGoProfile, onTestAgain, onGoList, onHistory, onBack }) {
+export default function TestView({ student, thumuns, onGoProfile, onTestAgain, onGoList, onHistory, onBack, onStudentUpdated }) {
   const [mode, setMode] = useState('naqza')
+  const [testNaqza, setTestNaqza] = useState(Number(student.current_naqza) || 1)
   const [juz, setJuz] = useState('')
   const [fiveHizb, setFiveHizb] = useState('')
   const [quranQuarter, setQuranQuarter] = useState('')
@@ -38,13 +40,20 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [fatha, setFatha] = useState(0)
   const [taradud, setTaradud] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [naqzaSaving, setNaqzaSaving] = useState(false)
   const [error, setError] = useState('')
   const [resultModal, setResultModal] = useState(null)
 
+  const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
+
+  useEffect(() => {
+    setTestNaqza(Number(student.current_naqza) || 1)
+  }, [student.id, student.current_naqza])
+
   const filtered = useMemo(() => {
-    if (mode === 'naqza') return filterThumuns(thumuns, { mode, naqza: student.current_naqza })
+    if (mode === 'naqza') return filterThumuns(thumuns, { mode, naqza: testNaqza })
     return filterThumuns(thumuns, { mode, juz, fiveHizb, quarter: quranQuarter, half: quranHalf })
-  }, [thumuns, mode, juz, fiveHizb, quranQuarter, quranHalf, student.current_naqza])
+  }, [thumuns, mode, juz, fiveHizb, quranQuarter, quranHalf, testNaqza])
 
   const preview = useMemo(() => computeScore(fatha, taradud), [fatha, taradud])
 
@@ -68,7 +77,34 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     setCurrent(base[Math.floor(Math.random() * base.length)])
   }
 
-  useEffect(() => { setCurrent(null) }, [mode, juz, fiveHizb, quranQuarter, quranHalf, student.current_naqza])
+  useEffect(() => { setCurrent(null) }, [mode, juz, fiveHizb, quranQuarter, quranHalf, testNaqza])
+
+  const refreshStudent = useCallback(async () => {
+    const { students: list } = await students.list()
+    const updated = list?.find(s => s.id === student.id)
+    if (updated) {
+      onStudentUpdated?.(updated)
+      return updated
+    }
+    return null
+  }, [student.id, onStudentUpdated])
+
+  async function handleNaqzaChange(nextRaw) {
+    const next = Number(nextRaw)
+    if (!next || next === testNaqza) return
+    setTestNaqza(next)
+    setNaqzaSaving(true)
+    setError('')
+    try {
+      const { student: updated } = await students.update(student.id, { current_naqza: next })
+      onStudentUpdated?.(updated)
+    } catch (e) {
+      setTestNaqza(Number(student.current_naqza) || 1)
+      setError(e?.message || 'تعذر تحديث النقزة')
+    } finally {
+      setNaqzaSaving(false)
+    }
+  }
 
   const resetCounters = useCallback(() => {
     setFatha(0)
@@ -82,10 +118,10 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     setSaving(true)
     setError('')
     try {
-      await sessions.create({
+      const res = await sessions.create({
         studentId: student.id,
         mode,
-        selectedNaqza: mode === 'naqza' ? student.current_naqza : null,
+        selectedNaqza: mode === 'naqza' ? testNaqza : student.current_naqza,
         selectedJuz: mode === 'juz' ? Number(juz) : null,
         selectedFiveHizb: mode === 'five_hizb' ? Number(fiveHizb) || null : null,
         selectedQuranQuarter: mode === 'quarter' ? Number(quranQuarter) || null : null,
@@ -96,7 +132,13 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         passed,
         score,
       })
-      setResultModal({ score, passed })
+      const updated = res?.student ?? await refreshStudent()
+      if (updated) onStudentUpdated?.(updated)
+      setResultModal({
+        score,
+        passed,
+        naqzaAfter: passed ? (updated?.current_naqza ?? null) : student.current_naqza,
+      })
       resetCounters()
     } catch (e) {
       setError(e?.message || 'تعذر حفظ المحاولة')
@@ -128,7 +170,21 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         <img className="test-student-bar__avatar" src={photoSrc} alt="" width={48} height={48} onError={(e) => { e.currentTarget.src = '/profile-placeholder.svg' }} />
         <div className="test-student-bar__body">
           <p className="test-student-bar__name">{student.name}</p>
-          <p className="test-student-bar__meta">#{student.number} • {formatNaqza(student.current_naqza, thumuns)}</p>
+          <p className="test-student-bar__meta">#{student.number}</p>
+          <label className="test-student-bar__naqza-field">
+            <span className="test-student-bar__naqza-label">النقزة الحالية</span>
+            <select
+              className="input test-student-bar__naqza-select"
+              value={testNaqza}
+              disabled={naqzaSaving || saving}
+              onChange={e => handleNaqzaChange(e.target.value)}
+            >
+              {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
+                <option key={n} value={n}>{formatNaqza(n, thumuns, naqzaLabels)}</option>
+              ))}
+            </select>
+          </label>
+          <p className="test-student-bar__hint meta">عند النجاح تتقدّم النقزة الحالية تلقائياً (+1) — في كل الأوضاع</p>
         </div>
       </div>
 
@@ -149,6 +205,11 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         </div>
 
         <div className="test-setup__filters">
+          {mode === 'naqza' && (
+            <p className="meta test-setup__naqza-note">
+              اختبار من نقزة {formatNaqza(testNaqza, thumuns, naqzaLabels)} — {filtered.length} ثُمُن متاح
+            </p>
+          )}
           {mode === 'juz' && (
             <label className="field">
               <span className="field__label">الجزء</span>
@@ -264,6 +325,9 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         studentName={student.name}
         score={resultModal?.score}
         passed={resultModal?.passed}
+        naqzaAfter={resultModal?.naqzaAfter}
+        naqzaLabels={naqzaLabels}
+        thumuns={thumuns}
         onProfile={() => { setResultModal(null); onGoProfile?.() }}
         onTestAgain={() => { setResultModal(null); onTestAgain?.() }}
         onList={() => { setResultModal(null); onGoList?.() }}

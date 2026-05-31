@@ -196,7 +196,7 @@ function buildSessionsForStudent(student, thumuns) {
     for (let a = 0; a < attemptsThisWeek; a++) {
       const attemptDay = ATTEMPT_DAYS[randomInt(0, ATTEMPT_DAYS.length - 1)]
       const mode = pickWeighted(MODES)
-      const selectedNaqza = mode === 'naqza' ? currentNaqza : null
+      const selectedNaqza = currentNaqza
       const selectedJuz = mode === 'juz' ? randomInt(1, 30) : null
       const selectedFiveHizb = mode === 'five_hizb' ? randomInt(1, 12) : null
       const selectedQuranQuarter = mode === 'quarter' ? randomInt(1, 4) : null

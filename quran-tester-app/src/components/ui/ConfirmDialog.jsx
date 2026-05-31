@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useMotionMount } from '../../lib/useMotionMount.js'
 
 let confirmState = { open: false, title: '', message: '', resolve: () => {} }
 
@@ -12,13 +13,23 @@ export function confirmDialog(title, message) {
 
 export default function ConfirmDialog() {
   const [, tick] = useState(0)
+  const [content, setContent] = useState({ title: '', message: '' })
+  const open = confirmState.open
+  const { render, active } = useMotionMount(open)
+
   useEffect(() => {
     const h = () => tick(t => t + 1)
     window.addEventListener('confirm-dialog-change', h)
     return () => window.removeEventListener('confirm-dialog-change', h)
   }, [])
 
-  if (!confirmState.open) return null
+  useEffect(() => {
+    if (open) {
+      setContent({ title: confirmState.title, message: confirmState.message })
+    }
+  }, [open])
+
+  if (!render) return null
 
   function close(result) {
     confirmState.open = false
@@ -27,10 +38,14 @@ export default function ConfirmDialog() {
   }
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
-      <div className="modal">
-        <h3 className="modal__title">{confirmState.title}</h3>
-        <div className="modal__body">{confirmState.message}</div>
+    <div
+      className={`modal-overlay ${active ? 'modal-overlay--visible' : ''}`}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className={`modal ${active ? 'modal--visible' : ''}`}>
+        <h3 className="modal__title">{content.title}</h3>
+        <div className="modal__body">{content.message}</div>
         <div className="actions">
           <button type="button" className="btn" onClick={() => close(false)}>إلغاء</button>
           <button type="button" className="btn btn--primary" onClick={() => close(true)}>تأكيد</button>

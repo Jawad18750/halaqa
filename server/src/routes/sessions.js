@@ -27,6 +27,18 @@ function weekStartDateFrom(date){
   return getWeekStartSaturday(date)
 }
 
+/** Advance student naqza on pass — applies to every test mode (naqza, juz, five_hizb, etc.). */
+async function applyNaqzaProgression(studentId, userId) {
+  const { rows } = await pool.query(
+    `update students
+     set current_naqza = least(20, current_naqza + 1), updated_at = now()
+     where id = $1 and user_id = $2
+     returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+    [studentId, userId]
+  )
+  return rows[0] ?? null
+}
+
 router.post('/', async (req, res) => {
   try {
     console.log('[sessions] incoming body', req.body)
@@ -39,8 +51,9 @@ router.post('/', async (req, res) => {
 
     // Validate ownership
     console.log(`[sessions] start user=${req.user?.id} student=${studentId}`)
-    const s = await pool.query('select id from students where id=$1 and user_id=$2', [studentId, req.user.id])
+    const s = await pool.query('select id, current_naqza from students where id=$1 and user_id=$2', [studentId, req.user.id])
     if (!s.rows.length) return res.status(404).json({ error: 'student not found' })
+    const studentCurrentNaqza = s.rows[0].current_naqza ?? null
 
     // Enrich with thumun metadata
     const t = getThumunById(thumunId)
@@ -70,6 +83,11 @@ router.post('/', async (req, res) => {
 
     const computedScore = computeScore(passed, fathaPrompts, taradudCount)
 
+    // Snapshot naqza level at attempt time for all modes (naqza mode may override via selectedNaqza)
+    const naqzaSnapshot = mode === 'naqza'
+      ? (selectedNaqza ?? studentCurrentNaqza)
+      : studentCurrentNaqza
+
     const now = new Date()
     const weekStart = getWeekStartSaturday(now)
     const attemptDay = attemptDayFromDate(now)
@@ -97,7 +115,7 @@ router.post('/', async (req, res) => {
             $10,$11,$12,$13,$14,$15,$16,$17,$18
           ) returning *`,
           [
-            studentId, weekStart, attemptDay, mode, selectedNaqza ?? null, selectedJuz ?? null,
+            studentId, weekStart, attemptDay, mode, naqzaSnapshot, selectedJuz ?? null,
             Number(selectedFiveHizb) || null, Number(selectedQuranQuarter) || null, Number(selectedQuranHalf) || null,
             t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
             fathaPrompts, taradudCount, passed, computedScore
@@ -118,26 +136,23 @@ router.post('/', async (req, res) => {
       return res.status(504).json({ error: 'session save timeout or failed', details: msg })
     }
 
-  // Progression: increment current_naqza on every pass (no weekly restriction)
+  // Progression: advance current_naqza on every pass, any mode
+    let updatedStudent = null
     if (passed) {
       try {
-        await withTimeout(
-          pool.query(
-            `update students set current_naqza = current_naqza + 1, updated_at=now()
-             where id=$1 and user_id=$2`,
-            [studentId, req.user.id]
-          ),
+        updatedStudent = await withTimeout(
+          applyNaqzaProgression(studentId, req.user.id),
           15000,
           'update progression'
         )
-        console.log(`[sessions] progression updated for student=${studentId}`)
+        console.log(`[sessions] progression updated for student=${studentId} mode=${mode} naqza=${updatedStudent?.current_naqza}`)
       } catch (e) {
         console.error('[sessions] progression update failed', e?.message)
         return res.status(504).json({ error: 'progression update timeout or failed', details: e?.message || '' })
       }
     }
 
-    return res.status(201).json({ session: rows[0] })
+    return res.status(201).json({ session: rows[0], student: updatedStudent })
   } catch (e) {
     console.error('[sessions] unhandled', e)
     return res.status(500).json({ error: 'internal error', details: e?.message || '' })

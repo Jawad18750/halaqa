@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState, useCallback, Fragment } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { sessions, students } from '../api'
 import { formatNaqza } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
-import StatTile from './ui/StatTile.jsx'
-import SectionCard from './ui/SectionCard.jsx'
+import DashboardWidget from './ui/DashboardWidget.jsx'
+import DashboardStudentRow from './ui/DashboardStudentRow.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 
 const AT_RISK_RECENT_LIMIT = 5
@@ -12,6 +12,7 @@ const AT_RISK_MIN_FAIL_RATIO = 0.5
 const AT_RISK_MIN_SESSIONS = 3
 const IMPROVER_WINDOW_SIZE = 3
 const INITIAL_LIST_LIMIT = 3
+const RANK_TONES = ['gold', 'silver', 'bronze']
 
 export default function Dashboard({ onNavigate, onOpenStudent }) {
   const [week, setWeek] = useState(null)
@@ -141,15 +142,16 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
   const passCount = countPass(week)
   const failCount = countFail(week)
   const weekSessions = week?.sessions?.length ?? 0
+  const passRate = weekSessions ? Math.round((passCount / weekSessions) * 100) : 0
   const top = topStudents(week)
+  const weekRange = formatWeekRange(week?.weekStartDate)
 
   if (loading && !week && !error) return <div className="loading">جاري التحميل…</div>
 
   return (
-    <div className="stack">
+    <div className="stack dash-page">
       <PageHeader
         title="الرئيسية"
-        subtitle="ملخص الأسبوع الحالي"
         actions={(
           <button type="button" className="btn btn--ghost btn--sm" onClick={load} disabled={loading}>
             <i className="fa-solid fa-rotate" /> تحديث
@@ -164,156 +166,269 @@ export default function Dashboard({ onNavigate, onOpenStudent }) {
         </div>
       )}
 
-      <div className="dashboard-hero-stats">
-        <div className="dashboard-hero-stat">
-          <div className="dashboard-hero-stat__value">{list.length.toLocaleString('ar-EG-u-nu-latn')}</div>
-          <div className="dashboard-hero-stat__label">عدد الطلاب</div>
-        </div>
-        <div className="dashboard-hero-stat">
-          <div className="dashboard-hero-stat__value">{remaining.toLocaleString('ar-EG-u-nu-latn')}</div>
-          <div className="dashboard-hero-stat__label">متبقون هذا الأسبوع</div>
-        </div>
-        <div className="dashboard-hero-stat">
-          <div className="dashboard-hero-stat__value">{weekSessions.toLocaleString('ar-EG-u-nu-latn')}</div>
-          <div className="dashboard-hero-stat__label">اختبارات الأسبوع</div>
-        </div>
-        <div className="dashboard-hero-stat">
-          <div className="dashboard-hero-stat__value">
-            {weekSessions ? Math.round((passCount / weekSessions) * 100) : 0}%
+      <section className="dash-summary appear">
+        <div className="dash-summary__top">
+          <div className="dash-summary__intro">
+            <span className="dash-summary__eyebrow">
+              <i className="fa-solid fa-calendar-week" aria-hidden="true" />
+              ملخص الأسبوع الحالي
+            </span>
+            {weekRange && <p className="dash-summary__range">{weekRange}</p>}
           </div>
-          <div className="dashboard-hero-stat__label">نسبة النجاح</div>
-        </div>
-      </div>
-
-      <SectionCard title="نظرة عامة">
-        <div className="stat-grid">
-          <StatTile label="بداية الأسبوع" value={week?.weekStartDate ? new Date(week.weekStartDate).toLocaleDateString('ar-EG-u-nu-latn') : '—'} />
-          <StatTile label="نجاحات الأسبوع" value={passCount} />
-          <StatTile label="إخفاقات الأسبوع" value={failCount} />
-          <StatTile label="النقزة الأكثر" value={formatNaqza(mostTestedNaqza(week), thumunList, naqzaLabels)} />
-        </div>
-      </SectionCard>
-
-      <SectionCard title="أفضل الطلاب هذا الأسبوع">
-        {top.length === 0 ? (
-          <EmptyState
-            title="لا بيانات هذا الأسبوع"
-            action={onNavigate && (
-              <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate('weekly')}>
-                عرض النظرة الزمنية
-              </button>
-            )}
-          />
-        ) : (
-          <div className="dashboard-list">
-            {top.map((s, i) => (
-              <div
-                key={s.id}
-                className="dashboard-list-item clickable-row"
-                role="button"
-                tabIndex={0}
-                onClick={() => openProfile(s.id)}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(s.id) } }}
-              >
-                <span className="dashboard-list-title">{`المرتبة ${i + 1}: ${s.number} — ${s.name}`}</span>
-                <span className="dashboard-list-meta">{`متوسط ${s.avg.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })} • نجاحات ${s.passes}`}</span>
-              </div>
-            ))}
+          <div className="dash-summary__ring" aria-hidden="true">
+            <svg viewBox="0 0 44 44" className="dash-summary__ring-svg">
+              <circle className="dash-summary__ring-track" cx="22" cy="22" r="18" />
+              <circle
+                className="dash-summary__ring-fill"
+                cx="22"
+                cy="22"
+                r="18"
+                style={{ strokeDashoffset: `${113 - (113 * weeklyGoal.percent) / 100}` }}
+              />
+            </svg>
+            <span className="dash-summary__ring-label">{weeklyGoal.percent}%</span>
           </div>
-        )}
-      </SectionCard>
+        </div>
 
-      <SectionCard
-        title="طلاب غير مختبرين هذا الأسبوع"
-        actions={<button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('students')}>فتح القائمة</button>}
-      >
-        <WidgetList
-          items={notTestedThisWeek}
-          showAll={showAllNotTested}
-          setShowAll={setShowAllNotTested}
-          emptyText="جميع الطلاب اُختبروا"
-          renderItem={s => (
-            <div
-              className="dashboard-list-item clickable-row"
-              role="button"
-              tabIndex={0}
-              onClick={() => openProfile(s.id)}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(s.id) } }}
-            >
-              <span className="dashboard-list-title">{`${s.numberLabel} — ${s.name}`}</span>
+        <div className="dash-summary__kpis">
+          <div className="dash-kpi">
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-users" /></span>
+            <div>
+              <div className="dash-kpi__value">{list.length.toLocaleString('ar-EG-u-nu-latn')}</div>
+              <div className="dash-kpi__label">عدد الطلاب</div>
+            </div>
+          </div>
+          <div className="dash-kpi dash-kpi--warn">
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-hourglass-half" /></span>
+            <div>
+              <div className="dash-kpi__value">{remaining.toLocaleString('ar-EG-u-nu-latn')}</div>
+              <div className="dash-kpi__label">متبقون هذا الأسبوع</div>
+            </div>
+          </div>
+          <div className="dash-kpi">
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-clipboard-check" /></span>
+            <div>
+              <div className="dash-kpi__value">{weekSessions.toLocaleString('ar-EG-u-nu-latn')}</div>
+              <div className="dash-kpi__label">اختبارات الأسبوع</div>
+            </div>
+          </div>
+          <div className="dash-kpi dash-kpi--success">
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-chart-line" /></span>
+            <div>
+              <div className="dash-kpi__value">{passRate}%</div>
+              <div className="dash-kpi__label">نسبة النجاح</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="dash-summary__goal">
+          <div className="dash-summary__goal-text">
+            <span>تقدم هدف الأسبوع</span>
+            <strong>{weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')} / {weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}</strong>
+          </div>
+          <div
+            className="dash-progress"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={weeklyGoal.percent}
+            aria-label="تقدم هدف الأسبوع"
+          >
+            <span className="dash-progress__fill" style={{ width: `${weeklyGoal.percent}%` }} />
+          </div>
+        </div>
+      </section>
+
+      <div className="dash-grid">
+        <DashboardWidget title="نظرة عامة" icon="fa-gauge-high" variant="default">
+          <div className="dash-overview">
+            <div className="dash-overview__item">
+              <span className="dash-overview__label">بداية الأسبوع</span>
+              <span className="dash-overview__value">
+                {week?.weekStartDate ? new Date(week.weekStartDate).toLocaleDateString('ar-EG-u-nu-latn') : '—'}
+              </span>
+            </div>
+            <div className="dash-overview__item dash-overview__item--pass">
+              <span className="dash-overview__label">نجاحات</span>
+              <span className="dash-overview__value">{passCount.toLocaleString('ar-EG-u-nu-latn')}</span>
+            </div>
+            <div className="dash-overview__item dash-overview__item--fail">
+              <span className="dash-overview__label">إخفاقات</span>
+              <span className="dash-overview__value">{failCount.toLocaleString('ar-EG-u-nu-latn')}</span>
+            </div>
+            <div className="dash-overview__item dash-overview__item--accent">
+              <span className="dash-overview__label">النقزة الأكثر</span>
+              <span className="dash-overview__value dash-overview__value--sm">
+                {formatNaqza(mostTestedNaqza(week), thumunList, naqzaLabels)}
+              </span>
+            </div>
+          </div>
+        </DashboardWidget>
+
+        <DashboardWidget
+          title="أفضل الطلاب هذا الأسبوع"
+          icon="fa-trophy"
+          variant="success"
+          badge={top.length ? top.length : null}
+        >
+          {top.length === 0 ? (
+            <EmptyState
+              title="لا بيانات هذا الأسبوع"
+              icon="fa-trophy"
+              action={onNavigate && (
+                <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate('weekly')}>
+                  عرض النظرة الزمنية
+                </button>
+              )}
+            />
+          ) : (
+            <div className="dash-list">
+              {top.map((s, i) => (
+                <DashboardStudentRow
+                  key={s.id}
+                  id={s.id}
+                  rank={i + 1}
+                  rankTone={RANK_TONES[i] || 'default'}
+                  name={s.name}
+                  meta={`متوسط ${s.avg.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })} • ${s.passes} نجاح`}
+                  onOpen={openProfile}
+                />
+              ))}
             </div>
           )}
-        />
-      </SectionCard>
+        </DashboardWidget>
 
-      <SectionCard
-        title="طلاب بحاجة تدخل"
-        actions={(
-          <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('leaderboard')}>
-            لوحة الصدارة
-          </button>
-        )}
-      >
-        <WidgetList items={atRiskStudents} showAll={showAllAtRisk} setShowAll={setShowAllAtRisk} emptyText="لا يوجد طلاب معرّضون للخطر" renderItem={s => (
-          <div
-            className="dashboard-list-item clickable-row"
-            role="button"
-            tabIndex={0}
-            onClick={() => openProfile(s.id)}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(s.id) } }}
-          >
-            <span className="dashboard-list-title">{`${s.numberLabel} — ${s.name}`}</span>
-            <span className="dashboard-list-meta">{`متوسط ${s.avg.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })} • إخفاق ${Math.round(s.failRatio * 100)}%`}</span>
+        <DashboardWidget
+          title="طلاب غير مختبرين هذا الأسبوع"
+          icon="fa-user-clock"
+          variant="warning"
+          badge={notTestedThisWeek.length || null}
+          actions={(
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('students')}>
+              فتح القائمة
+            </button>
+          )}
+        >
+          <WidgetList
+            items={notTestedThisWeek}
+            showAll={showAllNotTested}
+            setShowAll={setShowAllNotTested}
+            emptyText="جميع الطلاب اُختبروا"
+            emptyIcon="fa-check-circle"
+            onOpen={openProfile}
+          />
+        </DashboardWidget>
+
+        <DashboardWidget
+          title="طلاب بحاجة تدخل"
+          icon="fa-triangle-exclamation"
+          variant="danger"
+          badge={atRiskStudents.length || null}
+          actions={(
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('leaderboard')}>
+              لوحة الصدارة
+            </button>
+          )}
+        >
+          <WidgetList
+            items={atRiskStudents}
+            showAll={showAllAtRisk}
+            setShowAll={setShowAllAtRisk}
+            emptyText="لا يوجد طلاب بحاجة تدخل"
+            emptyIcon="fa-shield-heart"
+            onOpen={openProfile}
+            renderMeta={s => `متوسط ${s.avg.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })} • إخفاق ${Math.round(s.failRatio * 100)}%`}
+          />
+        </DashboardWidget>
+
+        <DashboardWidget
+          title="الأكثر تحسناً"
+          icon="fa-arrow-trend-up"
+          variant="improve"
+          badge={topImprovers.length || null}
+        >
+          <WidgetList
+            items={topImprovers}
+            showAll={showAllImprovers}
+            setShowAll={setShowAllImprovers}
+            emptyText="لا بيانات كافية"
+            emptyIcon="fa-chart-line"
+            onOpen={openProfile}
+            renderMeta={s => `+${s.delta.toFixed(1)} (${s.beforeAvg.toFixed(1)} → ${s.afterAvg.toFixed(1)})`}
+          />
+        </DashboardWidget>
+
+        <DashboardWidget title="تقدم هدف الأسبوع" icon="fa-bullseye" variant="goal" className="dash-grid__full">
+          <div className="dash-goal">
+            <div className="dash-goal__stats">
+              <div className="dash-goal__stat">
+                <span className="dash-goal__stat-label">الهدف</span>
+                <span className="dash-goal__stat-value">{weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}</span>
+              </div>
+              <div className="dash-goal__stat">
+                <span className="dash-goal__stat-label">المكتمل</span>
+                <span className="dash-goal__stat-value">{weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')}</span>
+              </div>
+              <div className="dash-goal__stat dash-goal__stat--highlight">
+                <span className="dash-goal__stat-label">نسبة الإنجاز</span>
+                <span className="dash-goal__stat-value">{weeklyGoal.percent}%</span>
+              </div>
+            </div>
+            <div
+              className="dash-progress dash-progress--lg"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={weeklyGoal.percent}
+            >
+              <span className="dash-progress__fill" style={{ width: `${weeklyGoal.percent}%` }} />
+            </div>
+            <p className="dash-goal__hint meta">
+              {weeklyGoal.percent >= 100
+                ? 'تم اختبار جميع الطلاب هذا الأسبوع — أحسنت!'
+                : `متبقٍ ${remaining.toLocaleString('ar-EG-u-nu-latn')} طالب${remaining === 1 ? '' : ''} لإكمال الهدف`}
+            </p>
           </div>
-        )} />
-      </SectionCard>
-
-      <SectionCard title="الأكثر تحسناً">
-        <WidgetList items={topImprovers} showAll={showAllImprovers} setShowAll={setShowAllImprovers} emptyText="لا بيانات كافية" renderItem={s => (
-          <div
-            className="dashboard-list-item clickable-row"
-            role="button"
-            tabIndex={0}
-            onClick={() => openProfile(s.id)}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(s.id) } }}
-          >
-            <span className="dashboard-list-title">{`${s.numberLabel} — ${s.name}`}</span>
-            <span className="dashboard-list-meta">{`+${s.delta.toFixed(1)} (${s.beforeAvg.toFixed(1)} → ${s.afterAvg.toFixed(1)})`}</span>
-          </div>
-        )} />
-      </SectionCard>
-
-      <SectionCard title="تقدم هدف الأسبوع">
-        <div className="stat-grid stat-grid--fit">
-          <StatTile label="الهدف" value={weeklyGoal.target} />
-          <StatTile label="المكتمل" value={weeklyGoal.completed} />
-          <StatTile label="نسبة الإنجاز" value={`${weeklyGoal.percent}%`} />
-        </div>
-        <div className="dashboard-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={weeklyGoal.percent}>
-          <span style={{ width: `${weeklyGoal.percent}%` }} />
-        </div>
-      </SectionCard>
+        </DashboardWidget>
+      </div>
     </div>
   )
 }
 
-function WidgetList({ items, showAll, setShowAll, emptyText, renderItem }) {
+function WidgetList({ items, showAll, setShowAll, emptyText, emptyIcon, onOpen, renderMeta }) {
   const visible = showAll ? items : items.slice(0, INITIAL_LIST_LIMIT)
   return (
     <>
-      <div className="dashboard-list">
-        {visible.map(item => (
-          <Fragment key={item.id}>{renderItem(item)}</Fragment>
+      <div className="dash-list">
+        {visible.map(s => (
+          <DashboardStudentRow
+            key={s.id}
+            id={s.id}
+            numberLabel={s.numberLabel}
+            name={s.name}
+            meta={renderMeta?.(s)}
+            onOpen={onOpen}
+          />
         ))}
-        {visible.length === 0 && <EmptyState title={emptyText} icon="fa-check-circle" />}
+        {visible.length === 0 && <EmptyState title={emptyText} icon={emptyIcon || 'fa-inbox'} />}
       </div>
       {items.length > INITIAL_LIST_LIMIT && (
-        <button type="button" className="btn btn--ghost dashboard-list-toggle" onClick={() => setShowAll(v => !v)}>
-          {showAll ? 'عرض أقل' : 'عرض الكل'}
+        <button type="button" className="btn btn--ghost dash-list-toggle" onClick={() => setShowAll(v => !v)}>
+          {showAll ? 'عرض أقل' : `عرض الكل (${items.length})`}
         </button>
       )}
     </>
   )
+}
+
+function formatWeekRange(weekStartDate) {
+  if (!weekStartDate) return ''
+  const start = new Date(weekStartDate)
+  if (Number.isNaN(start.getTime())) return ''
+  const end = new Date(start)
+  end.setDate(end.getDate() + 6)
+  const fmt = d => d.toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'short' })
+  return `${fmt(start)} — ${fmt(end)}`
 }
 
 function average(values) {

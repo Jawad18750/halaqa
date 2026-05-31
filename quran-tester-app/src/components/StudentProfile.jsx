@@ -16,6 +16,7 @@ import EmptyState from './ui/EmptyState.jsx'
 import SessionCard from './ui/SessionCard.jsx'
 import StudentHubHeader, { computeStudentStats } from './ui/StudentHubHeader.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
+import Toast from './ui/Toast.jsx'
 
 export default function StudentProfile({ student, thumuns = [], onBack, onTest, onHistory, onStudentUpdated }) {
   const [list, setList] = useState([])
@@ -23,7 +24,7 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
 
-  function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2000) }
+  function showToast(msg) { setToast(msg) }
 
   function toDateOnly(v) {
     if (!v) return ''
@@ -261,7 +262,7 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
         )}
       </SectionCard>
 
-      {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
+      <Toast message={toast} onDone={() => setToast('')} />
     </div>
   )
 }

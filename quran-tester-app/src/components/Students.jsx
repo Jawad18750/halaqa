@@ -4,6 +4,7 @@ import { buildNaqzaLabels } from '../lib/labels.js'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import StudentListItem from './ui/StudentListItem.jsx'
+import Toast from './ui/Toast.jsx'
 
 const WEEK_FILTERS = [
   { id: 'all', label: 'الكل' },
@@ -37,7 +38,7 @@ export default function Students({ onSelect, onProfile }) {
   const naqzaLabels = buildNaqzaLabels(thumuns)
   const placeholder = '/profile-placeholder.svg'
 
-  function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2000) }
+  function showToast(msg) { setToast(msg) }
 
   useEffect(() => {
     if (menuId == null) return
@@ -290,7 +291,7 @@ export default function Students({ onSelect, onProfile }) {
         </ul>
       )}
 
-      {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
+      <Toast message={toast} onDone={() => setToast('')} />
     </div>
   )
 }

@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react'
 import Auth from './Auth'
+import { useMotionMount } from '../lib/useMotionMount.js'
 
 const NAV_GROUPS = [
   {
@@ -27,15 +29,48 @@ const NAV_GROUPS = [
 ]
 
 export default function Drawer({ open, onClose, user, currentView, onAuthed, onNavigate, onLogout }) {
-  if (!open) return null
+  const { render, active } = useMotionMount(open)
+  const drawerRef = useRef(null)
+  const closeBtnRef = useRef(null)
+
+  useEffect(() => {
+    if (active) {
+      closeBtnRef.current?.focus()
+      return
+    }
+    const root = drawerRef.current
+    if (root?.contains(document.activeElement)) {
+      document.activeElement.blur()
+    }
+  }, [active])
+
+  if (!render) return null
 
   return (
     <>
-      <div className="drawer-overlay" onClick={onClose} />
-      <aside className="drawer" role="dialog" aria-modal="true" aria-label="القائمة">
+      <div
+        className={`drawer-overlay ${active ? 'drawer-overlay--visible' : ''}`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside
+        ref={drawerRef}
+        className={`drawer ${active ? 'drawer--visible' : ''}`}
+        role="dialog"
+        aria-modal={active ? 'true' : undefined}
+        aria-label="القائمة"
+        {...(!active && { inert: true })}
+      >
         <header className="drawer-header">
           <strong>القائمة</strong>
-          <button type="button" className="btn btn--ghost btn--sm" onClick={onClose} aria-label="إغلاق">
+          <button
+            ref={closeBtnRef}
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={onClose}
+            aria-label="إغلاق"
+            tabIndex={active ? 0 : -1}
+          >
             <i className="fa-solid fa-xmark" />
           </button>
         </header>

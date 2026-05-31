@@ -1,12 +1,36 @@
 import Badge from './Badge.jsx'
-import { resultLabel, gradeLabel } from '../../lib/labels.js'
+import { resultLabel, gradeLabel, formatNaqza } from '../../lib/labels.js'
+import { useMotionMount } from '../../lib/useMotionMount.js'
 
-export default function TestResultModal({ open, studentName, score, passed, onProfile, onTestAgain, onList, onClose }) {
-  if (!open) return null
+export default function TestResultModal({
+  open,
+  studentName,
+  score,
+  passed,
+  naqzaAfter,
+  naqzaLabels,
+  thumuns,
+  onProfile,
+  onTestAgain,
+  onList,
+  onClose,
+}) {
+  const { render, active } = useMotionMount(open)
+
+  if (!render) return null
+
+  const naqzaLabel = passed && naqzaAfter != null
+    ? formatNaqza(naqzaAfter, thumuns, naqzaLabels)
+    : null
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="test-result-title">
-      <div className="modal test-result-modal">
+    <div
+      className={`modal-overlay ${active ? 'modal-overlay--visible' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="test-result-title"
+    >
+      <div className={`modal test-result-modal ${active ? 'modal--visible' : ''}`}>
         <h3 className="modal__title" id="test-result-title">تم تسجيل المحاولة</h3>
         <div className="test-result-modal__summary">
           <div className="test-result-modal__student">{studentName}</div>
@@ -15,6 +39,11 @@ export default function TestResultModal({ open, studentName, score, passed, onPr
             <span className="test-result-modal__score">{score}</span>
             <span className="meta">{gradeLabel(score)}</span>
           </div>
+          {naqzaLabel && (
+            <p className="test-result-modal__progress meta">
+              <i className="fa-solid fa-arrow-up" aria-hidden="true" /> النقزة الحالية: {naqzaLabel}
+            </p>
+          )}
         </div>
         <p className="modal__body">إلى أين تريد الانتقال؟</p>
         <div className="test-result-modal__actions">

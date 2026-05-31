@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { auth } from '../api'
+import PageHeader from './ui/PageHeader.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 
-export default function ResetPassword() {
+export default function ResetPassword({ onBack }) {
   const [token, setToken] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -30,7 +31,10 @@ export default function ResetPassword() {
 
   return (
     <div className="auth-card">
-      <SectionCard title="إعادة تعيين كلمة المرور">
+      {onBack && (
+        <PageHeader title="إعادة تعيين كلمة المرور" onBack={onBack} />
+      )}
+      <SectionCard title={onBack ? undefined : 'إعادة تعيين كلمة المرور'}>
         <form onSubmit={submit} className="stack">
           <label className="field">
             <span className="field__label">كلمة المرور الجديدة</span>

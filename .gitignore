@@ -74,6 +74,9 @@ quran-tester-app/public/quran-thumun-data.json.backup.*
 *.sqlite
 *.sqlite3
 
+# Server runtime uploads (student photos)
+server/src/uploads/
+
 # Backup files
 *.backup
 *.bak

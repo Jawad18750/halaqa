@@ -27,6 +27,7 @@ export default function App() {
   const [user, setUser] = useState(null)
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [view, setView] = useState('dashboard')
+  const [returnView, setReturnView] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [thumuns, setThumuns] = useState([])
   const [loading, setLoading] = useState(true)
@@ -78,9 +79,16 @@ export default function App() {
   function goDashboard() {
     setView('dashboard')
     setSelectedStudent(null)
+    setReturnView(null)
   }
 
   function openStudent(student, target = 'students') {
+    const fromStudentsList = view === 'students' && !selectedStudent
+    if (fromStudentsList) {
+      setReturnView(null)
+    } else if (['dashboard', 'leaderboard', 'weekly'].includes(view)) {
+      setReturnView(view)
+    }
     setSelectedStudent(student)
     setView(target)
   }
@@ -88,10 +96,28 @@ export default function App() {
   function goStudentsList() {
     setSelectedStudent(null)
     setView('students')
+    setReturnView(null)
   }
 
   function goStudentProfile() {
     setView('students')
+  }
+
+  function handleProfileBack() {
+    if (returnView) {
+      setView(returnView)
+      setSelectedStudent(null)
+      setReturnView(null)
+      return
+    }
+    goStudentsList()
+  }
+
+  function goHomeFromReset() {
+    if (window.location.pathname.startsWith('/reset')) {
+      window.history.replaceState({}, '', '/')
+    }
+    setView('dashboard')
   }
 
   function logout() {
@@ -102,18 +128,30 @@ export default function App() {
   }
 
   function renderContent() {
-    if (view === 'reset') return <ResetPassword />
+    if (view === 'reset') {
+      return (
+        <div key="reset" className="page motion-page">
+          <ResetPassword onBack={goHomeFromReset} />
+        </div>
+      )
+    }
+
+    const viewKey = !user
+      ? 'guest'
+      : selectedStudent
+        ? `${view}:${selectedStudent.id}`
+        : view
 
     if (!user) {
       return (
-        <div className="page">
-          <FreestyleRandomizer thumuns={thumuns} loading={loading} onSignIn={() => setDrawerOpen(true)} />
+        <div key={viewKey} className="page motion-page">
+          <FreestyleRandomizer thumuns={thumuns} loading={loading} theme={theme} onSignIn={() => setDrawerOpen(true)} />
         </div>
       )
     }
 
     return (
-      <div className={`page ${WIDE_VIEWS.has(view) ? 'page--wide' : ''}`}>
+      <div key={viewKey} className={`page motion-page ${WIDE_VIEWS.has(view) ? 'page--wide' : ''}`}>
         {view === 'dashboard' && (
           <Dashboard onNavigate={navigate} onOpenStudent={openStudent} />
         )}
@@ -127,7 +165,7 @@ export default function App() {
           <StudentProfile
             student={selectedStudent}
             thumuns={thumuns}
-            onBack={goStudentsList}
+            onBack={handleProfileBack}
             onTest={() => setView('test')}
             onHistory={() => setView('studentHistory')}
             onStudentUpdated={setSelectedStudent}
@@ -142,6 +180,7 @@ export default function App() {
             onGoList={goStudentsList}
             onHistory={() => setView('studentHistory')}
             onBack={goStudentProfile}
+            onStudentUpdated={setSelectedStudent}
           />
         )}
         {view === 'studentHistory' && selectedStudent && (
@@ -157,7 +196,9 @@ export default function App() {
         {view === 'leaderboard' && (
           <WeeklyLeaderboard onBack={goDashboard} onOpenStudent={openStudent} />
         )}
-        {view === 'freestyle' && <FreestyleRandomizer thumuns={thumuns} loading={loading} onSignIn={() => setDrawerOpen(true)} />}
+        {view === 'freestyle' && (
+          <FreestyleRandomizer thumuns={thumuns} loading={loading} theme={theme} onBack={goDashboard} />
+        )}
         {view === 'about' && <About onBack={goDashboard} />}
         {view === 'privacy' && <Privacy onBack={goDashboard} />}
         {view === 'backup' && <Backup onBack={goDashboard} />}
@@ -165,15 +206,20 @@ export default function App() {
     )
   }
 
+  const contextLabel = selectedStudent && ['test', 'students', 'studentHistory'].includes(view)
+    ? selectedStudent.name
+    : null
+
   return (
     <AppShell
       theme={theme}
       view={view}
       user={user}
+      contextLabel={contextLabel}
       drawerOpen={drawerOpen}
       wide={WIDE_VIEWS.has(view)}
       onBrandClick={goDashboard}
-      onMenuClick={() => setDrawerOpen(true)}
+      onMenuClick={() => setDrawerOpen(open => !open)}
       onThemeToggle={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
       onDrawerClose={() => setDrawerOpen(false)}
       onAuthed={setUser}
