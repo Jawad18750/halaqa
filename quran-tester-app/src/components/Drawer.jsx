@@ -1,55 +1,87 @@
-import { useState } from 'react'
 import Auth from './Auth'
 
-export default function Drawer({ open, onClose, user, onAuthed, onNavigate, onLogout }) {
+const NAV_GROUPS = [
+  {
+    label: 'عمل يومي',
+    items: [
+      { view: 'dashboard', icon: 'fa-gauge', label: 'الرئيسية' },
+      { view: 'students', icon: 'fa-users', label: 'الطلاب' },
+      { view: 'freestyle', icon: 'fa-wand-magic-sparkles', label: 'الوضع الحر' },
+    ],
+  },
+  {
+    label: 'تقارير',
+    items: [
+      { view: 'weekly', icon: 'fa-calendar-week', label: 'نظرة زمنية' },
+      { view: 'leaderboard', icon: 'fa-trophy', label: 'لوحة الصدارة' },
+    ],
+  },
+  {
+    label: 'إعدادات',
+    items: [
+      { view: 'backup', icon: 'fa-cloud-arrow-down', label: 'النسخ الاحتياطي' },
+      { view: 'about', icon: 'fa-circle-info', label: 'عن التطبيق' },
+      { view: 'privacy', icon: 'fa-user-shield', label: 'الخصوصية' },
+    ],
+  },
+]
+
+export default function Drawer({ open, onClose, user, currentView, onAuthed, onNavigate, onLogout }) {
+  if (!open) return null
+
   return (
     <>
-      {open && <div className="drawer-overlay" onClick={onClose} />}
-      {open && (
-        <aside className="drawer" role="dialog" aria-modal="true">
-          <header className="drawer-header">
-            <strong>القائمة</strong>
-            <button className="btn btn--ghost" onClick={onClose} aria-label="إغلاق">×</button>
-          </header>
+      <div className="drawer-overlay" onClick={onClose} />
+      <aside className="drawer" role="dialog" aria-modal="true" aria-label="القائمة">
+        <header className="drawer-header">
+          <strong>القائمة</strong>
+          <button type="button" className="btn btn--ghost btn--sm" onClick={onClose} aria-label="إغلاق">
+            <i className="fa-solid fa-xmark" />
+          </button>
+        </header>
+
+        {!user ? (
           <div className="drawer-inner">
-            <div style={{ borderTop:'1px solid var(--card-border)', margin:'6px 0 12px', opacity:.6 }} />
-            {!user ? (
-              <Auth onAuthed={(u) => { onAuthed(u); onClose(); }} />
-            ) : (
-              <nav className="nav-list" style={{ display:'grid', gap:8 }}>
-                <button className="btn" onClick={() => { onNavigate('dashboard'); onClose(); }}>
-                  <i className="fa-solid fa-gauge" style={{ marginInlineStart:6 }}></i> الرئيسية
-                </button>
-                <button className="btn" onClick={() => { onNavigate('students'); onClose(); }}>
-                  <i className="fa-solid fa-users" style={{ marginInlineStart:6 }}></i> الطلاب
-                </button>
-                <button className="btn" onClick={() => { onNavigate('weekly'); onClose(); }}>
-                  <i className="fa-solid fa-calendar-week" style={{ marginInlineStart:6 }}></i> نظرة زمنية
-                </button>
-                <button className="btn" onClick={() => { onNavigate('leaderboard'); onClose(); }}>
-                  <i className="fa-solid fa-trophy" style={{ marginInlineStart:6 }}></i> لوحة الصدارة الأسبوعية
-                </button>
-                <button className="btn" onClick={() => { onNavigate('freestyle'); onClose(); }}>
-                  <i className="fa-solid fa-wand-magic-sparkles" style={{ marginInlineStart:6 }}></i> الوضع الحر
-                </button>
-                <button className="btn" onClick={() => { onNavigate('backup'); onClose(); }}>
-                  <i className="fa-solid fa-cloud-arrow-down" style={{ marginInlineStart:6 }}></i> النسخ الاحتياطي
-                </button>
-                <button className="btn" onClick={() => { onNavigate('about'); onClose(); }}>
-                  <i className="fa-solid fa-circle-info" style={{ marginInlineStart:6 }}></i> عن التطبيق
-                </button>
-                <button className="btn" onClick={() => { onNavigate('privacy'); onClose(); }}>
-                  <i className="fa-solid fa-user-shield" style={{ marginInlineStart:6 }}></i> الخصوصية
-                </button>
-                <button className="btn btn--ghost" onClick={() => { onLogout(); onClose(); }}>
-                  <i className="fa-solid fa-right-from-bracket" style={{ marginInlineStart:6 }}></i> تسجيل الخروج
-                </button>
-              </nav>
-            )}
+            <Auth onAuthed={u => { onAuthed(u); onClose() }} />
           </div>
-        </aside>
-      )}
+        ) : (
+          <>
+            <div className="drawer-user">
+              <div className="drawer-user__avatar">
+                <i className="fa-solid fa-user" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600 }}>{user.username}</div>
+                <div className="meta">{user.email || 'معلّم'}</div>
+              </div>
+            </div>
+            <div className="drawer-inner">
+              {NAV_GROUPS.map(group => (
+                <nav key={group.label} className="nav-group" aria-label={group.label}>
+                  <div className="nav-group__label">{group.label}</div>
+                  <div className="nav-list">
+                    {group.items.map(item => (
+                      <button
+                        key={item.view}
+                        type="button"
+                        className={`nav-item ${currentView === item.view ? 'nav-item--active' : ''}`}
+                        onClick={() => { onNavigate(item.view); onClose() }}
+                      >
+                        <i className={`fa-solid ${item.icon}`} />
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </nav>
+              ))}
+              <button type="button" className="nav-item" onClick={() => { onLogout(); onClose() }} style={{ marginTop: 8, color: 'var(--danger)' }}>
+                <i className="fa-solid fa-right-from-bracket" />
+                تسجيل الخروج
+              </button>
+            </div>
+          </>
+        )}
+      </aside>
     </>
   )
 }
-

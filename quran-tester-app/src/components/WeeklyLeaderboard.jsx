@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { sessions } from '../api'
+import { sessions, students } from '../api'
+import { modeLabel, rankLabel, formatThumunId, formatLocaleDateTime } from '../lib/labels.js'
+import PageHeader from './ui/PageHeader.jsx'
+import SectionCard from './ui/SectionCard.jsx'
+import StatTile from './ui/StatTile.jsx'
+import EmptyState from './ui/EmptyState.jsx'
 
-export default function WeeklyLeaderboard({ onBack }) {
+export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
   const [rows, setRows] = useState([])
+  const [studentList, setStudentList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [thumuns, setThumuns] = useState([])
@@ -18,6 +24,10 @@ export default function WeeklyLeaderboard({ onBack }) {
       .then(r => r.json())
       .then(d => setThumuns(d.thumuns || []))
       .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    students.list().then(r => setStudentList(r?.students || [])).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -47,6 +57,11 @@ export default function WeeklyLeaderboard({ onBack }) {
       setFrom(start)
       setTo(toDateOnly(endDate))
     } catch {}
+  }
+
+  function openProfile(id) {
+    const s = studentList.find(x => x.id === id)
+    if (s && onOpenStudent) onOpenStudent(s, 'students')
   }
 
   const leaderboard = useMemo(() => {
@@ -105,41 +120,34 @@ export default function WeeklyLeaderboard({ onBack }) {
   }, [rows])
 
   return (
-    <div style={{ padding: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-        <button className="btn" onClick={onBack}>← الرجوع</button>
-      </div>
-
-      <h2 style={{ textAlign: 'center', marginTop: 0 }}>لوحة الصدارة الأسبوعية</h2>
-
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginTop: 8 }}>
-        <label className="info-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
-          من:
+    <div className="stack">
+      <PageHeader title="لوحة الصدارة الأسبوعية" onBack={onBack} />
+      <div className="filter-bar">
+        <label className="field" style={{ flex: 1, minWidth: 140 }}>
+          <span className="field__label">من</span>
           <input className="input" type="date" value={from} onChange={e => setFrom(e.target.value)} />
         </label>
-        <label className="info-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
-          إلى:
+        <label className="field" style={{ flex: 1, minWidth: 140 }}>
+          <span className="field__label">إلى</span>
           <input className="input" type="date" value={to} onChange={e => setTo(e.target.value)} />
         </label>
-        <button className="btn" onClick={useCurrentWeek}>هذا الأسبوع</button>
+        <button type="button" className="btn btn--sm" onClick={useCurrentWeek}>هذا الأسبوع</button>
       </div>
 
-      <div className="card" style={{ marginTop: 12 }}>
-        <div className="info-grid info-grid--fit">
-          <Info label="عدد الطلاب في الصدارة" value={num(leaderboard.length)} />
-          <Info label="إجمالي المحاولات" value={num(rows.length)} />
-          <Info label="متوسط عام" value={num1(average(leaderboard.map(x => x.avgScore)))} />
-          <Info label="نسبة النجاح العامة" value={`${num1(average(leaderboard.map(x => x.passRate)))}%`} />
+      <SectionCard>
+        <div className="stat-grid stat-grid--fit">
+          <StatTile label="عدد الطلاب" value={num(leaderboard.length)} />
+          <StatTile label="إجمالي المحاولات" value={num(rows.length)} />
+          <StatTile label="متوسط عام" value={num1(average(leaderboard.map(x => x.avgScore)))} />
+          <StatTile label="نسبة النجاح" value={`${num1(average(leaderboard.map(x => x.passRate)))}%`} />
         </div>
-      </div>
+      </SectionCard>
 
-      {error && <div style={{ color: 'crimson', marginTop: 8 }}>{error}</div>}
-      {loading ? (
-        <div style={{ marginTop: 12 }}>جاري التحميل…</div>
-      ) : (
-        <div className="card" style={{ marginTop: 12 }}>
+      {error && <div className="alert alert--error">{error}</div>}
+      {loading ? <div className="loading">جاري التحميل…</div> : (
+        <SectionCard>
           {leaderboard.length === 0 ? (
-            <div>لا توجد بيانات لهذه الفترة.</div>
+            <EmptyState title="لا توجد بيانات لهذه الفترة" />
           ) : (
             <>
               <div className="desktop-only table-wrapper">
@@ -159,7 +167,12 @@ export default function WeeklyLeaderboard({ onBack }) {
                   </thead>
                   <tbody>
                     {leaderboard.map(item => (
-                      <tr key={item.id}>
+                      <tr
+                        key={item.id}
+                        className="clickable-row"
+                        onClick={() => openProfile(item.id)}
+                        style={{ cursor: onOpenStudent ? 'pointer' : undefined }}
+                      >
                         <td>{rankLabel(item.rank)}</td>
                         <td>{`${num(item.student_number)} — ${item.student_name}`}</td>
                         <td>{num1(item.avgScore)}</td>
@@ -167,8 +180,8 @@ export default function WeeklyLeaderboard({ onBack }) {
                         <td>{num(item.attempts)}</td>
                         <td>{`${num(item.passes)} / ${num(item.fails)} (${num1(item.passRate)}%)`}</td>
                         <td>{modeLabel(item.dominantMode)}</td>
-                        <td>{formatThumun(item.dominantThumun, thumuns)}</td>
-                        <td>{item.lastAttemptAt ? new Date(item.lastAttemptAt).toLocaleString('ar-EG-u-nu-latn') : '—'}</td>
+                        <td>{formatThumunId(item.dominantThumun, thumuns)}</td>
+                        <td>{item.lastAttemptAt ? formatLocaleDateTime(new Date(item.lastAttemptAt).toISOString()) : '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -177,35 +190,35 @@ export default function WeeklyLeaderboard({ onBack }) {
 
               <div className="mobile-cards">
                 {leaderboard.map(item => (
-                  <div key={item.id} className="student-card" style={{ display: 'grid', gap: 8 }}>
+                  <div
+                    key={item.id}
+                    className="student-card clickable-row"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openProfile(item.id)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfile(item.id) } }}
+                    style={{ display: 'grid', gap: 8 }}
+                  >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                       <span className="tag">{rankLabel(item.rank)}</span>
                       <strong style={{ textAlign: 'right' }}>{`${num(item.student_number)} — ${item.student_name}`}</strong>
                     </div>
                     <div className="info-grid info-grid--fit">
-                      <Info label="المتوسط" value={num1(item.avgScore)} />
-                      <Info label="أفضل درجة" value={num(item.bestScore)} />
-                      <Info label="المحاولات" value={num(item.attempts)} />
-                      <Info label="النجاح" value={`${num1(item.passRate)}%`} />
-                      <Info label="الوضع الغالب" value={modeLabel(item.dominantMode)} />
-                      <Info label="الثمن الغالب" value={formatThumun(item.dominantThumun, thumuns)} />
+                      <StatTile label="المتوسط" value={num1(item.avgScore)} />
+                      <StatTile label="أفضل درجة" value={num(item.bestScore)} />
+                      <StatTile label="المحاولات" value={num(item.attempts)} />
+                      <StatTile label="النجاح" value={`${num1(item.passRate)}%`} />
+                      <StatTile label="الوضع الغالب" value={modeLabel(item.dominantMode)} />
+                      <StatTile label="الثمن الغالب" value={formatThumunId(item.dominantThumun, thumuns)} />
+                      <StatTile label="آخر محاولة" value={item.lastAttemptAt ? formatLocaleDateTime(new Date(item.lastAttemptAt).toISOString()) : '—'} />
                     </div>
                   </div>
                 ))}
               </div>
             </>
           )}
-        </div>
+        </SectionCard>
       )}
-    </div>
-  )
-}
-
-function Info({ label, value }) {
-  return (
-    <div className="info">
-      <div className="info-label">{label}</div>
-      <div className="info-value">{value}</div>
     </div>
   )
 }
@@ -255,31 +268,4 @@ function num(n) {
 function num1(n) {
   const v = Number(n || 0)
   return v.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })
-}
-
-function rankLabel(rank) {
-  if (rank === 1) return '🥇 المركز 1'
-  if (rank === 2) return '🥈 المركز 2'
-  if (rank === 3) return '🥉 المركز 3'
-  return `المركز ${num(rank)}`
-}
-
-function modeLabel(mode) {
-  switch (mode) {
-    case 'naqza': return 'النقزة'
-    case 'juz': return 'الجزء'
-    case 'five_hizb': return 'خمسة أحزاب'
-    case 'quarter': return 'ربع القرآن'
-    case 'half': return 'نصف القرآن'
-    case 'full': return 'القرآن كامل'
-    default: return mode ? String(mode) : '—'
-  }
-}
-
-function formatThumun(id, thumuns) {
-  const numId = Number(id || 0)
-  if (!numId) return '—'
-  const t = thumuns.find(x => x.id === numId)
-  if (!t) return num(numId)
-  return `${num(t.id)} - ${t.name}`
 }

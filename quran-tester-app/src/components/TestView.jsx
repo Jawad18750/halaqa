@@ -1,7 +1,34 @@
-import { useEffect, useMemo, useState } from 'react'
-import { sessions } from '../api'
+import { useEffect, useMemo, useState, useCallback } from 'react'
+import { sessions, getApiUrl } from '../api'
+import {
+  QUARTER_LABELS,
+  HALF_LABELS,
+  formatNaqza,
+  formatJuz,
+  fiveHizbLabel,
+  filterThumuns,
+  computeScore,
+  emptyFilterHint,
+  resultLabel,
+  gradeLabel,
+} from '../lib/labels.js'
+import PageHeader from './ui/PageHeader.jsx'
+import StatTile from './ui/StatTile.jsx'
+import SectionCard from './ui/SectionCard.jsx'
+import Badge from './ui/Badge.jsx'
+import TestResultModal from './ui/TestResultModal.jsx'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
 
-export default function TestView({ student, thumuns, onDone }) {
+const MODES = [
+  { id: 'naqza', label: 'النقزة' },
+  { id: 'juz', label: 'الجزء' },
+  { id: 'five_hizb', label: '5 أحزاب' },
+  { id: 'quarter', label: 'ربع' },
+  { id: 'half', label: 'نصف' },
+  { id: 'full', label: 'كامل' },
+]
+
+export default function TestView({ student, thumuns, onGoProfile, onTestAgain, onGoList, onHistory, onBack }) {
   const [mode, setMode] = useState('naqza')
   const [juz, setJuz] = useState('')
   const [fiveHizb, setFiveHizb] = useState('')
@@ -12,151 +39,132 @@ export default function TestView({ student, thumuns, onDone }) {
   const [taradud, setTaradud] = useState(0)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [toast, setToast] = useState('')
-  function showToast(msg){ setToast(msg); setTimeout(()=>setToast(''),2000)}
-
-  const JUZ_NAMES = useMemo(() => ([
-    'الم', 'سيقول', 'تلك الرسل', 'لن تنالوا', 'والمحصنات', 'لا يحب الله', 'وإذا سمعوا', 'ولو أننا', 'قال الملأ', 'واعلموا',
-    'يعتذرون', 'وما من دابة', 'وما أبرئ نفسي', 'ربما', 'سبحان الذي', 'قال ألم', 'اقترب', 'قد أفلح', 'وقال الذين', 'أمن خلق',
-    'اتل ما أوحي', 'ومن يقنت', 'وما لي', 'فمن أظلم', 'إليه يرد', 'حم السجدة', 'قال فما خطبكم', 'قد سمع الله', 'تبارك الذي', 'عم'
-  ]), [])
-
-  function formatNaqza(n){
-    const num = Number(n)
-    if (!num || !thumuns?.length) return String(n ?? '')
-    const first = thumuns.filter(t => t.naqza === num).sort((a,b)=>a.id-b.id)[0]
-    const name = first?.name || `النقزة ${num}`
-    return `${num} - ${name}`
-  }
-
-  function formatJuz(n){
-    const num = Number(n)
-    if (!num) return String(n ?? '')
-    const name = JUZ_NAMES[num-1] || `الجزء ${num}`
-    return `${num} - ${name}`
-  }
-
-  function getFiveHizbGroup(h){
-    const num = Number(h)
-    if (!num) return null
-    return Math.floor((num - 1) / 5) + 1 // 1..12
-  }
-
-  function fiveHizbLabel(k){
-    const n = Number(k)
-    if (!n) return ''
-    const start = (n - 1) * 5 + 1
-    const end = n * 5
-    return `الأحزاب ${start}–${end}`
-  }
-
-  const QUARTER_LABELS = ['الربع الأول','الربع الثاني','الربع الثالث','الربع الرابع']
-  const HALF_LABELS = ['النصف الأول','النصف الثاني']
+  const [resultModal, setResultModal] = useState(null)
 
   const filtered = useMemo(() => {
-    if (!thumuns?.length) return []
-    if (mode === 'juz' && juz) return thumuns.filter(t => t.juz === Number(juz))
-    if (mode === 'five_hizb' && fiveHizb) return thumuns.filter(t => getFiveHizbGroup(t.hizb) === Number(fiveHizb))
-    if (mode === 'quarter' && quranQuarter) return thumuns.filter(t => Math.floor((Number(t.id) - 1) / 120) + 1 === Number(quranQuarter))
-    if (mode === 'half' && quranHalf) return thumuns.filter(t => Math.floor((Number(t.id) - 1) / 240) + 1 === Number(quranHalf))
-    if (mode === 'full') return thumuns
-    return thumuns.filter(t => t.naqza === Number(student.current_naqza))
-  }, [thumuns, mode, juz, fiveHizb, quranQuarter, quranHalf, student])
+    if (mode === 'naqza') return filterThumuns(thumuns, { mode, naqza: student.current_naqza })
+    return filterThumuns(thumuns, { mode, juz, fiveHizb, quarter: quranQuarter, half: quranHalf })
+  }, [thumuns, mode, juz, fiveHizb, quranQuarter, quranHalf, student.current_naqza])
+
+  const preview = useMemo(() => computeScore(fatha, taradud), [fatha, taradud])
+
+  const filterHint = useMemo(() => {
+    if (filtered.length) return null
+    return emptyFilterHint(mode, { juz, fiveHizb, quarter: quranQuarter, half: quranHalf })
+  }, [filtered.length, mode, juz, fiveHizb, quranQuarter, quranHalf])
+
+  const apiBase = getApiUrl()
+  const photoSrc = (() => {
+    if (!student?.photo_url) return '/profile-placeholder.svg'
+    let url = student.photo_url
+    if (!url.includes('?')) url = `${url}?v=${Date.now()}`
+    return url.startsWith('http') ? url : `${apiBase}${url}`
+  })()
 
   function pickRandom() {
     if (!filtered.length) return
-    const base = current ? filtered.filter(t => t.id !== current.id) : filtered
-    const pool = base.length ? base : filtered
-    const idx = Math.floor(Math.random() * pool.length)
-    setCurrent(pool[idx])
+    const pool = current ? filtered.filter(t => t.id !== current.id) : filtered
+    const base = pool.length ? pool : filtered
+    setCurrent(base[Math.floor(Math.random() * base.length)])
   }
 
   useEffect(() => { setCurrent(null) }, [mode, juz, fiveHizb, quranQuarter, quranHalf, student.current_naqza])
 
-  async function finalize(passed) {
-    if (!current) {
-      setError('يرجى اختيار ثُمُن أولاً')
-      console.warn('Finalize blocked: no current thumun selected')
-      return
-    }
-    console.log('Finalize clicked', { passed, thumunId: current?.id, fatha, taradud })
-    // Pass strictly depends on Fatha < 4
-    const effectivePassed = fatha < 4
-    // Client mirror of server scoring guarantees
-    const fathaPenaltyTier = fatha >= 3 ? 30 : fatha === 2 ? 20 : fatha === 1 ? 10 : 0
-    const hesitationPenalty = Math.min(10, Math.max(0, taradud - 3) * 1)
-    let score
-    if (effectivePassed) {
-      score = Math.max(60, Math.min(100, 100 - (fathaPenaltyTier + hesitationPenalty)))
-    } else {
-      score = Math.max(0, Math.min(59, 59 - ((Math.max(0, fatha - 4)) * 5) - Math.min(20, taradud)))
-    }
-    const payload = {
-      studentId: student.id,
-      mode,
-      selectedNaqza: mode === 'naqza' ? student.current_naqza : null,
-      selectedJuz: mode === 'juz' ? Number(juz) : null,
-      selectedFiveHizb: mode === 'five_hizb' ? Number(fiveHizb) || null : null,
-      selectedQuranQuarter: mode === 'quarter' ? Number(quranQuarter) || null : null,
-      selectedQuranHalf: mode === 'half' ? Number(quranHalf) || null : null,
-      thumunId: current.id,
-      fathaPrompts: fatha,
-      taradudCount: taradud,
-      passed: effectivePassed,
-      score
-    }
+  const resetCounters = useCallback(() => {
+    setFatha(0)
+    setTaradud(0)
+    setCurrent(null)
+  }, [])
+
+  async function finalize() {
+    if (!current) { setError('يرجى اختيار ثُمُن أولاً'); return }
+    const { passed, score } = preview
     setSaving(true)
     setError('')
     try {
-      console.log('POST /sessions payload', payload)
-      const res = await sessions.create(payload)
-      showToast('تم تسجيل المحاولة')
-      onDone?.(res)
+      await sessions.create({
+        studentId: student.id,
+        mode,
+        selectedNaqza: mode === 'naqza' ? student.current_naqza : null,
+        selectedJuz: mode === 'juz' ? Number(juz) : null,
+        selectedFiveHizb: mode === 'five_hizb' ? Number(fiveHizb) || null : null,
+        selectedQuranQuarter: mode === 'quarter' ? Number(quranQuarter) || null : null,
+        selectedQuranHalf: mode === 'half' ? Number(quranHalf) || null : null,
+        thumunId: current.id,
+        fathaPrompts: fatha,
+        taradudCount: taradud,
+        passed,
+        score,
+      })
+      setResultModal({ score, passed })
+      resetCounters()
     } catch (e) {
-      const msg = e?.message ? String(e.message) : 'تعذر حفظ المحاولة'
-      setError(msg)
-      console.error('Finalize session failed', e)
+      setError(e?.message || 'تعذر حفظ المحاولة')
     } finally {
       setSaving(false)
     }
   }
 
+  async function handleResult() {
+    const msg = `تسجيل نتيجة ${student.name}:\n${resultLabel(preview.passed)} — ${preview.score} (${gradeLabel(preview.score)})`
+    const ok = await confirmDialog('تأكيد النتيجة', msg)
+    if (!ok) return
+    await finalize()
+  }
+
   return (
-    <div className="test-container" style={{ padding:16, display:'grid', gap:16, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
-      <div className="card appear" style={{ display:'grid', gap:8, width:'100%', maxWidth:720, marginLeft:'auto', marginRight:'auto' }}>
-        <div className="info-grid info-grid--fit">
-          <Info label="الطالب" value={`${student.name}`} />
-          <Info label="رقم الطالب" value={`${student.number}`} />
-          <Info label="النقزة الحالية" value={formatNaqza(student.current_naqza)} />
+    <div className="test-view stack--test-page">
+      <PageHeader
+        title="اختبار"
+        onBack={onBack}
+        actions={onHistory && (
+          <button type="button" className="btn btn--ghost btn--sm" onClick={onHistory} aria-label="السجل">
+            <i className="fa-solid fa-clock-rotate-left" />
+          </button>
+        )}
+      />
+
+      <div className="test-student-bar">
+        <img className="test-student-bar__avatar" src={photoSrc} alt="" width={48} height={48} onError={(e) => { e.currentTarget.src = '/profile-placeholder.svg' }} />
+        <div className="test-student-bar__body">
+          <p className="test-student-bar__name">{student.name}</p>
+          <p className="test-student-bar__meta">#{student.number} • {formatNaqza(student.current_naqza, thumuns)}</p>
         </div>
-        <div style={{ display:'flex', gap:8, alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
-          <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
-            <span>الوضع:</span>
-            <select className="input select-center" value={mode} onChange={e => setMode(e.target.value)} style={{ width:160 }}>
-              <option value="naqza">حسب النقزة</option>
-              <option value="juz">حسب الجزء</option>
-              <option value="five_hizb">خمسة أحزاب</option>
-              <option value="quarter">ربع القرآن</option>
-              <option value="half">نصف القرآن</option>
-              <option value="full">القرآن كامل</option>
-            </select>
-          </label>
+      </div>
+
+      <SectionCard title="1. اختيار الوضع">
+        <div className="mode-chips" role="tablist" aria-label="وضع الاختبار">
+          {MODES.map(m => (
+            <button
+              key={m.id}
+              type="button"
+              role="tab"
+              aria-selected={mode === m.id}
+              className={`mode-chip ${mode === m.id ? 'mode-chip--active' : ''}`}
+              onClick={() => setMode(m.id)}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="test-setup__filters">
           {mode === 'juz' && (
-            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
-              <span>الجزء:</span>
-              <select className="input select-center" value={juz} onChange={e => setJuz(e.target.value)} style={{ width:120 }}>
-                <option value="">—</option>
+            <label className="field">
+              <span className="field__label">الجزء</span>
+              <select className="input" value={juz} onChange={e => setJuz(e.target.value)}>
+                <option value="">اختر الجزء</option>
                 {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{n}</option>
+                  <option key={n} value={n}>{formatJuz(n)}</option>
                 ))}
               </select>
             </label>
           )}
           {mode === 'five_hizb' && (
-            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
-              <span>المجموعة:</span>
-              <select className="input select-center" value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} style={{ width:140 }}>
-                <option value="">—</option>
+            <label className="field">
+              <span className="field__label">المجموعة</span>
+              <select className="input" value={fiveHizb} onChange={e => setFiveHizb(e.target.value)}>
+                <option value="">اختر المجموعة</option>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>{fiveHizbLabel(n)}</option>
                 ))}
@@ -164,86 +172,102 @@ export default function TestView({ student, thumuns, onDone }) {
             </label>
           )}
           {mode === 'quarter' && (
-            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
-              <span>الربع:</span>
-              <select className="input select-center" value={quranQuarter} onChange={e => setQuranQuarter(e.target.value)} style={{ width:140 }}>
-                <option value="">—</option>
-                {QUARTER_LABELS.map((lbl, idx) => (
-                  <option key={idx+1} value={idx+1}>{lbl}</option>
-                ))}
+            <label className="field">
+              <span className="field__label">الربع</span>
+              <select className="input" value={quranQuarter} onChange={e => setQuranQuarter(e.target.value)}>
+                <option value="">اختر الربع</option>
+                {QUARTER_LABELS.map((lbl, idx) => <option key={idx + 1} value={idx + 1}>{lbl}</option>)}
               </select>
             </label>
           )}
           {mode === 'half' && (
-            <label className="info-label label-stack-center" style={{ display:'grid', justifyItems:'center', textAlign:'center', gap:6 }}>
-              <span>النصف:</span>
-              <select className="input select-center" value={quranHalf} onChange={e => setQuranHalf(e.target.value)} style={{ width:140 }}>
-                <option value="">—</option>
-                {HALF_LABELS.map((lbl, idx) => (
-                  <option key={idx+1} value={idx+1}>{lbl}</option>
-                ))}
+            <label className="field">
+              <span className="field__label">النصف</span>
+              <select className="input" value={quranHalf} onChange={e => setQuranHalf(e.target.value)}>
+                <option value="">اختر النصف</option>
+                {HALF_LABELS.map((lbl, idx) => <option key={idx + 1} value={idx + 1}>{lbl}</option>)}
               </select>
             </label>
           )}
         </div>
-        <div style={{ textAlign:'center' }}>
-          <button className="btn btn--primary" onClick={pickRandom} disabled={!filtered.length}>اختر ثُمُناً عشوائياً</button>
-          <div className="meta" style={{ marginTop:6 }}>عدد الأثمان المتاحة: {filtered.length}</div>
-        </div>
-      </div>
+
+        <button type="button" className="btn btn--primary test-pick-btn" onClick={pickRandom} disabled={!filtered.length}>
+          <i className="fa-solid fa-shuffle" /> اختر ثُمُناً ({filtered.length})
+        </button>
+
+        {filterHint && <p className="alert alert--error" style={{ marginTop: 8, textAlign: 'center' }}>{filterHint}</p>}
+      </SectionCard>
 
       {current && (
-        <div className="card appear" style={{ display:'grid', gap:10, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
-          <div className="phrase" style={{ marginBottom:0 }}>الثُمُن رقم {current.id}</div>
-          <div className="phrase">{current.name}</div>
-          <div className="info-grid">
-            <Info label="السورة" value={current.surah} />
-            <Info label="رقم السورة" value={current.surahNumber} />
-            <Info label="الحزب" value={current.hizb} />
-            <Info label="الربع" value={current.quarter} />
-            <Info label="الجزء" value={formatJuz(current.juz)} />
-            <Info label="النقزة" value={formatNaqza(current.naqza)} />
+        <SectionCard title="2. الثُمُن المختار">
+          <div className="thumun-hero thumun-hero--test">
+            <div className="thumun-hero__id">#{current.id}</div>
+            <div className="thumun-hero__phrase">{current.name}</div>
           </div>
-        </div>
+          <div className="info-grid info-grid--fit">
+            <StatTile label="السورة" value={current.surah || '—'} />
+            <StatTile label="الحزب" value={current.hizb ?? '—'} />
+            <StatTile label="الجزء" value={formatJuz(current.juz)} />
+            <StatTile label="النقزة" value={formatNaqza(current.naqza, thumuns)} />
+          </div>
+          <button type="button" className="btn btn--ghost" style={{ width: '100%', marginTop: 12 }} onClick={pickRandom}>
+            <i className="fa-solid fa-shuffle" /> ثُمُن آخر
+          </button>
+        </SectionCard>
       )}
 
-      <div className="card appear" style={{ display:'grid', gap:12, width:'100%', marginLeft:'auto', marginRight:'auto' }}>
-        <div className="info-grid" style={{ gridTemplateColumns:'repeat(2, minmax(0,1fr))', alignItems:'stretch' }}>
-          <div className="info">
+      <SectionCard title="3. تسجيل الأداء">
+        <div className="counter-row">
+          <div className="counter-block counter-block--touch">
             <div className="info-label">الفتحة</div>
-            <div className="info-value">{fatha} / 3</div>
-            <div style={{ display:'flex', gap:6, justifyContent:'center', marginTop:6 }}>
-              <button className="btn" onClick={() => setFatha(Math.min(10, fatha + 1))}>+</button>
-              <button className="btn" onClick={() => setFatha(Math.max(0, fatha - 1))}>-</button>
+            <div className="counter-block__value">{fatha}</div>
+            <p className="hint">4+ = فشل</p>
+            <div className="counter-block__actions">
+              <button type="button" className="btn" aria-label="تقليل" onClick={() => setFatha(Math.max(0, fatha - 1))}>−</button>
+              <button type="button" className="btn" aria-label="زيادة" onClick={() => setFatha(Math.min(10, fatha + 1))}>+</button>
             </div>
           </div>
-          <div className="info">
+          <div className="counter-block counter-block--touch">
             <div className="info-label">التردد</div>
-            <div className="info-value">{taradud}</div>
-            <div style={{ display:'flex', gap:6, justifyContent:'center', marginTop:6 }}>
-              <button className="btn" onClick={() => setTaradud(taradud + 1)}>+</button>
-              <button className="btn" onClick={() => setTaradud(Math.max(0, taradud - 1))}>-</button>
+            <div className="counter-block__value">{taradud}</div>
+            <div className="counter-block__actions">
+              <button type="button" className="btn" aria-label="تقليل" onClick={() => setTaradud(Math.max(0, taradud - 1))}>−</button>
+              <button type="button" className="btn" aria-label="زيادة" onClick={() => setTaradud(taradud + 1)}>+</button>
             </div>
           </div>
         </div>
-        <div style={{ display:'flex', justifyContent:'center', gap:8 }}>
-          <button className="btn btn--primary" disabled={!current || saving || fatha >= 4} onClick={async () => { if (!confirm('تأكيد تسجيل النتيجة: نجح؟')) return; await finalize(true); showToast('تم التسجيل: نجح') }}>نجح</button>
-          <button className="btn" disabled={!current || saving} onClick={async () => { if (!confirm('تأكيد تسجيل النتيجة: فشل؟')) return; await finalize(false); showToast('تم التسجيل: فشل') }}>فشل</button>
+
+        <div className="score-preview desktop-only">
+          <div className="meta">معاينة الدرجة</div>
+          <div className="score-preview__value">{preview.score}</div>
+          <div className="cluster" style={{ justifyContent: 'center' }}>
+            <Badge variant={preview.passed ? 'pass' : 'fail'}>{resultLabel(preview.passed)}</Badge>
+            <span className="meta">{gradeLabel(preview.score)}</span>
+          </div>
         </div>
-        {error && <div style={{ color:'crimson' }}>{error}</div>}
+
+        {error && <div className="alert alert--error" style={{ marginTop: 12 }}>{error}</div>}
+      </SectionCard>
+
+      <div className="test-sticky-bar test-sticky-bar--enhanced">
+        <div className="test-sticky-bar__preview">
+          <span className="test-sticky-bar__score">{preview.score}</span>
+          <Badge variant={preview.passed ? 'pass' : 'fail'}>{resultLabel(preview.passed)}</Badge>
+        </div>
+        <button type="button" className="btn btn--primary" disabled={!current || saving} onClick={handleResult}>
+          {saving ? 'جاري الحفظ…' : 'تسجيل النتيجة'}
+        </button>
       </div>
 
-      {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
+      <TestResultModal
+        open={Boolean(resultModal)}
+        studentName={student.name}
+        score={resultModal?.score}
+        passed={resultModal?.passed}
+        onProfile={() => { setResultModal(null); onGoProfile?.() }}
+        onTestAgain={() => { setResultModal(null); onTestAgain?.() }}
+        onList={() => { setResultModal(null); onGoList?.() }}
+      />
     </div>
   )
 }
-
-function Info({ label, value }) {
-  return (
-    <div className="info" style={{ padding: 8, background: '#fafafa', borderRadius: 8, border: '1px solid #eee' }}>
-      <div className="info-label" style={{ color: '#777', fontSize: 12 }}>{label}</div>
-      <div className="info-value" style={{ fontSize: 16 }}>{value}</div>
-    </div>
-  )
-}
-

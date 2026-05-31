@@ -1,21 +1,32 @@
-import { useEffect, useState } from 'react'
-import AvatarCropper from './AvatarCropper'
-import { students, getApiUrl } from '../api'
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { students, sessions, getApiUrl } from '../api'
+import { buildNaqzaLabels } from '../lib/labels.js'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
+import EmptyState from './ui/EmptyState.jsx'
+import StudentListItem from './ui/StudentListItem.jsx'
+
+const WEEK_FILTERS = [
+  { id: 'all', label: 'الكل' },
+  { id: 'pending', label: 'لم يُختبر' },
+  { id: 'tested', label: 'مُختبر' },
+]
 
 export default function Students({ onSelect, onProfile }) {
   const [list, setList] = useState([])
+  const [testedIds, setTestedIds] = useState(new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAdd, setShowAdd] = useState(false)
   const [query, setQuery] = useState('')
+  const [weekFilter, setWeekFilter] = useState('all')
   const [editingId, setEditingId] = useState(null)
+  const [menuId, setMenuId] = useState(null)
   const [editNumber, setEditNumber] = useState(1)
   const [editName, setEditName] = useState('')
-  const [editNotes, setEditNotes] = useState('')
   const [editNaqza, setEditNaqza] = useState(20)
-  const [showCropper, setShowCropper] = useState(false)
-  const [pendingStudentId, setPendingStudentId] = useState(null)
-  const [pendingFile, setPendingFile] = useState(null)
+  const [toast, setToast] = useState('')
+  const [thumuns, setThumuns] = useState([])
+  const listRef = useRef(null)
 
   const [number, setNumber] = useState('')
   const [name, setName] = useState('')
@@ -23,13 +34,30 @@ export default function Students({ onSelect, onProfile }) {
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
   
+  const naqzaLabels = buildNaqzaLabels(thumuns)
+  const placeholder = '/profile-placeholder.svg'
+
+  function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2000) }
+
+  useEffect(() => {
+    if (menuId == null) return
+    function close(e) {
+      if (listRef.current && !listRef.current.contains(e.target)) setMenuId(null)
+    }
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
+  }, [menuId])
 
   async function load() {
     setLoading(true)
     setError('')
     try {
-      const { students: s } = await students.list()
-      setList(s)
+      const [studentsRes, weekly] = await Promise.all([
+        students.list(),
+        sessions.weekly().catch(() => ({ sessions: [] })),
+      ])
+      setList(studentsRes?.students || [])
+      setTestedIds(new Set((weekly?.sessions || []).map(s => s.student_id)))
     } catch (e) {
       setError(e.message)
     } finally {
@@ -39,7 +67,11 @@ export default function Students({ onSelect, onProfile }) {
 
   useEffect(() => { load() }, [])
 
-  function toDateOnly(v){
+  useEffect(() => {
+    fetch('/quran-thumun-data.json').then(r => r.json()).then(d => setThumuns(d.thumuns || [])).catch(() => {})
+  }, [])
+
+  function toDateOnly(v) {
     if (!v) return ''
     if (typeof v === 'string') {
       const m = v.match(/^\d{4}-\d{2}-\d{2}/)
@@ -48,12 +80,7 @@ export default function Students({ onSelect, onProfile }) {
     }
     try {
       const d = new Date(v)
-      if (!isNaN(d)) {
-        const yyyy = d.getFullYear()
-        const mm = String(d.getMonth()+1).padStart(2,'0')
-        const dd = String(d.getDate()).padStart(2,'0')
-        return `${yyyy}-${mm}-${dd}`
-      }
+      if (!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     } catch {}
     return ''
   }
@@ -67,14 +94,13 @@ export default function Students({ onSelect, onProfile }) {
         const dateOnly = toDateOnly(dobAdd)
         if (dateOnly) await students.update(created.id, { date_of_birth: dateOnly })
       }
-      if (photoFile) {
-        // basic client validation to avoid stutter
-        if (photoFile.size <= 2*1024*1024 && /^(image\/jpeg|image\/png)$/i.test(photoFile.type)) {
+      if (photoFile && photoFile.size <= 2 * 1024 * 1024 && /^(image\/jpeg|image\/png)$/i.test(photoFile.type)) {
           await students.uploadPhoto(created.id, photoFile)
-        }
       }
       if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
       setNumber(''); setName(''); setDobAdd(''); setPhotoFile(null); setPhotoPreview('')
+      setShowAdd(false)
+      showToast('تمت إضافة الطالب')
       load()
     } catch (e) {
       setError(e.message)
@@ -85,284 +111,186 @@ export default function Students({ onSelect, onProfile }) {
     setEditingId(s.id)
     setEditNumber(s.number || 1)
     setEditName(s.name || '')
-    
     setEditNaqza(s.current_naqza || 20)
-  }
-
-  function cancelEdit() {
-    setEditingId(null)
+    setMenuId(null)
   }
 
   async function saveEdit() {
     if (!editingId) return
     setError('')
     try {
-      const ok = await confirmModal('تأكيد الحفظ', 'هل تريد حفظ تعديلات الطالب؟')
+      const ok = await confirmDialog('تأكيد الحفظ', 'هل تريد حفظ تعديلات الطالب؟')
       if (!ok) return
       await students.update(editingId, { number: Number(editNumber), name: editName.trim(), current_naqza: Number(editNaqza) })
       setEditingId(null)
+      showToast('تم الحفظ')
       load()
     } catch (e) {
       setError(e.message)
     }
   }
 
-  // toast state
-  const [toast, setToast] = useState('')
-  function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2000) }
-
-  // build naqza label from thumuns list
-  const [thumuns, setThumuns] = useState([])
-  useEffect(() => {
-    fetch('/quran-thumun-data.json').then(r => r.json()).then(d => setThumuns(d.thumuns || [])).catch(() => {})
-  }, [])
-  function naqzaLabel(n) {
-    if (!n || !thumuns.length) return String(n || '')
-    const first = thumuns.filter(t => t.naqza === Number(n)).sort((a,b)=>a.id-b.id)[0]
-    return first && first.name ? `${n} - ${first.name}` : String(n)
-  }
-
-  async function onPickPhoto(s, file) {
-    if (!file) return
-    setPendingStudentId(s.id)
-    setPendingFile(file)
-    setShowCropper(true)
-  }
-
-  async function onCropped(file) {
+  async function removeStudent(s) {
     try {
-      const form = new FormData()
-      form.append('photo', file)
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/students/${pendingStudentId}/photo`, {
-        method: 'POST',
-        headers: { Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '' },
-        body: form
-      })
-      if (!res.ok) throw new Error('رفع الصورة فشل')
-      await res.json()
-      setShowCropper(false)
-      setPendingStudentId(null)
-      setPendingFile(null)
-      showToast('تم تحديث الصورة')
+      const ok = await confirmDialog('تأكيد الحذف', 'هل تريد حذف الطالب؟')
+      if (!ok) return
+      await students.remove(s.id)
+      showToast('تم الحذف')
+      load()
     } catch (e) {
       setError(String(e.message || e))
     }
   }
 
-  const filtered = list.filter(s => {
-    if (!query.trim()) return true
+  const notTestedCount = useMemo(
+    () => list.filter(s => !testedIds.has(s.id)).length,
+    [list, testedIds]
+  )
+
+  const filtered = useMemo(() => {
     const q = query.trim()
-    return String(s.number).includes(q) || (s.name || '').includes(q)
-  })
-  const apiBase = getApiUrl()
-  const placeholder = '/profile-placeholder.svg'
-  function photoSrc(s){
+    let base = q
+      ? list.filter(s => String(s.number).includes(q) || (s.name || '').includes(q))
+      : list
+    if (weekFilter === 'tested') base = base.filter(s => testedIds.has(s.id))
+    if (weekFilter === 'pending') base = base.filter(s => !testedIds.has(s.id))
+    return [...base].sort((a, b) => Number(a.number || 0) - Number(b.number || 0))
+  }, [list, query, weekFilter, testedIds])
+
+  function photoSrc(s) {
     if (!s?.photo_url) return placeholder
     let url = s.photo_url
     if (!url.includes('?')) {
       const ver = s?.updated_at ? new Date(s.updated_at).getTime() : Date.now()
       url = `${url}?v=${ver}`
     }
+    const apiBase = getApiUrl()
     return url.startsWith('http') ? url : `${apiBase}${url}`
   }
 
   return (
-    <div className="container" style={{ width: '100%', maxWidth: 900 }}>
-      <div className="card" style={{ display:'grid', gap:10 }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:8, alignItems:'center' }}>
-          <input className="input" placeholder="بحث بالاسم أو الرقم" value={query} onChange={e => setQuery(e.target.value)} />
-          <button className="btn btn--primary" onClick={() => setShowAdd(v => !v)} type="button">{showAdd ? 'إخفاء' : 'إضافة طالب'}</button>
+    <div className="students-page">
+      <div className="students-toolbar">
+        <div className="students-toolbar__row">
+          <div className="students-search">
+            <i className="fa-solid fa-magnifying-glass" aria-hidden />
+            <input
+              className="students-search__input"
+              placeholder="بحث بالاسم أو الرقم"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              aria-label="بحث"
+            />
+            {query && (
+              <button type="button" className="students-search__clear" aria-label="مسح" onClick={() => setQuery('')}>
+                <i className="fa-solid fa-xmark" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            className={`btn btn--primary students-toolbar__add ${showAdd ? 'btn--ghost' : ''}`}
+            aria-label={showAdd ? 'إغلاق' : 'إضافة طالب'}
+            onClick={() => setShowAdd(v => !v)}
+          >
+            <i className={`fa-solid ${showAdd ? 'fa-xmark' : 'fa-plus'}`} />
+          </button>
         </div>
+
+        <div className="students-filter" role="tablist" aria-label="تصفية حسب الاختبار الأسبوعي">
+          {WEEK_FILTERS.map(f => (
+            <button
+              key={f.id}
+              type="button"
+              role="tab"
+              aria-selected={weekFilter === f.id}
+              className={`students-filter__chip ${weekFilter === f.id ? 'students-filter__chip--active' : ''}`}
+              onClick={() => setWeekFilter(f.id)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <p className="students-toolbar__meta">
+          {loading
+            ? 'جاري التحميل…'
+            : `${filtered.length} طالب${weekFilter === 'all' ? ` · ${notTestedCount} لم يُختبر` : ''}`}
+        </p>
+      </div>
+
         {showAdd && (
-        <form onSubmit={addStudent} style={{ display:'grid', gridTemplateColumns:'1fr', gap:10, alignItems:'stretch', margin:'0 auto', width:'100%', maxWidth:520 }}>
-          <label style={{ display:'grid', gap:6 }}>
-            <span className="info-label">الرقم</span>
-            <input className="input" type="number" value={number} onChange={e => setNumber(e.target.value)} required />
+        <form className="add-student-sheet" onSubmit={addStudent}>
+          <h3 className="add-student-sheet__title">طالب جديد</h3>
+          <label className="field">
+            <span className="field__label">الرقم</span>
+            <input className="input" type="number" value={number} onChange={e => setNumber(e.target.value)} required autoFocus />
           </label>
-          <label style={{ display:'grid', gap:6 }}>
-            <span className="info-label">الاسم</span>
+          <label className="field">
+            <span className="field__label">الاسم</span>
             <input className="input" value={name} onChange={e => setName(e.target.value)} required />
           </label>
-          <label style={{ display:'grid', gap:6 }}>
-            <span className="info-label">تاريخ الميلاد</span>
+          <label className="field">
+            <span className="field__label">تاريخ الميلاد</span>
             <input className="input" type="date" value={dobAdd} onChange={e => setDobAdd(e.target.value)} />
           </label>
-          <div style={{ display:'grid', gap:6 }}>
-            <span className="info-label">الصورة</span>
-            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-              <img src={photoPreview || '/profile-placeholder.svg'} alt="معاينة" width={56} height={56} className="profile-photo" onError={(e)=>{ e.currentTarget.src='/profile-placeholder.svg' }} />
-              <label className="btn" style={{ padding:'6px 10px' }}>
-                اختيار صورة
-                <input type="file" accept="image/jpeg,image/png" style={{ display:'none' }} onChange={(e)=>{ const f=e.target.files?.[0]; setPhotoFile(f||null); if (photoPreview) { try{ URL.revokeObjectURL(photoPreview) }catch{} } setPhotoPreview(f ? URL.createObjectURL(f) : '') }} />
+          <div className="add-student-panel__photo">
+            <img src={photoPreview || placeholder} alt="" width={48} height={48} className="student-item__avatar" />
+            <label className="btn btn--sm btn--ghost">
+              صورة
+              <input type="file" accept="image/jpeg,image/png" hidden onChange={(e) => {
+                const f = e.target.files?.[0]
+                setPhotoFile(f || null)
+                if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
+                setPhotoPreview(f ? URL.createObjectURL(f) : '')
+              }} />
               </label>
-              <span className="meta">JPEG/PNG حتى 2MB</span>
-            </div>
           </div>
-          
-          <button type="submit" className="btn btn--primary" style={{ gridColumn:'1/-1', justifySelf:'center' }}>إضافة</button>
+          <button type="submit" className="btn btn--primary">إضافة الطالب</button>
         </form>
         )}
-      </div>
-      {error && <div style={{ color:'crimson', marginTop:8 }}>{error}</div>}
-      <div style={{ marginTop: 16 }}>
-        {loading ? 'جاري التحميل…' : (
-          <>
-          <div className="desktop-only table-wrapper">
-            <table className="responsive-table">
-              <thead>
-                <tr>
-                  <th>الصورة</th>
-                  <th>الرقم</th>
-                  <th>الاسم</th>
-                  <th>النقزة الحالية</th>
-                  <th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(s => (
-                  <tr key={s.id} className={editingId===s.id ? 'updated' : ''}>
-                    <td>
-                      <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={48} height={48} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = '/profile-placeholder.svg' } }} />
-                    </td>
-                    <td>{editingId === s.id ? (
-                      <input className="input" type="number" value={editNumber} onChange={e => setEditNumber(e.target.value)} />
-                    ) : s.number}</td>
-                    <td>{editingId === s.id ? (
-                      <input className="input" value={editName} onChange={e => setEditName(e.target.value)} />
-                    ) : (
-                      <span className="clickable" onClick={() => onProfile && onProfile(s)} title="عرض الملف">{s.name}</span>
-                    )}</td>
-                    
-                    <td>
-                      <select className="input" value={editingId === s.id ? editNaqza : s.current_naqza} onChange={e => setEditNaqza(Number(e.target.value))} disabled={editingId !== s.id} style={{ maxWidth:260 }}>
-                        {Array.from({ length: 20 }, (_, i) => 20 - i).map(n => (
-                          <option key={n} value={n}>{naqzaLabel(n)}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td style={{ whiteSpace:'nowrap' }}>
-                      {editingId === s.id ? (
-                        <>
-                          <button className="icon-btn btn--primary" onClick={async () => { await saveEdit(); showToast('تم الحفظ') }} style={{ marginInlineEnd:6 }} title="حفظ">
-                            <i className="fa-solid fa-check"></i>
-                          </button>
-                          <button className="icon-btn" onClick={cancelEdit} title="إلغاء">
-                            <i className="fa-solid fa-xmark"></i>
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button className="icon-btn" onClick={(e) => { e.stopPropagation(); onSelect(s) }} title="اختبار" style={{ marginInlineEnd:6 }}>
-                            <i className="fa-solid fa-play"></i>
-                          </button>
-                          <button className="icon-btn" onClick={() => startEdit(s)} title="تعديل" style={{ marginInlineEnd:6 }}>
-                            <i className="fa-solid fa-pen"></i>
-                          </button>
-                          <button className="icon-btn" onClick={async () => { try { const ok = await confirmModal('تأكيد الحذف','هل تريد حذف الطالب؟'); if (!ok) return; await students.remove(s.id); showToast('تم الحذف'); load() } catch(e){ setError(String(e.message||e)) } }} title="حذف">
-                            <i className="fa-solid fa-trash"></i>
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mobile-cards">
-            {filtered.map(s => (
-              <div key={s.id} className={`student-card ${editingId===s.id ? 'updated' : ''} clickable`} onClick={() => { if (!editingId) onProfile && onProfile(s) }} style={{ display:'grid', gap:10 }}>
-                <div style={{ display:'grid', gridTemplateColumns:'120px 1fr', gap:10, alignItems:'center' }}>
-                  <div className="info-label" style={{ fontSize: 14 }}>الصورة</div>
-                  <div>
-                    <img className="profile-photo" src={photoSrc(s)} alt="صورة الطالب" width={56} height={56} onError={(e)=>{ if (e.currentTarget.dataset.fallback!== '1') { e.currentTarget.dataset.fallback='1'; e.currentTarget.src = placeholder } }} />
-                  </div>
-                  <div className="info-label" style={{ fontSize: 14 }}>الرقم</div>
-                  <div>
-                    {editingId === s.id ? (
-                      <input className="input" type="number" min="1" max="30" value={editNumber} onChange={e => setEditNumber(e.target.value)} />
-                    ) : (
-                      <div className="info-value" style={{ textAlign:'start' }}>{s.number}</div>
-                    )}
-                  </div>
-                  <div className="info-label" style={{ fontSize: 14 }}>الاسم</div>
-                  <div>
-                    {editingId === s.id ? (
-                      <input className="input" value={editName} onChange={e => setEditName(e.target.value)} />
-                    ) : (
-                      <div className="info-value clickable" onClick={() => onProfile && onProfile(s)} style={{ textAlign:'start', fontSize:18, fontWeight:700 }}>{s.name}</div>
-                    )}
-                  </div>
-                  
-                  <div className="info-label" style={{ fontSize: 14 }}>النقزة الحالية</div>
-                  <div>
-                    <select className="input" value={editingId === s.id ? editNaqza : s.current_naqza} onChange={e => setEditNaqza(Number(e.target.value))} disabled={editingId !== s.id}>
-                      {Array.from({ length: 20 }, (_, i) => 20 - i).map(n => (
-                        <option key={n} value={n}>{naqzaLabel(n)}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="actions" onClick={(e)=>e.stopPropagation()} style={{ display:'flex', gap:8, alignItems:'center' }}>
-                  {editingId === s.id ? (
-                    <>
-                      <button className="icon-btn btn--primary" onClick={async () => { await saveEdit(); showToast('تم الحفظ') }} title="حفظ"><i className="fa-solid fa-check"></i></button>
-                      <button className="icon-btn" onClick={cancelEdit} title="إلغاء"><i className="fa-solid fa-xmark"></i></button>
-                    </>
-                  ) : (
-                    <>
-                      {/* removed per request: photo upload/crop happens in profile page only */}
-                      <button className="icon-btn" onClick={() => onSelect(s)} title="اختبار" style={{ marginInlineEnd:6 }}>
-                        <i className="fa-solid fa-play"></i>
-                      </button>
-                      <button className="icon-btn" onClick={() => startEdit(s)} title="تعديل" style={{ marginInlineEnd:6 }}>
-                        <i className="fa-solid fa-pen"></i>
-                      </button>
-                      <button className="icon-btn" onClick={async () => { try { const ok = await confirmModal('تأكيد الحذف','هل تريد حذف الطالب؟'); if (!ok) return; await students.remove(s.id); showToast('تم الحذف'); load() } catch(e){ setError(String(e.message||e)) } }} title="حذف">
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          </>
-        )}
-      </div>
+
+      {error && <div className="alert alert--error">{error}</div>}
+
+      {loading ? (
+        <div className="loading">جاري التحميل…</div>
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title={query.trim() || weekFilter !== 'all' ? 'لا نتائج' : 'لا يوجد طلاب'}
+          subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : weekFilter === 'pending' ? 'جميع الطلاب اُختبروا هذا الأسبوع' : undefined}
+        />
+      ) : (
+        <ul className="student-list-panel" ref={listRef}>
+          {filtered.map(s => (
+            <StudentListItem
+              key={s.id}
+              student={s}
+              photoSrc={photoSrc}
+              placeholder={placeholder}
+              naqzaLabels={naqzaLabels}
+              testedThisWeek={testedIds.has(s.id)}
+              editing={editingId === s.id}
+              editNumber={editNumber}
+              editName={editName}
+              editNaqza={editNaqza}
+              onEditNumber={setEditNumber}
+              onEditName={setEditName}
+              onEditNaqza={setEditNaqza}
+              onSave={saveEdit}
+              onCancelEdit={() => setEditingId(null)}
+              onProfile={onProfile}
+              onTest={onSelect}
+              onStartEdit={startEdit}
+              onDelete={removeStudent}
+              menuOpen={menuId === s.id}
+              onMenuToggle={() => setMenuId(id => id === s.id ? null : s.id)}
+              onMenuClose={() => setMenuId(null)}
+            />
+          ))}
+        </ul>
+      )}
+
       {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
-      {showCropper && pendingFile && <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null); setPendingStudentId(null) }} onCropped={onCropped} />}
-      <ConfirmModal />
     </div>
   )
 }
-
-// Simple confirm modal using local state in module scope
-let confirmState = { open: false, title: '', message: '', resolve: (v) => {} }
-function confirmModal(title, message) {
-  confirmState.open = true; confirmState.title = title; confirmState.message = message
-  return new Promise((resolve) => { confirmState.resolve = resolve; window.dispatchEvent(new Event('confirm-modal-change')) })
-}
-function ConfirmModal() {
-  const [, setTick] = useState(0)
-  useEffect(() => {
-    const h = () => setTick(t => t + 1)
-    window.addEventListener('confirm-modal-change', h)
-    return () => window.removeEventListener('confirm-modal-change', h)
-  }, [])
-  if (!confirmState.open) return null
-  return (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
-      <div className="modal">
-        <h3 style={{ marginTop:0 }}>{confirmState.title}</h3>
-        <div style={{ color:'var(--muted)' }}>{confirmState.message}</div>
-        <div className="actions">
-          <button className="btn" onClick={() => { confirmState.open = false; confirmState.resolve(false); window.dispatchEvent(new Event('confirm-modal-change')) }}>إلغاء</button>
-          <button className="btn btn--primary" onClick={() => { confirmState.open = false; confirmState.resolve(true); window.dispatchEvent(new Event('confirm-modal-change')) }}>تأكيد</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-

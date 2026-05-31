@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { auth } from '../api'
+import SectionCard from './ui/SectionCard.jsx'
 
 export default function ResetPassword() {
   const [token, setToken] = useState('')
@@ -9,12 +10,10 @@ export default function ResetPassword() {
   const [err, setErr] = useState('')
 
   useEffect(() => {
-    const p = new URLSearchParams(window.location.search)
-    const t = p.get('token') || ''
-    setToken(t)
+    setToken(new URLSearchParams(window.location.search).get('token') || '')
   }, [])
 
-  async function submit(e){
+  async function submit(e) {
     e.preventDefault()
     setErr(''); setMsg('')
     if (!token) return setErr('الرابط غير صالح')
@@ -30,39 +29,22 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 420 }}>
-      <div className="card appear" style={{ display:'grid', gap:10 }}>
-        <h2 style={{ textAlign:'center', margin: 0 }}>إعادة تعيين كلمة المرور</h2>
-        <form onSubmit={submit} style={{ display:'grid', gap:10 }}>
-          <label style={{ display:'grid', gap:6 }}>
-            <span style={{ fontSize:13, color:'var(--muted)' }}>كلمة المرور الجديدة</span>
-            <input
-              className="input"
-              type="password"
-              value={password}
-              onChange={e=>setPassword(e.target.value)}
-              autoComplete="new-password"
-              required
-            />
+    <div className="auth-card">
+      <SectionCard title="إعادة تعيين كلمة المرور">
+        <form onSubmit={submit} className="stack">
+          <label className="field">
+            <span className="field__label">كلمة المرور الجديدة</span>
+            <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete="new-password" required />
           </label>
-          <label style={{ display:'grid', gap:6 }}>
-            <span style={{ fontSize:13, color:'var(--muted)' }}>تأكيد كلمة المرور</span>
-            <input
-              className="input"
-              type="password"
-              value={confirm}
-              onChange={e=>setConfirm(e.target.value)}
-              autoComplete="new-password"
-              required
-            />
+          <label className="field">
+            <span className="field__label">تأكيد كلمة المرور</span>
+            <input className="input" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} autoComplete="new-password" required />
           </label>
-          {err && <div style={{ color:'crimson' }}>{err}</div>}
-          {msg && <div style={{ color:'seagreen' }}>{msg}</div>}
-          <button className="btn btn--primary" type="submit">حفظ</button>
+          {err && <div className="alert alert--error">{err}</div>}
+          {msg && <div className="alert alert--success">{msg}</div>}
+          <button type="submit" className="btn btn--primary">حفظ</button>
         </form>
-      </div>
+      </SectionCard>
     </div>
   )
 }
-
-

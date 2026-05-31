@@ -8,7 +8,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "migrate": "node src/db/migrate.js",
-    "seed": "node src/db/seed.js"
+    "seed": "SEED_DEMO=1 SEED_DEMO_PHOTOS=1 node src/db/seed.js",
+    "seed:no-photos": "SEED_DEMO=1 node src/db/seed.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

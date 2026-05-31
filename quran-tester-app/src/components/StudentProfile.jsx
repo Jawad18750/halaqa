@@ -1,36 +1,47 @@
 import { useEffect, useMemo, useState } from 'react'
 import { sessions, students, getApiUrl } from '../api'
 import AvatarCropper from './AvatarCropper'
+import {
+  modeLabel,
+  resultLabel,
+  formatNaqza,
+  formatThumunId,
+  formatLocaleDateTime,
+  formatAttemptDate,
+  buildNaqzaLabels,
+} from '../lib/labels.js'
+import PageHeader from './ui/PageHeader.jsx'
+import SectionCard from './ui/SectionCard.jsx'
+import EmptyState from './ui/EmptyState.jsx'
+import SessionCard from './ui/SessionCard.jsx'
+import StudentHubHeader, { computeStudentStats } from './ui/StudentHubHeader.jsx'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
 
-export default function StudentProfile({ student, onBack }) {
+export default function StudentProfile({ student, thumuns = [], onBack, onTest, onHistory, onStudentUpdated }) {
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
+
+  function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2000) }
 
   function toDateOnly(v) {
     if (!v) return ''
     if (typeof v === 'string') {
       const m = v.match(/^\d{4}-\d{2}-\d{2}/)
       if (m) return m[0]
-      // e.g., 2013-12-26T22:00:00.000Z → 2013-12-26
       if (v.includes('T')) return v.split('T')[0]
     }
     try {
       const d = new Date(v)
-      if (!isNaN(d)) {
-        const yyyy = d.getFullYear()
-        const mm = String(d.getMonth() + 1).padStart(2, '0')
-        const dd = String(d.getDate()).padStart(2, '0')
-        return `${yyyy}-${mm}-${dd}`
-      }
+      if (!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     } catch {}
     return ''
   }
 
   const [dob, setDob] = useState(toDateOnly(student?.date_of_birth))
-  useEffect(() => {
-    setDob(toDateOnly(student?.date_of_birth))
-  }, [student?.date_of_birth])
+  useEffect(() => { setDob(toDateOnly(student?.date_of_birth)) }, [student?.date_of_birth])
+
   const [photoUrl, setPhotoUrl] = useState(student?.photo_url || '')
   useEffect(() => {
     try {
@@ -40,25 +51,9 @@ export default function StudentProfile({ student, onBack }) {
     } catch {}
   }, [student?.photo_url, student?.updated_at])
 
-  // Thumun dataset for labeling
-  const [thumuns, setThumuns] = useState([])
-  useEffect(() => {
-    fetch('/quran-thumun-data.json').then(r=>r.json()).then(d=>setThumuns(d.thumuns||[])).catch(()=>{})
-  }, [])
-
-  function formatThumunCell(id){
-    const t = thumuns.find(x => x.id === Number(id))
-    if (!t) return String(id ?? '')
-    try { return `${Number(t.id).toLocaleString('ar-EG-u-nu-latn')} - ${t.name}` } catch { return `${t.id} - ${t.name}` }
-  }
-  function formatNaqzaCell(id){
-    const t = thumuns.find(x => x.id === Number(id))
-    const n = t?.naqza
-    if (!n) return ''
-    const first = thumuns.find(x => x.naqza === Number(n))
-    const nm = first?.name || ''
-    try { return nm ? `${Number(n).toLocaleString('ar-EG-u-nu-latn')} - ${nm}` : String(n) } catch { return nm ? `${n} - ${nm}` : String(n) }
-  }
+  const naqzaLabels = buildNaqzaLabels(thumuns)
+  const currentNaqzaLabel = formatNaqza(student?.current_naqza, thumuns, naqzaLabels)
+  const stats = useMemo(() => computeStudentStats(list), [list])
 
   async function load() {
     setLoading(true); setError('')
@@ -72,33 +67,31 @@ export default function StudentProfile({ student, onBack }) {
   async function saveDob() {
     try {
       let payloadDob = dob || null
-      if (payloadDob && payloadDob.includes('/')) {
-        // Convert dd/mm/yyyy → yyyy-mm-dd
-        const [d, m, y] = payloadDob.split(/[\/.\-]/)
-        if (d && m && y) payloadDob = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-      } else if (payloadDob && payloadDob.includes('T')) {
-        // Strip time if an ISO string slipped in
-        payloadDob = payloadDob.split('T')[0]
-      }
+      if (payloadDob?.includes('T')) payloadDob = payloadDob.split('T')[0]
       await students.update(student.id, { date_of_birth: payloadDob })
+      showToast('تم حفظ تاريخ الميلاد')
     } catch (e) { setError(e.message) }
   }
 
   const [showCropper, setShowCropper] = useState(false)
   const [pendingFile, setPendingFile] = useState(null)
-  function onPick(e){
+
+  function onPick(e) {
     const f = e.target.files?.[0]
     if (!f) return
     setPendingFile(f)
     setShowCropper(true)
   }
-  async function onCropped(file){
+
+  async function onCropped(file) {
     try {
       const { student: s } = await students.uploadPhoto(student.id, file)
       const ver = Date.now()
       setPhotoUrl(s.photo_url ? `${s.photo_url}?v=${ver}` : '')
       setShowCropper(false)
       setPendingFile(null)
+      onStudentUpdated?.({ ...student, ...s })
+      showToast('تم تحديث الصورة')
     } catch (e) { setError(e.message) }
   }
 
@@ -108,236 +101,167 @@ export default function StudentProfile({ student, onBack }) {
     ? (photoUrl.startsWith('http') ? photoUrl : `${apiBase}${photoUrl}`)
     : placeholder
 
-  function modeLabel(mode) {
-    switch (mode) {
-      case 'naqza': return 'النقزة'
-      case 'juz': return 'الجزء'
-      case 'five_hizb': return 'خمسة أحزاب'
-      case 'quarter': return 'ربع القرآن'
-      case 'half': return 'نصف القرآن'
-      case 'full': return 'القرآن كامل'
-      default: return mode || '—'
-    }
-  }
-
   function buildRows() {
-    return list.map(r => {
-      const t = thumuns.find(x => x.id === Number(r.thumun_id))
-      const thumunLabel = t ? `${Number(t.id).toLocaleString('ar-EG-u-nu-latn')} - ${t.name}` : String(r.thumun_id ?? '')
-      const naqzaVal = t?.naqza
-      const naqzaLabel = (() => {
-        if (!naqzaVal) return ''
-        const first = thumuns.find(x => x.naqza === Number(naqzaVal))
-        const nm = first?.name || ''
-        return nm ? `${Number(naqzaVal).toLocaleString('ar-EG-u-nu-latn')} - ${nm}` : String(naqzaVal)
-      })()
-      return {
-      date: new Date(r.attempt_at || r.created_at).toLocaleString('ar-EG-u-nu-latn'),
-        thumunLabel,
-        naqza: naqzaLabel,
+    return list.map(r => ({
+      date: formatLocaleDateTime(formatAttemptDate(r)),
+      thumunLabel: formatThumunId(r.thumun_id, thumuns),
+      naqza: (() => {
+        const t = thumuns.find(x => x.id === Number(r.thumun_id))
+        return t?.naqza ? formatNaqza(t.naqza, thumuns, naqzaLabels) : ''
+      })(),
       mode: modeLabel(r.mode),
       fatha: String(r.fatha_prompts ?? ''),
       taradud: String(r.taradud_count ?? ''),
-      result: r.passed ? 'نجح' : 'فشل',
-      score: String(r.score ?? '')
-      }
-    })
+      result: resultLabel(r.passed),
+      score: String(r.score ?? ''),
+    }))
   }
 
   function exportExcel() {
     try {
       const rows = buildRows()
       const title = `سجل الطالب — ${student.name}`
-      const styles = `
-        table{border-collapse:collapse;width:100%;direction:rtl;font-family:'IBM Plex Sans Arabic',Arial}
-        th,td{border:1px solid #ccd3db;padding:8px;text-align:center}
-        thead th{background:#f3f6fa;font-weight:700}
-        h1{font-size:18px;margin:0 0 10px}
-      `
+      const styles = `table{border-collapse:collapse;width:100%;direction:rtl;font-family:'IBM Plex Sans Arabic',Arial}th,td{border:1px solid #ccd3db;padding:8px;text-align:center}thead th{background:#f3f6fa;font-weight:700}h1{font-size:18px;margin:0 0 10px}`
       let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
-      html += `<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px"><img src="/quran.png" width="24" height="24" style="display:inline-block;border-radius:6px"/><h1 style="margin:0">${title}</h1></div>`
-      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;justify-items:center;text-align:center">
-        <div style="display:flex;align-items:center;gap:10px"><img src="${photoSrc}" width="56" height="56" style="border-radius:10px;border:1px solid #ccd3db;object-fit:cover"/></div>
-        <div style="display:grid;gap:4px;justify-items:center">
-          <div><strong>الاسم:</strong> ${student.name}</div>
-          <div><strong>الرقم:</strong> ${student.number}</div>
-          <div><strong>تاريخ الميلاد:</strong> ${dob || '—'}</div>
-        </div>
-      </div>`
-      html += '<table><thead><tr>'+
-        '<th>التاريخ</th><th>الثمن</th><th>النقزة</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
-        '</tr></thead><tbody>'
+      html += `<h1>${title}</h1><p>النقزة: ${currentNaqzaLabel}</p><table><thead><tr><th>التاريخ</th><th>الثمن</th><th>النقزة</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th></tr></thead><tbody>`
       for (const r of rows) {
         html += `<tr><td>${r.date}</td><td>${r.thumunLabel}</td><td>${r.naqza}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
       }
       html += '</tbody></table></body></html>'
-      const blob = new Blob(["\ufeff" + html], { type: 'application/vnd.ms-excel;charset=utf-8' })
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
-      const ts = new Date().toISOString().replace(/[-:T]/g,'').slice(0,14)
       a.href = url
-      a.download = `student_${student.number}_attempts_${ts}.xls`
+      a.download = `student_${student.number}_attempts.xls`
       document.body.appendChild(a)
       a.click()
       setTimeout(() => { URL.revokeObjectURL(url); a.remove() }, 0)
-    } catch (e) {
-      setError(String(e?.message || e))
-    }
+    } catch (e) { setError(String(e?.message || e)) }
   }
 
   function exportPDF() {
     try {
       const rows = buildRows()
-      const title = `سجل الطالب — ${student.name} (رقم ${student.number})`
-      const styles = `
-        @page { size: A4; margin: 16mm }
-        body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial;color:#111}
-        h1{font-size:20px;margin:0;text-align:center}
-        table{border-collapse:collapse;width:100%}
-        th,td{border:1px solid #ccd3db;padding:6px 8px;text-align:center}
-        thead th{background:#f3f6fa}
-      `
-      let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title><style>${styles}</style></head><body>`
-      html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px"><img src="/quran.png" width="26" height="26" style="display:inline-block;border-radius:6px"/><h1>${title}</h1></div>`
-      html += `<div style="margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center">
-        <div><img src="${photoSrc}" width="72" height="72" style="border-radius:12px;border:1px solid #ccd3db;object-fit:cover"/></div>
-        <div style="display:grid;gap:6px">
-          <div><strong>الاسم:</strong> ${student.name}</div>
-          <div><strong>الرقم:</strong> ${student.number}</div>
-          <div><strong>تاريخ الميلاد:</strong> ${dob || '—'}</div>
-        </div>
-      </div>`
-      html += '<table><thead><tr>'+
-        '<th>التاريخ</th><th>الثمن</th><th>النقزة</th><th>الوضع</th><th>الفتحة</th><th>التردد</th><th>النتيجة</th><th>الدرجة</th>'+
-        '</tr></thead><tbody>'
+      const title = `سجل الطالب — ${student.name}`
+      const styles = `@page{size:A4;margin:16mm}body{direction:rtl;font-family:'IBM Plex Sans Arabic',Arial}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd3db;padding:6px;text-align:center}thead th{background:#f3f6fa}`
+      let html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>${styles}</style></head><body>`
+      html += `<h1>${title}</h1><table><thead><tr><th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>النتيجة</th><th>الدرجة</th></tr></thead><tbody>`
       for (const r of rows) {
-        html += `<tr><td>${r.date}</td><td>${r.thumunLabel}</td><td>${r.naqza}</td><td>${r.mode}</td><td>${r.fatha}</td><td>${r.taradud}</td><td>${r.result}</td><td>${r.score}</td></tr>`
+        html += `<tr><td>${r.date}</td><td>${r.thumunLabel}</td><td>${r.mode}</td><td>${r.result}</td><td>${r.score}</td></tr>`
       }
       html += '</tbody></table></body></html>'
       const win = window.open('', '_blank')
-      if (!win) return setError('تعذر فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة.')
-      win.document.open()
+      if (!win) return setError('تعذر فتح نافذة الطباعة')
       win.document.write(html)
       win.document.close()
-      // Small delay to ensure styles apply
-      setTimeout(() => { win.focus(); win.print(); }, 250)
-    } catch (e) {
-      setError(String(e?.message || e))
-    }
+      setTimeout(() => { win.focus(); win.print() }, 250)
+    } catch (e) { setError(String(e?.message || e)) }
+  }
+
+  async function deleteSession(id) {
+    if (!await confirmDialog('حذف المحاولة', 'هل تريد حذف هذه المحاولة؟')) return
+    try {
+      await sessions.remove(id)
+      load()
+    } catch (e) { setError(String(e.message || e)) }
   }
 
   return (
-    <div className="container" style={{ width:'100%', maxWidth: 900 }}>
-      <button className="btn" onClick={onBack} style={{ marginBottom: 10 }}>← الرجوع</button>
-      <div className="card profile-header" style={{ display:'grid', gridTemplateColumns:'100px 1fr', gap:12, alignItems:'center' }}>
-        <div>
-          <img className="profile-photo" src={photoSrc} alt="صورة الطالب" width={90} height={90}
-               onError={() => setPhotoUrl('')}
-          />
-          <div style={{ marginTop:6 }}>
-            <label className="btn" style={{ padding:'6px 10px', fontSize:12 }}>
-              تحميل صورة
-              <input type="file" accept="image/*" onChange={onPick} style={{ display:'none' }} />
-            </label>
-          </div>
-        </div>
-        <div style={{ display:'grid', gap:6, minWidth: 0 }}>
-          <div style={{ fontSize:18, fontWeight:700 }}>{student.name}</div>
-          <div className="tag">رقم الطالب: {student.number}</div>
-          <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', gap:8, alignItems:'center', minWidth: 0, paddingInline: 10 }}>
-            <span className="info-label" style={{ whiteSpace:'nowrap' }}>تاريخ الميلاد:</span>
-            <input className="input" type="date" value={dob || ''} onChange={e => setDob(e.target.value)} onBlur={saveDob} style={{ width:'100%', minWidth:0, paddingInline: 10 }} />
-          </div>
-        </div>
-      </div>
+    <div className="stack">
+      <PageHeader title="ملف الطالب" onBack={onBack} />
+
+      <StudentHubHeader
+        student={student}
+        photoSrc={photoSrc}
+        currentNaqzaLabel={currentNaqzaLabel}
+        stats={stats}
+        dob={dob}
+        onDobChange={e => setDob(e.target.value)}
+        onDobBlur={saveDob}
+        onPhotoPick={onPick}
+        actions={(
+          <>
+            {onTest && (
+              <button type="button" className="btn btn--primary" onClick={onTest}>
+                <i className="fa-solid fa-play" /> اختبار
+              </button>
+            )}
+            {onHistory && (
+              <button type="button" className="btn btn--ghost" onClick={onHistory}>
+                <i className="fa-solid fa-clock-rotate-left" /> السجل الكامل
+              </button>
+            )}
+          </>
+        )}
+      />
+
       {showCropper && pendingFile && (
         <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null) }} onCropped={onCropped} />
       )}
 
-      <div className="card profile-card" style={{ marginTop:12 }}>
-        <h2 style={{ marginTop:0, color:'var(--muted)' }}>سجل الطالب</h2>
-        {error && <div style={{ color:'crimson', marginBottom:8 }}>{error}</div>}
-        <div className="mobile-center" style={{ display:'flex', gap:8, justifyContent:'flex-end', marginBottom:8 }}>
-          <button className="btn" onClick={exportPDF} title="تصدير PDF">تصدير PDF</button>
-          <button className="btn" onClick={exportExcel} title="تصدير Excel">تصدير Excel</button>
-        </div>
-        {loading ? 'جاري التحميل…' : (
-          <div className="profile-table-wrapper">
-            <table className="responsive-table profile-table">
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الثمن</th>
-                  <th>النقزة</th>
-                  <th>الوضع</th>
-                  <th>الفتحة</th>
-                  <th>التردد</th>
-                  <th>النتيجة</th>
-                  <th>الدرجة</th>
-                  <th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.map(r => (
-                  <tr key={r.id}>
-                    <td>
-                      <EditableTime row={r} onSaved={load} onError={setError} />
-                    </td>
-                    <td>{formatThumunCell(r.thumun_id)}</td>
-                    <td>{formatNaqzaCell(r.thumun_id) || '—'}</td>
-                    <td>{modeLabel(r.mode)}</td>
-                    <td>{r.fatha_prompts}</td>
-                    <td>{r.taradud_count}</td>
-                    <td>{r.passed ? 'نجح' : 'فشل'}</td>
-                    <td>{r.score}</td>
-                    <td>
-                      <button className="icon-btn" title="حذف" onClick={async () => { try { if (!confirm('حذف المحاولة؟')) return; await sessions.remove(r.id); load() } catch(e){ setError(String(e.message||e)) } }}>
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <SectionCard
+        title="آخر المحاولات"
+        actions={(
+          <div className="cluster">
+            <button type="button" className="btn btn--sm btn--ghost" onClick={exportPDF} aria-label="تصدير PDF"><i className="fa-solid fa-file-pdf" /></button>
+            <button type="button" className="btn btn--sm btn--ghost" onClick={exportExcel} aria-label="تصدير Excel"><i className="fa-solid fa-file-excel" /></button>
           </div>
         )}
-      </div>
+      >
+        {error && <div className="alert alert--error" style={{ marginBottom: 8 }}>{error}</div>}
+        {loading ? (
+          <div className="loading">جاري التحميل…</div>
+        ) : list.length === 0 ? (
+          <EmptyState
+            title="لا محاولات بعد"
+            action={onTest && (
+              <button type="button" className="btn btn--primary" onClick={onTest}>
+                <i className="fa-solid fa-play" /> بدء اختبار
+              </button>
+            )}
+          />
+        ) : (
+          <>
+            <div className="session-list mobile-only">
+              {list.slice(0, 5).map(r => (
+                <SessionCard
+                  key={r.id}
+                  session={r}
+                  thumuns={thumuns}
+                  onDelete={() => deleteSession(r.id)}
+                />
+              ))}
+            </div>
+            {list.length > 5 && onHistory && (
+              <button type="button" className="btn btn--ghost mobile-only" style={{ width: '100%', marginTop: 12 }} onClick={onHistory}>
+                عرض كل السجل ({list.length} محاولة)
+              </button>
+            )}
+            <div className="desktop-only profile-table-wrapper" style={{ marginTop: 16 }}>
+              <table className="responsive-table profile-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>النتيجة</th><th>الدرجة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.map(r => (
+                    <tr key={r.id}>
+                      <td>{formatLocaleDateTime(formatAttemptDate(r))}</td>
+                      <td>{formatThumunId(r.thumun_id, thumuns)}</td>
+                      <td>{modeLabel(r.mode)}</td>
+                      <td>{resultLabel(r.passed)}</td>
+                      <td>{r.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </SectionCard>
+
+      {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
     </div>
   )
 }
-
-function EditableTime({ row, onSaved, onError }){
-  const [editing, setEditing] = useState(false)
-  const [val, setVal] = useState(toLocalInput(row.attempt_at || row.created_at))
-  function toLocalInput(iso){
-    try { const d = new Date(iso); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16) } catch { return '' }
-  }
-  function toIsoLocal(input){
-    // input is yyyy-MM-ddTHH:mm (local). Convert to ISO string preserving local wall time
-    try { const d = new Date(input); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString() } catch { return null }
-  }
-  async function save(){
-    try {
-      const iso = toIsoLocal(val)
-      if (!iso) return onError('تاريخ غير صالح')
-      await sessions.updateTime(row.id, iso)
-      setEditing(false)
-      onSaved?.()
-    } catch (e) { onError(String(e?.message||e)) }
-  }
-  if (!editing) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
-      <span>{new Date(row.attempt_at || row.created_at).toLocaleString('ar-LY')}</span>
-      <button className="icon-btn" title="تعديل الوقت" onClick={()=>setEditing(true)}><i className="fa-solid fa-pen"></i></button>
-    </div>
-  )
-  return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
-      <input type="datetime-local" className="input" value={val} onChange={e=>setVal(e.target.value)} style={{ width: 220 }} />
-      <button className="icon-btn btn--primary" title="حفظ" onClick={save}><i className="fa-solid fa-check"></i></button>
-      <button className="icon-btn" title="إلغاء" onClick={()=>{ setEditing(false); setVal(toLocalInput(row.attempt_at || row.created_at)) }}><i className="fa-solid fa-xmark"></i></button>
-    </div>
-  )
-}
-
-

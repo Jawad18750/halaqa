@@ -15,10 +15,9 @@ export default function Auth({ onAuthed }) {
     e.preventDefault()
     setError('')
     try {
-      const fn = mode === 'login' ? auth.login : auth.register
       const { user } = await (mode === 'login'
-        ? fn(username.trim(), password.trim())
-        : fn(username.trim(), password.trim(), email.trim()))
+        ? auth.login(username.trim(), password.trim())
+        : auth.register(username.trim(), password.trim(), email.trim()))
       onAuthed(user)
     } catch (e) {
       setError(e.message)
@@ -26,73 +25,45 @@ export default function Auth({ onAuthed }) {
   }
 
   return (
-    <div style={{ maxWidth: 380, width: '100%', margin: 0, padding: 8 }}>
-      <h2 style={{ margin: '6px 0 12px' }}>{mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب'}</h2>
-      <form onSubmit={submit} style={{ display:'grid', gridTemplateColumns:'1fr', gap: 10 }}>
-        <label style={{ display:'grid', gap:6 }}>
-          <span style={{ fontSize:13, color:'var(--muted)' }}>اسم المستخدم</span>
-          <input
-            className="input"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            autoComplete="username"
-            required
-          />
+    <div className="auth-card">
+      <h2 style={{ margin: '0 0 16px', fontSize: 'var(--text-xl)' }}>{mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب'}</h2>
+      <form onSubmit={submit} className="stack">
+        <label className="field">
+          <span className="field__label">اسم المستخدم</span>
+          <input className="input" value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required />
         </label>
         {mode === 'register' && (
-          <label style={{ display:'grid', gap:6 }}>
-            <span style={{ fontSize:13, color:'var(--muted)' }}>البريد الإلكتروني</span>
-            <input
-              className="input"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-            />
+          <label className="field">
+            <span className="field__label">البريد الإلكتروني</span>
+            <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" required />
           </label>
         )}
-        <label style={{ display:'grid', gap:6 }}>
-          <span style={{ fontSize:13, color:'var(--muted)' }}>كلمة المرور</span>
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            required
-          />
+        <label className="field">
+          <span className="field__label">كلمة المرور</span>
+          <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} required />
         </label>
-        {error && <div style={{ color: 'crimson' }}>{error}</div>}
-        <button type="submit" className="btn btn--primary" style={{ width:'100%' }}>{mode === 'login' ? 'دخول' : 'تسجيل'}</button>
-        <button type="button" className="btn" style={{ width:'100%' }} onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
+        {error && <div className="alert alert--error">{error}</div>}
+        <button type="submit" className="btn btn--primary" style={{ width: '100%' }}>{mode === 'login' ? 'دخول' : 'تسجيل'}</button>
+        <button type="button" className="btn btn--ghost" style={{ width: '100%' }} onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
           {mode === 'login' ? 'إنشاء حساب جديد' : 'لديك حساب؟ دخول'}
         </button>
         {mode === 'login' && (
-          <button type="button" className="btn" style={{ width:'100%' }} onClick={() => setForgot(true)}>نسيت كلمة المرور؟</button>
+          <button type="button" className="btn btn--ghost" style={{ width: '100%' }} onClick={() => setForgot(true)}>نسيت كلمة المرور؟</button>
         )}
       </form>
       {forgot && (
-        <form onSubmit={async (e)=>{ e.preventDefault(); setError(''); setForgotMsg(''); try { await auth.forgot(forgotEmail.trim()); setForgotMsg('تم إرسال رابط الاستعادة (إن وجد) إلى بريدك.'); } catch(err){ setError(err.message) } }} style={{ display:'grid', gap:10, marginTop:8 }}>
-          <label style={{ display:'grid', gap:6 }}>
-            <span style={{ fontSize:13, color:'var(--muted)' }}>البريد الإلكتروني</span>
-            <input
-              className="input"
-              type="email"
-              value={forgotEmail}
-              onChange={e=>setForgotEmail(e.target.value)}
-              autoComplete="email"
-              required
-            />
+        <form onSubmit={async (e) => { e.preventDefault(); setError(''); setForgotMsg(''); try { await auth.forgot(forgotEmail.trim()); setForgotMsg('تم إرسال رابط الاستعادة (إن وُجد) إلى بريدك.'); } catch (err) { setError(err.message) } }} className="stack" style={{ marginTop: 16 }}>
+          <label className="field">
+            <span className="field__label">البريد الإلكتروني</span>
+            <input className="input" type="email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} autoComplete="email" required />
           </label>
-          {forgotMsg && <div style={{ color:'var(--muted)' }}>{forgotMsg}</div>}
-          <div style={{ display:'flex', gap:8 }}>
-            <button className="btn btn--primary" type="submit" style={{ flex:1 }}>إرسال رابط الاستعادة</button>
-            <button className="btn" type="button" onClick={()=>{ setForgot(false); setForgotEmail(''); setForgotMsg('') }} style={{ flex:1 }}>إغلاق</button>
+          {forgotMsg && <div className="alert alert--success">{forgotMsg}</div>}
+          <div className="cluster">
+            <button className="btn btn--primary" type="submit" style={{ flex: 1 }}>إرسال الرابط</button>
+            <button className="btn" type="button" onClick={() => { setForgot(false); setForgotEmail(''); setForgotMsg('') }} style={{ flex: 1 }}>إغلاق</button>
           </div>
         </form>
       )}
     </div>
   )
 }
-
