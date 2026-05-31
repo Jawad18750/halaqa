@@ -101,16 +101,33 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
   const step1Valid = number && name.trim() && !duplicateNumber
   const step2Valid = true
 
-  useEffect(() => {
-    Promise.all([
-      students.list().then(r => r?.students || []).catch(() => []),
-      guardians.list().then(r => r?.guardians || []).catch(() => []),
-    ]).then(([list, gRows]) => {
+  async function loadBootstrap() {
+    setLoading(true)
+    setError('')
+    try {
+      const [studentsRes, guardiansRes] = await Promise.all([
+        students.list(),
+        guardians.list(),
+      ])
+      const list = studentsRes?.students || []
       setStudentList(list)
-      setExistingGuardians(gRows)
+      setExistingGuardians(guardiansRes?.guardians || [])
       setNumber(String(Math.max(...list.map(s => Number(s.number) || 0), 0) + 1 || 1))
-    }).finally(() => setLoading(false))
-  }, [])
+    } catch (e) {
+      setError(e?.message || 'تعذر تحميل البيانات')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { loadBootstrap() }, [])
+
+  useEffect(() => {
+    if (step !== 2) return
+    guardians.list()
+      .then(r => setExistingGuardians(r?.guardians || []))
+      .catch(e => setError(e?.message || 'تعذر تحميل أولياء الأمور'))
+  }, [step])
 
   function markDirty() { setDirty(true) }
 
@@ -303,7 +320,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
 
         <div className="add-student-body">
           {step === 1 && (
-              <section className="add-student-step">
+              <section className="add-student-step add-student-step--student-info">
                 <PreviewCard
                   number={number}
                   name={name}

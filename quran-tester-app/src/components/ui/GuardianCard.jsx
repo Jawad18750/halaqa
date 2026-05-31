@@ -10,7 +10,10 @@ import {
   guardianCardTitle,
   guardianCardSubtitle,
   isPlaceholderGuardianName,
-  buildTelegramInviteMessage,
+  telegramNotificationStatusLabel,
+  formatTelegramLinkedAt,
+  formatTelegramAccountLabel,
+  buildInviteMessageForChannel,
   openGuardianInvite,
   inviteChannelToast,
   copyText,
@@ -66,7 +69,8 @@ export default function GuardianCard({
   const toggleExpand = onToggleExpand || (() => setExpandedLocal(v => !v))
 
   const tg = telegramStatus(row)
-  const linked = isTelegramActive(row)
+  const linked = row?.telegram_linked
+  const telegramActive = isTelegramActive(row)
   const students = row.students || []
   const studentCount = row.student_count || students.length || 0
   const showStudents = variant === 'manage' && students.length > 0
@@ -82,27 +86,38 @@ export default function GuardianCard({
       return
     }
 
+    const resolvedStudentName = student?.name || students[0]?.name
     setSendingId(guardianRow.id)
     try {
       const result = await guardians.createLinkCode(guardianRow.id)
       const inviteParams = {
         guardianName: guardianRow.name,
-        studentName: student?.name,
+        studentName: resolvedStudentName,
         deepLink: result.deepLink,
         code: result.code,
         sheikhName,
         masjidName,
       }
-      const message = buildTelegramInviteMessage(inviteParams)
       const opened = openGuardianInvite(channel, {
         phoneE164: guardianRow.phone_e164,
         deepLink: result.deepLink,
         inviteParams,
       })
 
+      if (opened.error) {
+        onToast?.(opened.error)
+        return
+      }
       if (opened.ok) {
         onToast?.(inviteChannelToast(channel))
       } else {
+        let message
+        try {
+          message = buildInviteMessageForChannel(channel, inviteParams)
+        } catch (err) {
+          onToast?.(err.message)
+          return
+        }
         setInviteFallback({ guardian: guardianRow, message, inviteParams, channel, ...result })
       }
     } catch (e) {
@@ -147,6 +162,22 @@ export default function GuardianCard({
     }
   }
 
+  async function handleRevokeTelegram() {
+    const ok = await confirmDialog(
+      'إلغاء ربط Telegram',
+      'سيؤدي إلغاء الربط إلى توقف وصول نتائج جميع الطلاب المرتبطين بولي الأمر عبر Telegram، وسيحتاج ولي الأمر إلى رابط جديد لإعادة الربط. هل تريد المتابعة؟',
+      { confirmLabel: 'إلغاء الربط', cancelLabel: 'تراجع' }
+    )
+    if (!ok) return
+    try {
+      await guardians.revokeTelegram(row.id)
+      onToast?.('تم إلغاء ربط Telegram بنجاح.')
+      onRefresh?.()
+    } catch {
+      onToast?.('تعذّر إلغاء الربط حاليًا، يرجى المحاولة مرة أخرى.')
+    }
+  }
+
   return (
     <li className={`guardian-card guardian-card--${variant} ${linked ? 'guardian-card--linked' : 'guardian-card--needs-invite'} ${selectMode && selected ? 'guardian-card--selected' : ''}`}>
       <div className="guardian-card__header">
@@ -155,7 +186,7 @@ export default function GuardianCard({
             <input
               type="checkbox"
               checked={selected}
-              disabled={!linked}
+              disabled={!telegramActive}
               onChange={onToggleSelect}
               aria-label={`اختيار ${row.name}`}
             />
@@ -167,18 +198,15 @@ export default function GuardianCard({
           </span>
           <div className="guardian-card__info">
             <div className="guardian-card__name">
-              {row.is_primary && (
+              {row.is_primary && variant === 'manage' && (
                 <span className="guardian-primary" title="ولي أساسي">
                   <i className="fa-solid fa-star" />
                 </span>
               )}
               <strong>{displayTitle}</strong>
-              {row.relationship && variant === 'profile' && (
-                <span className="meta"> ({row.relationship})</span>
-              )}
             </div>
             {displaySubtitle && variant === 'manage' && (
-              <p className="guardian-card__students-preview meta">{displaySubtitle}</p>
+              <p className="guardian-card__notes meta">{displaySubtitle}</p>
             )}
             <button type="button" className="guardian-card__phone" onClick={handleCopyPhone} title="نسخ الرقم">
               <span dir="ltr">{row.phone_e164}</span>
@@ -227,6 +255,17 @@ export default function GuardianCard({
 
       <div className="guardian-card__meta-row">
         <span className={`guardian-badge ${tg.className}`}>{tg.label}</span>
+        {variant === 'profile' && row.is_primary && (
+          <span className="guardian-badge guardian-badge--primary">
+            <i className="fa-solid fa-star" aria-hidden /> ولي أساسي
+          </span>
+        )}
+        {variant === 'profile' && row.relationship && (
+          <span className="guardian-card__relationship">{row.relationship}</span>
+        )}
+        {variant === 'profile' && row.notify_on_result && (
+          <span className="guardian-badge guardian-badge--ok">إشعار بالنتائج</span>
+        )}
         {variant === 'manage' && studentCount > 0 && (
           <button
             type="button"
@@ -271,15 +310,41 @@ export default function GuardianCard({
 
       {linked ? (
         <div className="guardian-card__linked-wrap">
-          <p className="guardian-card__linked-note">
-            <i className="fa-brands fa-telegram" aria-hidden />
-            مربوط — ستصل النتائج تلقائياً
-          </p>
-          {onSendMessage && (
-            <button type="button" className="btn btn--ghost btn--sm guardian-card__message-btn" onClick={() => onSendMessage(row)}>
-              <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
+          <div className="guardian-card__telegram-info">
+            <p className="guardian-card__linked-note">
+              <i className="fa-brands fa-telegram" aria-hidden />
+              {telegramActive
+                ? 'مربوط عبر Telegram — ستصل النتائج تلقائيًا'
+                : 'مربوط عبر Telegram — الإشعارات متوقفة حاليًا'}
+            </p>
+            <dl className="guardian-card__telegram-meta">
+              <div>
+                <dt>حساب Telegram</dt>
+                <dd>{formatTelegramAccountLabel(row)}</dd>
+              </div>
+              {formatTelegramLinkedAt(row.telegram_linked_at) && (
+                <div>
+                  <dt>تاريخ الربط</dt>
+                  <dd>{formatTelegramLinkedAt(row.telegram_linked_at)}</dd>
+                </div>
+              )}
+              <div>
+                <dt>حالة الإشعارات</dt>
+                <dd>{telegramNotificationStatusLabel(row)}</dd>
+              </div>
+            </dl>
+          </div>
+          <div className="guardian-card__linked-actions">
+            {telegramActive && onSendMessage && (
+              <button type="button" className="btn btn--ghost btn--sm guardian-card__message-btn" onClick={() => onSendMessage(row)}>
+                <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
+              </button>
+            )}
+            <button type="button" className="btn btn--ghost btn--sm guardian-card__revoke-btn" onClick={handleRevokeTelegram} title="إلغاء ربط حساب Telegram لولي الأمر">
+              <i className="fa-solid fa-link-slash" /> إلغاء ربط Telegram
             </button>
-          )}
+            <p className="meta guardian-card__revoke-hint">ينطبق على حساب ولي الأمر — جميع الطلاب المرتبطين.</p>
+          </div>
         </div>
       ) : (
         <div className="guardian-card__invites-wrap">

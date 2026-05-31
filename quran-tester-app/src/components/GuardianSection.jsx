@@ -169,7 +169,7 @@ export default function GuardianSection({ student, onToast }) {
               </form>
             )
           ) : (
-            <button type="button" className="btn btn--ghost btn--sm" style={{ marginTop: 8 }} onClick={openAddForm}>
+            <button type="button" className="btn btn--ghost guardian-section__add" onClick={openAddForm}>
               <i className="fa-solid fa-plus" /> إضافة ولي أمر
             </button>
           )}

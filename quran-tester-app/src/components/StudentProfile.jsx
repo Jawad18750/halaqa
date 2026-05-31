@@ -201,19 +201,21 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
         <AvatarCropper file={pendingFile} onCancel={() => { setShowCropper(false); setPendingFile(null) }} onCropped={onCropped} />
       )}
 
-      <SectionCard title="أولياء الأمور">
-        <GuardianSection student={student} onToast={showToast} />
-      </SectionCard>
+      <div className="profile-sections">
+        <SectionCard title="أولياء الأمور" className="profile-sections__guardians">
+          <GuardianSection student={student} onToast={showToast} />
+        </SectionCard>
 
-      <SectionCard
-        title="آخر المحاولات"
-        actions={(
-          <div className="cluster">
-            <button type="button" className="btn btn--sm btn--ghost" onClick={exportPDF} aria-label="تصدير PDF"><i className="fa-solid fa-file-pdf" /></button>
-            <button type="button" className="btn btn--sm btn--ghost" onClick={exportExcel} aria-label="تصدير Excel"><i className="fa-solid fa-file-excel" /></button>
-          </div>
-        )}
-      >
+        <SectionCard
+          title="آخر المحاولات"
+          className="profile-sections__sessions"
+          actions={(
+            <div className="cluster">
+              <button type="button" className="btn btn--sm btn--ghost" onClick={exportPDF} aria-label="تصدير PDF"><i className="fa-solid fa-file-pdf" /></button>
+              <button type="button" className="btn btn--sm btn--ghost" onClick={exportExcel} aria-label="تصدير Excel"><i className="fa-solid fa-file-excel" /></button>
+            </div>
+          )}
+        >
         {error && <div className="alert alert--error" style={{ marginBottom: 8 }}>{error}</div>}
         {loading ? (
           <div className="loading">جاري التحميل…</div>
@@ -266,6 +268,7 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
           </>
         )}
       </SectionCard>
+      </div>
 
       <Toast message={toast} onDone={() => setToast('')} />
     </div>

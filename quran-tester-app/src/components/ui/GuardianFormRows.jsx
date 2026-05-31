@@ -1,4 +1,5 @@
 import { telegramStatus } from '../../lib/guardianUi.js'
+import GuardianPickField from './GuardianPickField.jsx'
 
 export default function GuardianFormRows({
   rows,
@@ -54,6 +55,8 @@ export default function GuardianFormRows({
             <button
               type="button"
               className={`guardian-form-row__mode-btn ${row.mode === 'existing' ? 'guardian-form-row__mode-btn--active' : ''}`}
+              disabled={existingGuardians.length === 0}
+              title={existingGuardians.length === 0 ? 'لا يوجد أولياء مسجّلون بعد' : undefined}
               onClick={() => onUpdate(row.id, { mode: 'existing', name: '', phone: '' })}
             >
               موجود
@@ -62,24 +65,11 @@ export default function GuardianFormRows({
 
           {row.mode === 'existing' ? (
             <>
-              <label className="field">
-                <span className="field__label">اختر ولي الأمر</span>
-                <select
-                  className="input"
-                  value={row.guardianId}
-                  onChange={e => onUpdate(row.id, { guardianId: e.target.value })}
-                >
-                  <option value="">— اختر —</option>
-                  {existingGuardians.map(g => {
-                    const tg = telegramStatus(g)
-                    return (
-                      <option key={g.id} value={g.id}>
-                        {g.name} ({g.phone_e164}) — {tg.label}
-                      </option>
-                    )
-                  })}
-                </select>
-              </label>
+              <GuardianPickField
+                guardians={existingGuardians}
+                value={row.guardianId}
+                onChange={guardianId => onUpdate(row.id, { guardianId })}
+              />
               {row.guardianId && (() => {
                 const g = existingGuardians.find(x => x.id === row.guardianId)
                 if (!g) return null

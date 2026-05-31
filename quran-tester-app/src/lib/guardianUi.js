@@ -1,21 +1,61 @@
 import {
   INVITE_CHANNELS,
   buildTelegramInviteMessage,
+  buildInviteMessageForChannel,
   getInviteUrl,
   openGuardianInvite,
   inviteChannelToast,
 } from './guardianInvite.js'
 
-export { INVITE_CHANNELS, buildTelegramInviteMessage, getInviteUrl, openGuardianInvite, inviteChannelToast }
+export {
+  INVITE_CHANNELS,
+  buildTelegramInviteMessage,
+  buildInviteMessageForChannel,
+  getInviteUrl,
+  openGuardianInvite,
+  inviteChannelToast,
+}
 
 export function telegramStatus(row) {
   if (!row?.telegram_linked) return { label: 'غير مربوط', className: 'guardian-badge--muted', filter: 'unlinked' }
-  if (row.telegram_opt_out) return { label: 'غير مشترك', className: 'guardian-badge--warn', filter: 'optout' }
-  return { label: 'Telegram ✓', className: 'guardian-badge--ok', filter: 'linked' }
+  if (row.telegram_opt_out) return { label: 'إشعارات متوقفة', className: 'guardian-badge--warn', filter: 'optout' }
+  return { label: 'مربوط ✓', className: 'guardian-badge--ok', filter: 'linked' }
 }
 
 export function isTelegramActive(row) {
   return row?.telegram_linked && !row?.telegram_opt_out
+}
+
+export function telegramNotificationStatusLabel(row) {
+  if (!row?.telegram_linked) return null
+  return row.telegram_opt_out ? 'متوقفة' : 'نشطة'
+}
+
+export function formatTelegramLinkedAt(iso) {
+  if (!iso) return null
+  try {
+    return new Date(iso).toLocaleString('ar-EG', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      numberingSystem: 'latn',
+    })
+  } catch {
+    return null
+  }
+}
+
+export function formatTelegramAccountLabel(row) {
+  if (!row?.telegram_linked) return null
+  const display = String(row.telegram_display_name || '').trim()
+  const username = String(row.telegram_username || '').trim().replace(/^@/, '')
+  if (display && username) return `${display} (@${username})`
+  if (display) return display
+  if (username) return `@${username}`
+  return 'حساب Telegram'
 }
 
 export function needsInvite(row) {
@@ -73,14 +113,6 @@ export function guardianCardTitle(row, students = []) {
 }
 
 export function guardianCardSubtitle(row, students = []) {
-  const name = String(row?.name || '').trim()
-  const preview = formatGuardianStudentsPreview(students, 4)
-  if (isPlaceholderGuardianName(name)) {
-    if (preview && (students || []).length > 1) return preview
-    if (row?.notes?.trim()) return row.notes.trim()
-    return null
-  }
-  if (preview) return preview
   if (row?.notes?.trim()) return row.notes.trim()
   return null
 }

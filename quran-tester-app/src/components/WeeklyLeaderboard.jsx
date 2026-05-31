@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { sessions, students, guardians, getApiUrl } from '../api'
 import { modeLabel, formatThumunId } from '../lib/labels.js'
 import { isTelegramActive } from '../lib/guardianUi.js'
-import { buildHalaqaSignature } from '../lib/messageContext.js'
+import { buildHalaqaSignature, joinMessageBlocks } from '../lib/messageContext.js'
 import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 import PageHeader from './ui/PageHeader.jsx'
 import EmptyState from './ui/EmptyState.jsx'
@@ -23,6 +23,8 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
   const [notifyingId, setNotifyingId] = useState(null)
   const [messageTargets, setMessageTargets] = useState([])
   const [messageDraft, setMessageDraft] = useState('')
+  const [reportItem, setReportItem] = useState(null)
+  const [includeRankInReport, setIncludeRankInReport] = useState(false)
   const [showMessageSheet, setShowMessageSheet] = useState(false)
   const [from, setFrom] = useState(() => {
     const d = new Date()
@@ -175,11 +177,13 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
       const { guardians: list } = await guardians.forStudent(item.id)
       const linked = (list || []).filter(isTelegramActive)
       if (!linked.length) {
-        setToast('لا يوجد ولي مربوط — أرسل دعوة Telegram أولاً')
+        setToast('لا يوجد ولي أمر مربوط — أرسل دعوة Telegram أولاً')
         return
       }
       const rangeLabel = formatRangeLabel(from, to)
-      setMessageDraft(buildLeaderboardMessage(item, rangeLabel, { sheikhName, masjidName }))
+      setReportItem(item)
+      setIncludeRankInReport(false)
+      setMessageDraft(buildWeeklyReportMessage(item, from, to, { sheikhName, masjidName, includeRank: false }))
       setMessageTargets(linked)
       setShowMessageSheet(true)
     } catch (e) {
@@ -307,37 +311,71 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
         open={showMessageSheet}
         guardians={messageTargets}
         initialMessage={messageDraft}
-        title="إرسال نتيجة لولي الأمر"
-        onClose={() => setShowMessageSheet(false)}
+        title="إرسال تقرير لولي الأمر"
+        reportOptions={reportItem ? (
+          <label className="leaderboard-report-option">
+            <input
+              type="checkbox"
+              checked={includeRankInReport}
+              onChange={e => {
+                const next = e.target.checked
+                setIncludeRankInReport(next)
+                setMessageDraft(buildWeeklyReportMessage(reportItem, from, to, {
+                  sheikhName,
+                  masjidName,
+                  includeRank: next,
+                }))
+              }}
+            />
+            <span>تضمين ترتيب الطالب في التقرير</span>
+          </label>
+        ) : null}
+        onClose={() => { setShowMessageSheet(false); setReportItem(null) }}
         onToast={msg => setToast(msg)}
       />
     </div>
   )
 }
 
-function buildLeaderboardMessage(item, rangeLabel, { sheikhName, masjidName } = {}) {
+function buildWeeklyReportMessage(item, from, to, { sheikhName, masjidName, includeRank = false } = {}) {
   const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
-  const lines = [
-    '🏆 نتيجة لوحة الصدارة',
-    '━━━━━━━━━━━━━━',
-    '',
-    `👤 الطالب: ${item.student_name}`,
-    `📅 الفترة: ${rangeLabel}`,
-    '',
-    `🥇 المركز: ${item.rank}`,
-    `📊 المتوسط: ${num1(item.avgScore)}`,
-    `⭐ أفضل درجة: ${num(item.bestScore)}`,
-    `📝 المحاولات: ${num(item.attempts)}`,
-    `✅ نسبة النجاح: ${num1(item.passRate)}%`,
-    '',
-    halaqaFooter ? '💡 رسالة من حلقة الاختبار — لا حاجة للرد.' : '💡 رسالة من حلقة اختبار القرآن — لا حاجة للرد.',
+  const fromDate = formatDateLabel(from)
+  const toDate = formatDateLabel(to)
+  const headerLines = [
+    `الطالب: ${item.student_name}`,
+    `الفترة: من ${fromDate} إلى ${toDate}`,
   ]
-  if (halaqaFooter) {
-    lines.push(halaqaFooter)
-    lines.push('')
+  if (includeRank) {
+    headerLines.push(`ترتيب الطالب في الحلقة: ${item.rank}`)
   }
-  lines.push(`🤲 بارك الله في ${item.student_name} 🤲`)
-  return lines.join('\n')
+
+  return joinMessageBlocks([
+    '📊 التقرير الأسبوعي لمتابعة الطالب',
+    headerLines,
+    [
+      `عدد الاختبارات: ${num(item.attempts)}`,
+      `متوسط الدرجات: ${num1(item.avgScore)}`,
+      `أعلى درجة: ${num(item.bestScore)}`,
+      `نسبة الاختبارات المجتازة: ${num1(item.passRate)}%`,
+    ],
+    'هذه رسالة متابعة من حلقة القرآن الكريم، ولا يلزم الرد عليها.',
+    halaqaFooter,
+    `🤲 بارك الله في ${item.student_name}، ووفقه للمراجعة والإتقان.`,
+  ])
+}
+
+function formatDateLabel(value) {
+  if (!value) return '—'
+  try {
+    return new Date(`${value}T12:00:00`).toLocaleDateString('ar-EG', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      numberingSystem: 'latn',
+    })
+  } catch {
+    return value
+  }
 }
 
 function formatRangeLabel(from, to) {

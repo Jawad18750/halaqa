@@ -191,6 +191,7 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
         const result = await guardians.createLinkCode(g.id)
         const inviteParams = {
           guardianName: g.name,
+          studentName: g.students?.[0]?.name,
           deepLink: result.deepLink,
           code: result.code,
           sheikhName,
@@ -201,7 +202,7 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
           deepLink: result.deepLink,
           inviteParams,
         })
-        if (opened.ok) sent++
+        if (opened.ok && !opened.error) sent++
       } catch {}
     }
     setBulkSending(false)
@@ -261,7 +262,7 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
 
           <div className="guardians-toolbar__footer">
             <p className="guardians-toolbar__count">
-              {loading ? 'جاري التحميل…' : `${filtered.length} ولي`}
+              {loading ? 'جاري التحميل…' : `${filtered.length} ولي أمر`}
             </p>
             <div className="guardians-toolbar__actions">
               {linkedList.length > 0 && !selectMode && (
@@ -289,7 +290,7 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
           subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : 'اضغط + لإضافة ولي أمر'}
         />
       ) : (
-        <ul className="guardian-list guardian-list--cards student-list-panel">
+        <ul className="guardian-list guardian-list--cards guardian-list--responsive student-list-panel">
           {filtered.map(row => (
             <GuardianCard
               key={row.id}

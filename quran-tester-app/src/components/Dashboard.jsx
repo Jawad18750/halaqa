@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { sessions, students, guardians } from '../api'
+import { sessions, students, guardians, notifications } from '../api'
 import { formatNaqza } from '../lib/labels.js'
 import { guardianCoverageStats } from '../lib/guardianUi.js'
 import PageHeader from './ui/PageHeader.jsx'
@@ -24,6 +24,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
   const [thumunList, setThumunList] = useState([])
   const [overviewSessions, setOverviewSessions] = useState([])
   const [guardianList, setGuardianList] = useState([])
+  const [telegramLinkActivity, setTelegramLinkActivity] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAllNotTested, setShowAllNotTested] = useState(false)
@@ -34,16 +35,20 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
     setLoading(true)
     setError('')
     try {
-      const [w, studentsRes, overview, guardiansRes] = await Promise.all([
+      const [w, studentsRes, overview, guardiansRes, activityRes] = await Promise.all([
         sessions.weekly(),
         students.list(),
         sessions.overview().catch(() => ({ sessions: [] })),
         guardians.list().catch(() => ({ guardians: [] })),
+        notifications.log(20).catch(() => ({ entries: [] })),
       ])
       const s = studentsRes?.students || []
       setWeek(w)
       setList(s)
       setGuardianList(guardiansRes?.guardians || [])
+      setTelegramLinkActivity(
+        (activityRes?.entries || []).filter(e => e.status === 'telegram_linked').slice(0, 3)
+      )
       setOverviewSessions(Array.isArray(overview?.sessions) ? overview.sessions : [])
       const testedIds = new Set(w?.sessions?.map(x => x.student_id))
       setRemaining(Math.max(0, (s?.length || 0) - testedIds.size))
@@ -52,6 +57,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
       setList([])
       setOverviewSessions([])
       setGuardianList([])
+      setTelegramLinkActivity([])
       setRemaining(0)
       setError(e?.message || 'تعذر تحميل البيانات')
     } finally {
@@ -219,8 +225,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
         id: 'invite-guardians',
         tone: 'warn',
         icon: 'fa-brands fa-telegram',
-        title: `${guardianMetrics.needsInvite} ولي بحاجة دعوة Telegram`,
-        body: 'أرسل دعوة عبر واتساب أو Telegram أو SMS — ولي الأمر يضغط Start في البوت مرة واحدة لتصله النتائج تلقائياً.',
+        title: `${guardianMetrics.needsInvite} من أولياء الأمور لم يتم ربطهم بعد`,
+        body: 'أرسل رابط الربط عبر واتساب أو Telegram أو رسالة نصية، حتى يتمكن ولي الأمر من استلام نتائج الطالب تلقائيًا.',
         action: 'guardians',
         actionLabel: 'إدارة الدعوات',
       })
@@ -230,8 +236,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
         id: 'students-no-guardian',
         tone: 'info',
         icon: 'fa-solid fa-user-plus',
-        title: `${guardianMetrics.studentsWithoutGuardian} طالب بدون ولي أمر`,
-        body: 'اربط أولياء الأمور عند إضافة طالب جديد أو من ملف الطالب لتفعيل إشعارات النتائج.',
+        title: `${guardianMetrics.studentsWithoutGuardian} طالب دون ولي أمر مسجّل`,
+        body: 'أضف بيانات ولي الأمر من ملف الطالب لتفعيل متابعة النتائج والإشعارات.',
         action: 'addStudent',
         actionLabel: 'إضافة طالب',
       })
@@ -241,7 +247,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
       tone: 'telegram',
       icon: 'fa-solid fa-bell',
       title: 'ميزة جديدة: إشعارات أولياء الأمور',
-      body: 'بعد كل اختبار، يُرسل ملخص النتيجة تلقائياً لأولياء الأمور المربوطين عبر Telegram.',
+      body: 'يمكن الآن إرسال نتائج الاختبارات تلقائيًا إلى أولياء الأمور المرتبطين عبر Telegram.',
       action: 'guardians',
       actionLabel: 'تعرّف على الميزة',
     })
@@ -353,27 +359,29 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
         </div>
       </section>
 
-      {announcements.length > 0 && (
-        <section className="dash-announcements appear">
+      <div className="dash-panels-row">
+        {announcements.length > 0 && (
+          <section className="dash-announcements appear">
+            <div className="dash-section-head">
+              <h2 className="dash-section-head__title">
+                <i className="fa-solid fa-bullhorn" aria-hidden />
+                إعلانات
+              </h2>
+            </div>
+            <AnnouncementList items={announcements} onAction={handleAnnouncementAction} />
+          </section>
+        )}
+
+        <section className={`dash-quick appear ${announcements.length === 0 ? 'dash-quick--solo' : ''}`}>
           <div className="dash-section-head">
             <h2 className="dash-section-head__title">
-              <i className="fa-solid fa-bullhorn" aria-hidden />
-              إعلانات
+              <i className="fa-solid fa-bolt" aria-hidden />
+              وصول سريع
             </h2>
           </div>
-          <AnnouncementList items={announcements} onAction={handleAnnouncementAction} />
+          <QuickAccessGrid items={quickAccessItems} />
         </section>
-      )}
-
-      <section className="dash-quick appear">
-        <div className="dash-section-head">
-          <h2 className="dash-section-head__title">
-            <i className="fa-solid fa-bolt" aria-hidden />
-            وصول سريع
-          </h2>
-        </div>
-        <QuickAccessGrid items={quickAccessItems} />
-      </section>
+      </div>
 
       <div className="dash-grid">
         <DashboardWidget title="نظرة عامة" icon="fa-gauge-high" variant="default">
@@ -433,11 +441,11 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
                   <strong>{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</strong>
                   <span> من </span>
                   <strong>{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</strong>
-                  <span> ولي مربوط Telegram</span>
+                  <span> ولي أمر مربوط عبر Telegram</span>
                 </p>
                 <p className="meta dash-guardians__sub">
                   {guardianMetrics.needsInvite > 0
-                    ? `${guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')} ولي بحاجة دعوة`
+                    ? `${guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')} ولي أمر بحاجة دعوة`
                     : guardianMetrics.total === 0
                       ? 'أضف أولياء الأمور عند إنشاء الطلاب'
                       : 'جميع أولياء الأمور مربوطون'}
@@ -460,7 +468,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
               </div>
               <div className={`dash-guardians__kpi ${guardianMetrics.studentsWithoutGuardian > 0 ? 'dash-guardians__kpi--info' : ''}`}>
                 <span className="dash-guardians__kpi-value">{guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')}</span>
-                <span className="dash-guardians__kpi-label">طلاب بدون ولي</span>
+                <span className="dash-guardians__kpi-label">طلاب بدون ولي أمر</span>
               </div>
             </div>
 
@@ -478,6 +486,20 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
                 <span>Start في البوت</span>
               </li>
             </ol>
+
+            {telegramLinkActivity.length > 0 && (
+              <div className="dash-guardians__activity">
+                <p className="dash-guardians__activity-title">آخر عمليات الربط</p>
+                <ul className="dash-guardians__activity-list">
+                  {telegramLinkActivity.map(entry => (
+                    <li key={entry.id} className="dash-guardians__activity-item">
+                      <i className="fa-brands fa-telegram" aria-hidden />
+                      <span>{entry.message_preview}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="dash-guardians__actions">
               {guardianMetrics.needsInvite > 0 ? (

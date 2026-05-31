@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useMotionMount } from '../../lib/useMotionMount.js'
 
-let confirmState = { open: false, title: '', message: '', resolve: () => {} }
+let confirmState = { open: false, title: '', message: '', confirmLabel: 'تأكيد', cancelLabel: 'إلغاء', resolve: () => {} }
 
-export function confirmDialog(title, message) {
-  confirmState = { open: true, title, message, resolve: () => {} }
+export function confirmDialog(title, message, options = {}) {
+  confirmState = {
+    open: true,
+    title,
+    message,
+    confirmLabel: options.confirmLabel || 'تأكيد',
+    cancelLabel: options.cancelLabel || 'إلغاء',
+    resolve: () => {},
+  }
   return new Promise((resolve) => {
     confirmState.resolve = resolve
     window.dispatchEvent(new Event('confirm-dialog-change'))
@@ -13,7 +20,7 @@ export function confirmDialog(title, message) {
 
 export default function ConfirmDialog() {
   const [, tick] = useState(0)
-  const [content, setContent] = useState({ title: '', message: '' })
+  const [content, setContent] = useState({ title: '', message: '', confirmLabel: 'تأكيد', cancelLabel: 'إلغاء' })
   const open = confirmState.open
   const { render, active } = useMotionMount(open)
 
@@ -25,7 +32,12 @@ export default function ConfirmDialog() {
 
   useEffect(() => {
     if (open) {
-      setContent({ title: confirmState.title, message: confirmState.message })
+      setContent({
+        title: confirmState.title,
+        message: confirmState.message,
+        confirmLabel: confirmState.confirmLabel,
+        cancelLabel: confirmState.cancelLabel,
+      })
     }
   }, [open])
 
@@ -47,8 +59,8 @@ export default function ConfirmDialog() {
         <h3 className="modal__title">{content.title}</h3>
         <div className="modal__body">{content.message}</div>
         <div className="actions">
-          <button type="button" className="btn" onClick={() => close(false)}>إلغاء</button>
-          <button type="button" className="btn btn--primary" onClick={() => close(true)}>تأكيد</button>
+          <button type="button" className="btn" onClick={() => close(false)}>{content.cancelLabel}</button>
+          <button type="button" className="btn btn--primary" onClick={() => close(true)}>{content.confirmLabel}</button>
         </div>
       </div>
     </div>

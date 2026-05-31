@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import { pool } from './db.js'
 import { normalizePhoneE164 } from './phone.js'
 
-const LINK_CODE_TTL_MS = 72 * 60 * 60 * 1000
+const LINK_CODE_TTL_MS = 24 * 60 * 60 * 1000
 
 export async function listGuardiansForUser(userId) {
   const { rows } = await pool.query(
@@ -11,6 +11,8 @@ export async function listGuardiansForUser(userId) {
             gt.telegram_chat_id is not null as telegram_linked,
             coalesce(gt.opt_out, false) as telegram_opt_out,
             gt.linked_at as telegram_linked_at,
+            gt.telegram_username,
+            gt.telegram_display_name,
             coalesce(
               json_agg(
                 json_build_object('id', s.id, 'number', s.number, 'name', s.name)
@@ -23,7 +25,7 @@ export async function listGuardiansForUser(userId) {
      left join students s on s.id = gs.student_id and s.user_id = g.user_id
      left join guardian_telegram gt on gt.guardian_id = g.id
      where g.user_id = $1
-     group by g.id, gt.telegram_chat_id, gt.opt_out, gt.linked_at
+     group by g.id, gt.telegram_chat_id, gt.opt_out, gt.linked_at, gt.telegram_username, gt.telegram_display_name
      order by g.name asc`,
     [userId]
   )
@@ -130,7 +132,9 @@ export async function listGuardiansForStudent(userId, studentId) {
             g.id, g.name, g.phone_e164, g.notes,
             gt.telegram_chat_id is not null as telegram_linked,
             coalesce(gt.opt_out, false) as telegram_opt_out,
-            gt.linked_at as telegram_linked_at
+            gt.linked_at as telegram_linked_at,
+            gt.telegram_username,
+            gt.telegram_display_name
      from guardian_students gs
      join guardians g on g.id = gs.guardian_id and g.user_id = $1
      left join guardian_telegram gt on gt.guardian_id = g.id
@@ -320,4 +324,22 @@ export async function createLinkCode(userId, guardianId) {
     : null
 
   return { code, expiresAt: expiresAt.toISOString(), deepLink }
+}
+
+export async function revokeTelegramLink(userId, guardianId) {
+  await assertGuardianOwned(userId, guardianId)
+
+  const { rowCount } = await pool.query(
+    'delete from guardian_telegram where guardian_id=$1',
+    [guardianId]
+  )
+  if (!rowCount) {
+    throw Object.assign(new Error('لا يوجد ربط Telegram'), { status: 404 })
+  }
+
+  await pool.query(
+    `update telegram_link_codes set used_at=now()
+     where guardian_id=$1 and used_at is null`,
+    [guardianId]
+  )
 }

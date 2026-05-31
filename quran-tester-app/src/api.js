@@ -129,6 +129,9 @@ export const guardians = {
   async createLinkCode(guardianId) {
     return await request(`/guardians/${guardianId}/link-code`, { method: 'POST', body: '{}' })
   },
+  async revokeTelegram(guardianId) {
+    return await request(`/guardians/${guardianId}/telegram`, { method: 'DELETE' })
+  },
 }
 
 // Notifications

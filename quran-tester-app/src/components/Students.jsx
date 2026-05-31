@@ -147,11 +147,11 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
               <strong>إشعارات أولياء الأمور</strong>
               <p className="meta">
                 {guardianMetrics.studentsWithoutGuardian > 0
-                  ? `${guardianMetrics.studentsWithoutGuardian} طالب بدون ولي · `
+                  ? `${guardianMetrics.studentsWithoutGuardian} طالب بدون ولي أمر · `
                   : ''}
                 {guardianMetrics.needsInvite > 0
-                  ? `${guardianMetrics.needsInvite} ولي بحاجة دعوة Telegram`
-                  : 'جميع أولياء الأمور المربوطين جاهزون'}
+                  ? `${guardianMetrics.needsInvite} ولي أمر بحاجة دعوة Telegram`
+                  : 'جميع أولياء الأمور المرتبطين جاهزون'}
               </p>
             </div>
           </div>

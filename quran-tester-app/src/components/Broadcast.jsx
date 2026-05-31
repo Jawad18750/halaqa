@@ -11,6 +11,8 @@ import {
   parseFamilyStudents,
   formatFamilyLabel,
 } from '../lib/guardianUi.js'
+import { appendSignatureFooter, hasHalaqaSettings } from '../lib/messageContext.js'
+import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 
 const STATUS_LABELS = {
   sent: 'تم الإرسال',
@@ -28,7 +30,9 @@ const TARGETS = [
 ]
 
 export default function Broadcast({ onBack }) {
+  const { sheikhName, masjidName } = useMessageSettings()
   const [message, setMessage] = useState('')
+  const [appendSignature, setAppendSignature] = useState(true)
   const [targetType, setTargetType] = useState('all')
   const [targetId, setTargetId] = useState('')
   const [targetIds, setTargetIds] = useState(new Set())
@@ -60,6 +64,35 @@ export default function Broadcast({ onBack }) {
   }, [])
 
   const linkedGuardians = useMemo(() => guardianList.filter(isTelegramActive), [guardianList])
+  const canAppendSignature = hasHalaqaSettings({ sheikhName, masjidName })
+
+  const selectedFamily = useMemo(
+    () => families.find(f => f.id === targetId) || null,
+    [families, targetId]
+  )
+
+  const selectedFamilyStudents = useMemo(
+    () => parseFamilyStudents(selectedFamily),
+    [selectedFamily]
+  )
+
+  const estimatedRecipients = useMemo(() => {
+    if (targetType === 'guardians') {
+      return linkedGuardians.filter(g => targetIds.has(g.id)).length
+    }
+    if (targetType === 'student' && targetId) {
+      return linkedGuardians.filter(g =>
+        (g.students || []).some(s => s.id === targetId)
+      ).length
+    }
+    if (targetType === 'family' && selectedFamily) {
+      const ids = new Set(selectedFamilyStudents.map(s => s.id))
+      return linkedGuardians.filter(g =>
+        (g.students || []).some(s => ids.has(s.id))
+      ).length
+    }
+    return linkedGuardians.length
+  }, [targetType, targetIds, targetId, linkedGuardians, selectedFamily, selectedFamilyStudents])
 
   const filteredGuardians = useMemo(() => {
     const q = guardianQuery.trim()
@@ -71,16 +104,6 @@ export default function Broadcast({ onBack }) {
     }
     return base
   }, [linkedGuardians, guardianQuery])
-
-  const selectedFamily = useMemo(
-    () => families.find(f => f.id === targetId) || null,
-    [families, targetId]
-  )
-
-  const selectedFamilyStudents = useMemo(
-    () => parseFamilyStudents(selectedFamily),
-    [selectedFamily]
-  )
 
   async function loadLog() {
     setLogLoading(true)
@@ -125,14 +148,15 @@ export default function Broadcast({ onBack }) {
       setError('اختر طالباً')
       return
     }
+    if (estimatedRecipients === 0) {
+      setError('لا يوجد أولياء أمور مربوطون ضمن هذا الاختيار')
+      return
+    }
 
-    const countLabel = targetType === 'guardians'
-      ? `${targetIds.size} ولي`
-      : targetType === 'family' && selectedFamily
-        ? `عائلة ${selectedFamily.name}`
-        : 'المستهدفين'
-
-    const ok = await confirmDialog('إرسال رسالة', `إرسال هذه الرسالة إلى ${countLabel} عبر Telegram؟`)
+    const ok = await confirmDialog(
+      'إرسال رسالة إلى أولياء الأمور',
+      `سيتم إرسال هذه الرسالة إلى ${estimatedRecipients} من أولياء الأمور المرتبطين عبر Telegram. هل تريد المتابعة؟`
+    )
     if (!ok) return
 
     setSending(true)
@@ -140,14 +164,26 @@ export default function Broadcast({ onBack }) {
     setResult(null)
     try {
       const ids = targetType === 'guardians' ? [...targetIds] : null
+      const body = message.trim()
+      const outgoing = canAppendSignature && appendSignature
+        ? appendSignatureFooter(body, { sheikhName, masjidName })
+        : body
       const res = await notifications.broadcast(
-        message.trim(),
+        outgoing,
         targetType,
         targetType === 'all' || targetType === 'guardians' ? null : targetId,
         ids
       )
       setResult(res)
-      setToast('تم إرسال الرسالة')
+      const sent = res.stats?.sent ?? 0
+      const failed = res.stats?.failed ?? 0
+      if (sent === 0 && failed > 0) {
+        setToast('تعذر إرسال الرسالة — تحقق من الربط')
+      } else if (failed > 0) {
+        setToast(`تم الإرسال إلى ${sent} — فشل ${failed}`)
+      } else {
+        setToast(`تم الإرسال إلى ${sent} من أولياء الأمور`)
+      }
       setMessage('')
       if (targetType === 'guardians') setTargetIds(new Set())
       await loadLog()
@@ -221,11 +257,26 @@ export default function Broadcast({ onBack }) {
               rows={4}
               value={message}
               onChange={e => setMessage(e.target.value.slice(0, 1000))}
-              placeholder="اكتب رسالتك بالعربية…"
+              placeholder="اكتب رسالة عامة لأولياء الأمور…"
               required
             />
             <span className="field__hint">{message.length}/1000</span>
           </label>
+
+          {canAppendSignature && (
+            <label className="message-signature-toggle">
+              <input
+                type="checkbox"
+                checked={appendSignature}
+                onChange={e => setAppendSignature(e.target.checked)}
+              />
+              <span>إضافة توقيع الحلقة في نهاية الرسالة</span>
+            </label>
+          )}
+
+          <p className="meta broadcast-form__recipients">
+            المستلمون المتوقعون: {estimatedRecipients} من أولياء الأمور المرتبطين عبر Telegram
+          </p>
 
           <div className="field">
             <span className="field__label">المستهدفون</span>
@@ -291,7 +342,7 @@ export default function Broadcast({ onBack }) {
                       </li>
                     ))}
                   </ul>
-                  <p className="field__hint">يُرسل لأولياء هؤلاء الطلاب المربوطين على Telegram.</p>
+                  <p className="field__hint">يُرسل لأولياء هؤلاء الطلاب المرتبطين على Telegram.</p>
                 </div>
               )}
 
@@ -404,7 +455,7 @@ export default function Broadcast({ onBack }) {
               )}
               {guardianList.some(g => !isTelegramActive(g)) && (
                 <p className="field__hint">
-                  {guardianList.filter(g => !isTelegramActive(g)).length} ولي غير مربوط — لن يُرسل إليهم.
+                  {guardianList.filter(g => !isTelegramActive(g)).length} ولي أمر غير مربوط — لن يُرسل إليهم.
                 </p>
               )}
             </div>
@@ -420,7 +471,7 @@ export default function Broadcast({ onBack }) {
               (targetType === 'family' && !targetId && !showFamilyCreate)
             }
           >
-            {sending ? 'جاري الإرسال…' : 'إرسال عبر Telegram'}
+            {sending ? 'جاري الإرسال…' : 'إرسال الرسالة'}
           </button>
         </form>
 

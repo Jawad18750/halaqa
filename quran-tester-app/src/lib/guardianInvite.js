@@ -1,24 +1,11 @@
-import { buildHalaqaIntro } from './messageContext.js'
+import {
+  buildHalaqaIntro,
+  formatLinkCodeForDisplay,
+  joinMessageBlocks,
+  normalizeLinkCode,
+} from './messageContext.js'
 
 const BOT_USERNAME = 'Halaqa_Test_bot'
-
-/** Emoji via escapes — survives any source file encoding; used for Telegram + copy/paste */
-const E = {
-  moon: '\u{1F319}',
-  book: '\u{1F4DA}',
-  person: '\u{1F464}',
-  check: '\u{2705}',
-  one: '\u{0031}\u{FE0F}\u{20E3}',
-  two: '\u{0032}\u{FE0F}\u{20E3}',
-  three: '\u{0033}\u{FE0F}\u{20E3}',
-  link: '\u{1F517}',
-  phone: '\u{1F4F1}',
-  bulb: '\u{1F4A1}',
-  question: '\u{2753}',
-  mail: '\u{1F4EC}',
-  pray: '\u{1F932}',
-  send: '\u{1F4E4}',
-}
 
 export const INVITE_CHANNELS = {
   whatsapp: { id: 'whatsapp', label: 'واتساب', icon: 'fa-brands fa-whatsapp' },
@@ -26,132 +13,182 @@ export const INVITE_CHANNELS = {
   sms: { id: 'sms', label: 'SMS', icon: 'fa-solid fa-comment-sms' },
 }
 
+export class InviteMessageError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'InviteMessageError'
+  }
+}
+
 export function phoneToDigits(phoneE164) {
   return String(phoneE164 || '').replace(/\D/g, '')
 }
 
-/** Pretty display: 482917 → 482 917 */
-export function formatLinkCodeForDisplay(code) {
-  const digits = String(code || '').replace(/\D/g, '')
-  if (digits.length === 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`
-  if (digits.length === 5) return `${digits.slice(0, 2)} ${digits.slice(2)}`
-  return digits
+export function validateInviteParams({ studentName, code, deepLink }) {
+  const student = String(studentName || '').trim()
+  if (!student) {
+    return { ok: false, error: 'يجب تحديد اسم الطالب قبل إرسال الدعوة.' }
+  }
+  const formattedCode = code ? formatLinkCodeForDisplay(code) : null
+  if (!formattedCode) {
+    return { ok: false, error: 'رمز الربط غير متوفر — أعد إنشاء الدعوة.' }
+  }
+  if (!deepLink && !formattedCode) {
+    return { ok: false, error: 'تعذر إنشاء دعوة كاملة — لا يوجد رابط أو رمز ربط.' }
+  }
+  return { ok: true, student, formattedCode }
 }
 
-/**
- * @param {'emoji'|'plain'} [style] — plain avoids emoji for wa.me/SMS prefilled text (WhatsApp corrupts them)
- */
-export function buildTelegramInviteMessage({
-  guardianName,
-  studentName,
-  deepLink,
-  code,
-  sheikhName,
-  masjidName,
-  style = 'emoji',
-}) {
-  if (style === 'plain') return buildPlainInviteMessage({ guardianName, studentName, deepLink, code, sheikhName, masjidName })
-  return buildEmojiInviteMessage({ guardianName, studentName, deepLink, code, sheikhName, masjidName })
+function greetingLine(guardianName) {
+  const name = String(guardianName || '').trim()
+  if (name) return `السلام عليكم ورحمة الله وبركاته، ${name}`
+  return 'السلام عليكم ورحمة الله وبركاته،'
 }
 
-function buildEmojiInviteMessage({ guardianName, studentName, deepLink, code, sheikhName, masjidName }) {
-  const greeting = guardianName
-    ? `${E.moon} السلام عليكم ${guardianName}،`
-    : `${E.moon} السلام عليكم،`
-  const studentLine = studentName
-    ? `${E.person} الطالب: ${studentName}`
-    : `${E.person} ابنكم/ابنتكم في حلقة تحفيظ القرآن`
-
-  const codeDisplay = code ? formatLinkCodeForDisplay(code) : null
-
-  const halaqaIntro = buildHalaqaIntro({ sheikhName, masjidName, style: 'emoji' })
-
-  const parts = [
-    greeting,
-    '',
-    `${halaqaIntro} — نود إبقاءكم على اطلاع بنتائج الاختبارات فور صدورها.`,
-    studentLine,
-    '',
-    `${E.check} المطلوب منكم (مرة واحدة فقط):`,
-    `${E.one} اضغط الرابط أدناه`,
-    `${E.two} في Telegram اضغط «Start» أو «ابدأ»`,
-    `${E.three} انتهى — ستصلكم رسالة تلقائياً بعد كل اختبار ${E.mail}`,
-    '',
+function buildTelegramCopyInvite({ guardianName, studentName, deepLink, formattedCode, sheikhName, masjidName }) {
+  const intro = buildHalaqaIntro({ sheikhName, masjidName, style: 'emoji' })
+  const blocks = [
+    greetingLine(guardianName),
+    intro,
+    [
+      `يسرّنا دعوتكم لمتابعة نتائج اختبارات الطالب: ${studentName}`,
+      'وذلك حتى تصلكم نتائجه في القرآن الكريم مباشرة بعد كل اختبار.',
+    ],
   ]
 
   if (deepLink) {
-    parts.push(`${E.link} الرابط:`, deepLink, '')
-  }
-
-  if (codeDisplay) {
-    parts.push(
-      `${E.phone} أو يدوياً:`,
-      `\u2022 افتح البوت: @${BOT_USERNAME}`,
-      `\u2022 أرسل هذا الرقم فقط: ${codeDisplay}`,
-      ''
+    blocks.push(
+      'سيتم إرسال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
+      [
+        '✅ طريقة الربط:',
+        '1. اضغطوا على الرابط أدناه.',
+        '2. عند فتح Telegram، اضغطوا «Start» أو «ابدأ».',
+        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+      ],
+      [
+        '🔗 رابط الربط:',
+        deepLink,
+      ],
+      [
+        'أو يمكنكم الربط يدويًا:',
+        `افتحوا البوت @${BOT_USERNAME} وأرسلوا رمز الربط التالي:`,
+        formattedCode,
+      ],
+    )
+  } else {
+    blocks.push(
+      'سيتم إرسال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
+      [
+        '✅ طريقة الربط:',
+        `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
+        '2. أرسلوا رمز الربط التالي:',
+        formattedCode,
+        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+      ],
     )
   }
 
-  parts.push(
-    `${E.bulb} Telegram تطبيق مجاني — مثل واتساب — لاستلام الإشعارات فقط.`,
-    `${E.question} إذا لم يعمل الرابط، انسخ الرقم وأرسله للبوت مباشرة.`,
-    '',
-    `بارك الله فيكم ${E.pray}`
+  blocks.push(
+    'إذا واجهتم أي صعوبة في الربط، يرجى التواصل مع معلّم الحلقة.',
+    'بارك الله فيكم، ونفع بكم.',
   )
-
-  return parts.join('\n')
+  return joinMessageBlocks(blocks)
 }
 
-/** WhatsApp *bold* formatting — no emoji (wa.me prefilled text breaks emoji on many phones) */
-function buildPlainInviteMessage({ guardianName, studentName, deepLink, code, sheikhName, masjidName }) {
-  const greeting = guardianName ? `السلام عليكم ${guardianName}،` : 'السلام عليكم،'
-  const studentLine = studentName
-    ? `الطالب: *${studentName}*`
-    : 'ابنكم/ابنتكم في حلقة تحفيظ القرآن'
-
-  const codeDisplay = code ? formatLinkCodeForDisplay(code) : null
-
-  const halaqaIntro = buildHalaqaIntro({ sheikhName, masjidName, style: 'plain' })
-
-  const parts = [
-    greeting,
-    '',
-    halaqaIntro,
-    'نود إبقاءكم على اطلاع بنتائج الاختبارات فور صدورها.',
-    studentLine,
-    '',
-    '*المطلوب منكم (مرة واحدة فقط):*',
-    '1. اضغط الرابط أدناه',
-    '2. في Telegram اضغط «Start» أو «ابدأ»',
-    '3. انتهى — ستصلكم رسالة تلقائياً بعد كل اختبار',
-    '',
+function buildWhatsAppInvite({ guardianName, studentName, deepLink, formattedCode, sheikhName, masjidName }) {
+  const intro = buildHalaqaIntro({ sheikhName, masjidName, style: 'plain' })
+  const blocks = [
+    greetingLine(guardianName),
+    intro,
+    [
+      `يسرّنا دعوتكم لمتابعة نتائج اختبارات الطالب: *${studentName}*`,
+      'حتى تصلكم نتائجه في القرآن الكريم مباشرة بعد كل اختبار.',
+    ],
   ]
 
   if (deepLink) {
-    parts.push('*الرابط:*', deepLink, '')
-  }
-
-  if (codeDisplay) {
-    parts.push(
-      '*أو يدوياً:*',
-      `- افتح البوت: @${BOT_USERNAME}`,
-      `- أرسل هذا الرقم فقط: *${codeDisplay}*`,
-      ''
+    blocks.push(
+      'سيتم استقبال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
+      [
+        '*طريقة الربط:*',
+        '1. اضغطوا على الرابط أدناه.',
+        '2. عند فتح Telegram، اضغطوا «Start» أو «ابدأ».',
+        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+      ],
+      [
+        '*رابط الربط:*',
+        deepLink,
+      ],
+      [
+        '*أو يمكنكم الربط يدويًا:*',
+        `افتحوا البوت @${BOT_USERNAME} وأرسلوا رمز الربط التالي:`,
+        `*${formattedCode}*`,
+      ],
+    )
+  } else {
+    blocks.push(
+      'سيتم استقبال النتائج عبر Telegram، والربط مطلوب مرة واحدة فقط.',
+      [
+        '*طريقة الربط:*',
+        `1. افتحوا البوت @${BOT_USERNAME} في Telegram.`,
+        '2. أرسلوا رمز الربط التالي:',
+        `*${formattedCode}*`,
+        '3. بعد إتمام الربط، ستصلكم النتائج تلقائيًا.',
+      ],
     )
   }
 
-  parts.push(
-    'Telegram تطبيق مجاني — مثل واتساب — لاستلام الإشعارات فقط.',
-    'إذا لم يعمل الرابط، انسخ الرقم وأرسله للبوت مباشرة.',
-    '',
-    'بارك الله فيكم',
+  blocks.push(
+    'إذا واجهتم أي صعوبة في الربط، يرجى التواصل مع معلّم الحلقة.',
+    'بارك الله فيكم، ونفع بكم.',
   )
-
-  return parts.join('\n')
+  return joinMessageBlocks(blocks)
 }
 
-function inviteMessageStyleForChannel(channel) {
-  return channel === 'whatsapp' || channel === 'sms' ? 'plain' : 'emoji'
+function buildSmsInvite({ studentName, deepLink, formattedCode }) {
+  if (deepLink) {
+    return [
+      `السلام عليكم، لمتابعة نتائج الطالب ${studentName} في حلقة القرآن الكريم عبر Telegram، اضغط الرابط:`,
+      deepLink,
+      `أو أرسل الرمز ${formattedCode} إلى البوت:`,
+      `@${BOT_USERNAME}`,
+      'الربط مطلوب مرة واحدة فقط.',
+    ].join('\n')
+  }
+  return [
+    `السلام عليكم، لمتابعة نتائج الطالب ${studentName} في حلقة القرآن الكريم عبر Telegram، أرسل الرمز ${formattedCode} إلى البوت:`,
+    `@${BOT_USERNAME}`,
+    'الربط مطلوب مرة واحدة فقط.',
+  ].join('\n')
+}
+
+export function buildInviteMessageForChannel(channel, params) {
+  const validation = validateInviteParams(params)
+  if (!validation.ok) throw new InviteMessageError(validation.error)
+
+  const base = {
+    guardianName: params.guardianName,
+    studentName: validation.student,
+    deepLink: params.deepLink || null,
+    formattedCode: validation.formattedCode,
+    sheikhName: params.sheikhName,
+    masjidName: params.masjidName,
+  }
+
+  switch (channel) {
+    case 'whatsapp':
+      return buildWhatsAppInvite(base)
+    case 'sms':
+      return buildSmsInvite(base)
+    case 'telegram':
+    default:
+      return buildTelegramCopyInvite(base)
+  }
+}
+
+/** @deprecated use buildInviteMessageForChannel */
+export function buildTelegramInviteMessage(params) {
+  return buildInviteMessageForChannel('telegram', params)
 }
 
 export function buildWhatsAppInviteUrl(phoneE164, message) {
@@ -166,7 +203,6 @@ export function buildSmsInviteUrl(phoneE164, message) {
   return `sms:+${digits}?body=${encodeURIComponent(message)}`
 }
 
-/** Opens Telegram share picker — choose the parent chat and send. */
 export function buildTelegramShareUrl(deepLink, message) {
   if (!deepLink) return null
   const text = message || deepLink
@@ -174,9 +210,14 @@ export function buildTelegramShareUrl(deepLink, message) {
 }
 
 export function getInviteUrl(channel, { phoneE164, message, deepLink, inviteParams }) {
-  const text = message || (inviteParams
-    ? buildTelegramInviteMessage({ ...inviteParams, style: inviteMessageStyleForChannel(channel) })
-    : '')
+  let text = message
+  if (!text && inviteParams) {
+    try {
+      text = buildInviteMessageForChannel(channel, inviteParams)
+    } catch {
+      return null
+    }
+  }
 
   switch (channel) {
     case 'whatsapp':
@@ -191,8 +232,14 @@ export function getInviteUrl(channel, { phoneE164, message, deepLink, invitePara
 }
 
 export function openGuardianInvite(channel, { phoneE164, message, deepLink, inviteParams }) {
+  try {
+    if (inviteParams && !message) buildInviteMessageForChannel(channel, inviteParams)
+  } catch (e) {
+    return { channel, url: null, ok: false, error: e.message }
+  }
+
   const url = getInviteUrl(channel, { phoneE164, message, deepLink, inviteParams })
-  if (!url) return { channel, url: null, ok: false }
+  if (!url) return { channel, url: null, ok: false, error: 'تعذر فتح الدعوة' }
 
   if (channel === 'sms') {
     window.location.href = url
@@ -206,12 +253,14 @@ export function openGuardianInvite(channel, { phoneE164, message, deepLink, invi
 export function inviteChannelToast(channel) {
   switch (channel) {
     case 'whatsapp':
-      return 'تم فتح واتساب — اضغط إرسال'
+      return 'تم فتح واتساب، راجع الرسالة ثم أرسلها.'
     case 'sms':
-      return 'تم فتح الرسائل — اضغط إرسال'
+      return 'تم فتح تطبيق الرسائل، راجع الرسالة ثم أرسلها.'
     case 'telegram':
-      return 'تم فتح Telegram — اختر محادثة ولي الأمر وأرسل'
+      return 'تم فتح Telegram، اختر محادثة ولي الأمر ثم أرسل الرسالة.'
     default:
       return 'تم فتح التطبيق'
   }
 }
+
+export { formatLinkCodeForDisplay, normalizeLinkCode }

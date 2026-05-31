@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import { pool } from '../lib/db.js'
 import { getUserSettings, updateUserSettings } from '../lib/userSettings.js'
+import { invalidateUnusedPasswordResets, PASSWORD_RESET_TTL_MS } from '../lib/passwordReset.js'
 
 const router = Router()
 
@@ -141,7 +142,8 @@ router.post(
     const user = u.rows[0]
     const token = crypto.randomBytes(32).toString('hex')
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
-    const expires = new Date(Date.now() + 60 * 60 * 1000) // 1h
+    const expires = new Date(Date.now() + PASSWORD_RESET_TTL_MS)
+    await invalidateUnusedPasswordResets(pool, user.id)
     await pool.query('insert into password_resets(user_id, token_hash, expires_at) values($1,$2,$3)', [user.id, tokenHash, expires.toISOString()])
     const base = process.env.RESET_BASE_URL || 'http://localhost:5173'
     const link = `${base}/reset?token=${token}`
@@ -149,8 +151,15 @@ router.post(
       await transporter.sendMail({
         from: process.env.SMTP_FROM || '"اختبار القرآن" <noreply@example.com>',
         to: email,
-        subject: 'إعادة تعيين كلمة المرور',
-        text: `مرحبًا ${user.username}\n\nلاستعادة كلمة المرور، افتح الرابط التالي خلال ساعة:\n${link}\n\nإذا لم تطلب ذلك فتجاهل الرسالة.`
+        subject: 'إعادة تعيين كلمة المرور — حلقة',
+        text: [
+          'السلام عليكم،',
+          'تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابكم في تطبيق حلقة.',
+          'لإنشاء كلمة مرور جديدة، افتحوا الرابط التالي خلال ساعة واحدة:',
+          link,
+          'إذا لم تطلبوا إعادة تعيين كلمة المرور، يمكنكم تجاهل هذه الرسالة، ولن يتم تغيير كلمة المرور الحالية.',
+          'فريق تطبيق حلقة',
+        ].join('\n'),
       })
       res.json({ ok: true })
     } catch (mailErr) {

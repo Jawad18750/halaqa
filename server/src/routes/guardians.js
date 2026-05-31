@@ -10,6 +10,7 @@ import {
   updateGuardianLink,
   deleteGuardianLink,
   createLinkCode,
+  revokeTelegramLink,
 } from '../lib/guardiansService.js'
 
 const router = Router()
@@ -62,6 +63,15 @@ router.post('/:id/link-code', async (req, res) => {
   try {
     const result = await createLinkCode(req.user.id, req.params.id)
     res.json(result)
+  } catch (e) {
+    handleError(res, e)
+  }
+})
+
+router.delete('/:id/telegram', async (req, res) => {
+  try {
+    await revokeTelegramLink(req.user.id, req.params.id)
+    res.json({ ok: true })
   } catch (e) {
     handleError(res, e)
   }

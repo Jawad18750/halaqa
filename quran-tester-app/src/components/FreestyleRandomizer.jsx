@@ -57,7 +57,7 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
 
   const pickerFields = (
     <>
-      <label className="field guest-field">
+      <label className="field freestyle-field">
         <span className="field__label">الوضع</span>
         <select
           value={mode}
@@ -65,7 +65,7 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
             setMode(e.target.value)
             resetModeFilters()
           }}
-          className="input guest-field__input"
+          className="input freestyle-field__input"
         >
           <option value="naqza">حسب النقزة</option>
           <option value="juz">حسب الجزء</option>
@@ -77,9 +77,9 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
       </label>
 
       {mode === 'naqza' && (
-        <label className="field guest-field">
+        <label className="field freestyle-field">
           <span className="field__label">النقزة</span>
-          <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input guest-field__input">
+          <select value={naqza} onChange={e => { setNaqza(Number(e.target.value)); setJuz('') }} className="input freestyle-field__input">
             {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
               <option key={n} value={n}>{`${n} - ${naqzaLabels[n - 1]}`}</option>
             ))}
@@ -88,9 +88,9 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
       )}
 
       {mode === 'juz' && (
-        <label className="field guest-field">
+        <label className="field freestyle-field">
           <span className="field__label">الجزء</span>
-          <select value={juz} onChange={e => setJuz(e.target.value)} className="input guest-field__input">
+          <select value={juz} onChange={e => setJuz(e.target.value)} className="input freestyle-field__input">
             <option value="">—</option>
             {Array.from({ length: 30 }, (_, i) => i + 1).map(n => (
               <option key={n} value={n}>{formatJuz(n)}</option>
@@ -100,9 +100,9 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
       )}
 
       {mode === 'five_hizb' && (
-        <label className="field guest-field">
+        <label className="field freestyle-field">
           <span className="field__label">المجموعة</span>
-          <select value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} className="input guest-field__input">
+          <select value={fiveHizb} onChange={e => setFiveHizb(e.target.value)} className="input freestyle-field__input">
             <option value="">—</option>
             {Array.from({ length: 12 }, (_, i) => i + 1).map(n => (
               <option key={n} value={n}>{fiveHizbLabel(n)}</option>
@@ -112,9 +112,9 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
       )}
 
       {mode === 'quarter' && (
-        <label className="field guest-field">
+        <label className="field freestyle-field">
           <span className="field__label">الربع</span>
-          <select value={quarter} onChange={e => setQuarter(e.target.value)} className="input guest-field__input">
+          <select value={quarter} onChange={e => setQuarter(e.target.value)} className="input freestyle-field__input">
             <option value="">—</option>
             {QUARTER_LABELS.map((lbl, idx) => (
               <option key={idx + 1} value={idx + 1}>{lbl}</option>
@@ -124,9 +124,9 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
       )}
 
       {mode === 'half' && (
-        <label className="field guest-field">
+        <label className="field freestyle-field">
           <span className="field__label">النصف</span>
-          <select value={half} onChange={e => setHalf(e.target.value)} className="input guest-field__input">
+          <select value={half} onChange={e => setHalf(e.target.value)} className="input freestyle-field__input">
             <option value="">—</option>
             {HALF_LABELS.map((lbl, idx) => (
               <option key={idx + 1} value={idx + 1}>{lbl}</option>
@@ -138,22 +138,22 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
   )
 
   const statusLine = filterHint ? (
-    <p className="guest-picker__alert">{filterHint}</p>
+    <p className="freestyle-picker__alert">{filterHint}</p>
   ) : (
-    <p className="guest-picker__meta">
+    <p className="freestyle-picker__meta">
       {loading ? 'جاري التحميل…' : (filtered.length ? `${filtered.length.toLocaleString('ar-EG-u-nu-latn')} ثُمُن متاح` : 'لا توجد أثمان متاحة')}
     </p>
   )
 
   const resultBlock = current && (
-    <SectionCard className="guest-result appear">
-      <div className={`guest-result__card ${highlight ? 'pulse-outline' : ''}`}>
-        <div className="guest-result__badge">الثُمُن رقم {current.id}</div>
-        <p className="guest-result__phrase">{current.name || '—'}</p>
-        <button type="button" className="btn btn--ghost btn--sm guest-result__again" onClick={pickRandom}>
+    <SectionCard className="freestyle-result appear">
+      <div className={`freestyle-result__card ${highlight ? 'pulse-outline' : ''}`}>
+        <div className="freestyle-result__badge">الثُمُن رقم {current.id}</div>
+        <p className="freestyle-result__phrase">{current.name || '—'}</p>
+        <button type="button" className="btn btn--ghost btn--sm freestyle-result__again" onClick={pickRandom}>
           <i className="fa-solid fa-shuffle" /> اختيار جديد
         </button>
-        <div className="info-grid info-grid--fit guest-result__stats">
+        <div className="info-grid info-grid--fit freestyle-result__stats">
           <StatTile label="السورة" value={current.surah ? `${current.surah}${current.surahNumber ? ` (${current.surahNumber})` : ''}` : '—'} />
           <StatTile label="الحزب" value={current.hizb ?? '—'} />
           <StatTile label="الربع" value={current.quarter ?? '—'} />
@@ -161,6 +161,33 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
           <StatTile label="النقزة" value={current.naqza ? `${current.naqza} - ${naqzaName(current.naqza, thumuns)}` : '—'} />
         </div>
       </div>
+    </SectionCard>
+  )
+
+  const pickerCard = (
+    <SectionCard className="freestyle-picker appear">
+      <div className="freestyle-picker__head">
+        <div className="freestyle-picker__head-text">
+          <h2 className="freestyle-picker__title">اختيار الثُمُن</h2>
+          <p className="freestyle-picker__lead">حدّد النطاق ثم اضغط الزر للاختيار العشوائي</p>
+        </div>
+        {!loading && filtered.length > 0 && (
+          <span className="freestyle-picker__count" aria-label={`${filtered.length} ثُمُن متاح`}>
+            {filtered.length.toLocaleString('ar-EG-u-nu-latn')}
+          </span>
+        )}
+      </div>
+      <div className="freestyle-picker__fields">{pickerFields}</div>
+      <button
+        type="button"
+        className="btn btn--primary freestyle-picker__shuffle"
+        onClick={pickRandom}
+        disabled={loading || !filtered.length}
+      >
+        <i className="fa-solid fa-shuffle" aria-hidden="true" />
+        اختر ثُمناً عشوائياً
+      </button>
+      {statusLine}
     </SectionCard>
   )
 
@@ -183,24 +210,7 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
           <p className="guest-hero__hint">لإدارة الطلاب وحفظ المحاولات والتقارير</p>
         </section>
 
-        <SectionCard className="guest-picker appear">
-          <div className="guest-picker__head">
-            <h2 className="guest-picker__title">اختيار الثُمُن</h2>
-            {!loading && filtered.length > 0 && (
-              <span className="guest-picker__count">{filtered.length.toLocaleString('ar-EG-u-nu-latn')}</span>
-            )}
-          </div>
-          <div className="guest-picker__fields">{pickerFields}</div>
-          <button
-            type="button"
-            className="btn btn--primary guest-picker__shuffle"
-            onClick={pickRandom}
-            disabled={loading || !filtered.length}
-          >
-            <i className="fa-solid fa-shuffle" /> اختر ثُمناً عشوائياً
-          </button>
-          {statusLine}
-        </SectionCard>
+        {pickerCard}
 
         {resultBlock}
       </div>
@@ -208,44 +218,16 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
   }
 
   return (
-    <div className="free-mode stack">
-      {onBack && <PageHeader title="الوضع الحر" onBack={onBack} />}
-      <SectionCard title={onBack ? undefined : 'الوضع الحر'}>
-        <div className="controls">
-          {pickerFields}
-          <button type="button" className="btn btn--primary" onClick={pickRandom} disabled={loading || !filtered.length}>
-            <i className="fa-solid fa-shuffle" /> اختر ثُمناً عشوائياً
-          </button>
-        </div>
-        {filterHint ? (
-          <p className="alert alert--error" style={{ textAlign: 'center', marginTop: 8 }}>{filterHint}</p>
-        ) : (
-          <p className="meta" style={{ textAlign: 'center' }}>
-            {loading ? 'جاري التحميل…' : (filtered.length ? `عدد الأثمان المتاحة: ${filtered.length.toLocaleString('ar-EG-u-nu-latn')}` : 'لا توجد أثمان متاحة')}
-          </p>
-        )}
-      </SectionCard>
-
-      {current && (
-        <SectionCard>
-          <div className={`card appear ${highlight ? 'pulse-outline' : ''}`}>
-            <div className="thumun-hero">
-              <div className="thumun-hero__id">الثُمُن رقم {current.id}</div>
-              <div className="thumun-hero__phrase">{current.name || '—'}</div>
-            </div>
-            <div className="cluster" style={{ justifyContent: 'center', marginTop: 12 }}>
-              <button type="button" className="btn" onClick={pickRandom}><i className="fa-solid fa-shuffle" /> اختيار جديد</button>
-            </div>
-            <div className="info-grid info-grid--fit" style={{ marginTop: 16 }}>
-              <StatTile label="السورة" value={current.surah ? `${current.surah}${current.surahNumber ? ` (${current.surahNumber})` : ''}` : '—'} />
-              <StatTile label="الحزب" value={current.hizb ?? '—'} />
-              <StatTile label="الربع" value={current.quarter ?? '—'} />
-              <StatTile label="الجزء" value={current.juz ? formatJuz(current.juz) : '—'} />
-              <StatTile label="النقزة" value={current.naqza ? `${current.naqza} - ${naqzaName(current.naqza, thumuns)}` : '—'} />
-            </div>
-          </div>
-        </SectionCard>
+    <div className="free-mode">
+      {onBack && (
+        <PageHeader
+          title="الوضع الحر"
+          subtitle="اختر ثُمناً عشوائياً للتدريب"
+          onBack={onBack}
+        />
       )}
+      {pickerCard}
+      {resultBlock}
     </div>
   )
 }

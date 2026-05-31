@@ -313,3 +313,37 @@ export async function getNotificationLog(userId, { limit = 50, studentId } = {})
   )
   return rows
 }
+
+export async function logTelegramLinkActivity({
+  userId,
+  guardianId,
+  studentName,
+  telegramDisplayName,
+  telegramUsername,
+}) {
+  const studentQ = await pool.query(
+    `select gs.student_id, s.name
+     from guardian_students gs
+     join students s on s.id = gs.student_id
+     where gs.guardian_id = $1
+     order by gs.is_primary desc, s.number asc
+     limit 1`,
+    [guardianId]
+  )
+  const studentRow = studentQ.rows[0]
+  const resolvedStudentName = studentName || studentRow?.name || 'الطالب'
+  let preview = `تم ربط ولي أمر الطالب ${resolvedStudentName} بحساب Telegram.`
+  const tgParts = []
+  if (telegramDisplayName) tgParts.push(telegramDisplayName)
+  if (telegramUsername) tgParts.push(`@${String(telegramUsername).replace(/^@/, '')}`)
+  if (tgParts.length) preview += ` (${tgParts.join(' · ')})`
+
+  await logNotification({
+    userId,
+    guardianId,
+    studentId: studentRow?.student_id || null,
+    channel: 'telegram',
+    status: 'telegram_linked',
+    messagePreview: preview,
+  })
+}

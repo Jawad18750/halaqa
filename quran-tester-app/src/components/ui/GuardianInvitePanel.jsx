@@ -5,6 +5,7 @@ import {
   needsInvite,
   isTelegramActive,
   buildTelegramInviteMessage,
+  buildInviteMessageForChannel,
   openGuardianInvite,
   inviteChannelToast,
 } from '../../lib/guardianUi.js'
@@ -46,12 +47,23 @@ export default function GuardianInvitePanel({
         deepLink: result.deepLink,
         inviteParams,
       })
+      if (opened.error) {
+        onToast?.(opened.error)
+        return
+      }
       if (opened.ok) {
         onToast?.(inviteChannelToast(channel))
       } else {
+        let message
+        try {
+          message = buildInviteMessageForChannel(channel, inviteParams)
+        } catch (err) {
+          onToast?.(err.message)
+          return
+        }
         onInviteFallback?.({
           guardian: guardianRow,
-          message: buildTelegramInviteMessage(inviteParams),
+          message,
           inviteParams,
           channel,
           ...result,

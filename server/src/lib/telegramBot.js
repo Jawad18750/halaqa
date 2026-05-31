@@ -29,6 +29,9 @@ async function telegramRequest(method, body) {
 }
 
 export async function sendMessage(chatId, text, options = {}) {
+  if (process.env.TELEGRAM_DRY_RUN === '1') {
+    return { message_id: 0, chat: { id: chatId }, text }
+  }
   return telegramRequest('sendMessage', {
     chat_id: chatId,
     text,
