@@ -1043,6 +1043,7 @@ select.input { appearance: none; }
 .alert { padding: var(--space-3); border-radius: var(--radius-md); font-size: var(--text-sm); }
 .alert--error { background: var(--danger-muted); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent); }
 .alert--success { background: var(--success-muted); color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 30%, transparent); }
+.alert--info { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--text); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); }
 
 .toast {
   position: fixed;
@@ -3241,6 +3242,78 @@ select.input { appearance: none; }
   margin-top: var(--space-2);
   font-size: var(--text-base);
 }
+
+.test-pick-hint {
+  margin: var(--space-1) 0 0;
+  text-align: center;
+  line-height: 1.45;
+}
+
+.test-manual-toggle {
+  width: 100%;
+  min-height: 44px;
+  margin-top: var(--space-2);
+}
+
+.test-manual-pick {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated, var(--surface));
+}
+
+.test-manual-pick__list {
+  display: grid;
+  gap: 6px;
+  max-height: min(42vh, 320px);
+  overflow-y: auto;
+}
+
+.test-manual-pick__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: start;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.test-manual-pick__item--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.test-manual-pick__id {
+  flex-shrink: 0;
+  font-weight: var(--font-semibold, 600);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.test-manual-pick__name {
+  line-height: 1.45;
+  font-size: var(--text-sm, 0.9rem);
+}
+
+.test-manual-pick__empty {
+  margin: 0;
+  text-align: center;
+  padding: var(--space-2);
+}
+
+.test-save-error {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.test-save-error p { margin: 0; }
 
 .thumun-hero--test {
   text-align: center;

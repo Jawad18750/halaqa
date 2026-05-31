@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { sessions, students, getApiUrl } from '../api'
 import {
   QUARTER_LABELS,
@@ -19,6 +19,7 @@ import SectionCard from './ui/SectionCard.jsx'
 import Badge from './ui/Badge.jsx'
 import TestResultModal from './ui/TestResultModal.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
+import { pickNextThumun, resetPickDeck, consumeFromPickDeck } from '../lib/thumunPick.js'
 
 const MODES = [
   { id: 'naqza', label: 'النقزة' },
@@ -29,20 +30,55 @@ const MODES = [
   { id: 'full', label: 'كامل' },
 ]
 
+function testDraftKey(studentId) {
+  return `halaqa.testDraft.${studentId}`
+}
+
+function readTestDraft(studentId) {
+  try {
+    const raw = sessionStorage.getItem(testDraftKey(studentId))
+    if (!raw) return null
+    const draft = JSON.parse(raw)
+    if (!draft?.currentId) return null
+    if (Date.now() - (draft.savedAt || 0) > 24 * 60 * 60 * 1000) {
+      sessionStorage.removeItem(testDraftKey(studentId))
+      return null
+    }
+    return draft
+  } catch {
+    return null
+  }
+}
+
+function writeTestDraft(studentId, draft) {
+  try {
+    sessionStorage.setItem(testDraftKey(studentId), JSON.stringify({ ...draft, savedAt: Date.now() }))
+  } catch {}
+}
+
+function clearTestDraft(studentId) {
+  try { sessionStorage.removeItem(testDraftKey(studentId)) } catch {}
+}
+
 export default function TestView({ student, thumuns, onGoProfile, onTestAgain, onGoList, onHistory, onBack, onStudentUpdated }) {
-  const [mode, setMode] = useState('naqza')
-  const [testNaqza, setTestNaqza] = useState(Number(student.current_naqza) || 1)
-  const [juz, setJuz] = useState('')
-  const [fiveHizb, setFiveHizb] = useState('')
-  const [quranQuarter, setQuranQuarter] = useState('')
-  const [quranHalf, setQuranHalf] = useState('')
+  const initialDraft = useMemo(() => readTestDraft(student.id), [student.id])
+  const [mode, setMode] = useState(() => initialDraft?.mode || 'naqza')
+  const [testNaqza, setTestNaqza] = useState(() => initialDraft?.testNaqza ?? (Number(student.current_naqza) || 1))
+  const [juz, setJuz] = useState(() => initialDraft?.juz || '')
+  const [fiveHizb, setFiveHizb] = useState(() => initialDraft?.fiveHizb || '')
+  const [quranQuarter, setQuranQuarter] = useState(() => initialDraft?.quranQuarter || '')
+  const [quranHalf, setQuranHalf] = useState(() => initialDraft?.quranHalf || '')
   const [current, setCurrent] = useState(null)
-  const [fatha, setFatha] = useState(0)
-  const [taradud, setTaradud] = useState(0)
+  const [fatha, setFatha] = useState(() => initialDraft?.fatha ?? 0)
+  const [taradud, setTaradud] = useState(() => initialDraft?.taradud ?? 0)
   const [saving, setSaving] = useState(false)
   const [naqzaSaving, setNaqzaSaving] = useState(false)
   const [error, setError] = useState('')
   const [resultModal, setResultModal] = useState(null)
+  const [showManualPick, setShowManualPick] = useState(false)
+  const [manualQuery, setManualQuery] = useState('')
+  const [draftRestored, setDraftRestored] = useState(false)
+  const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
 
@@ -62,6 +98,20 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     return emptyFilterHint(mode, { juz, fiveHizb, quarter: quranQuarter, half: quranHalf })
   }, [filtered.length, mode, juz, fiveHizb, quranQuarter, quranHalf])
 
+  const manualOptions = useMemo(() => {
+    const q = manualQuery.trim()
+    let list = [...filtered].sort((a, b) => a.id - b.id)
+    if (q) {
+      const asNum = Number(q)
+      if (!Number.isNaN(asNum) && q.match(/^\d+$/)) {
+        list = list.filter(t => t.id === asNum || String(t.id).startsWith(q))
+      } else {
+        list = list.filter(t => (t.name || '').includes(q))
+      }
+    }
+    return list
+  }, [filtered, manualQuery])
+
   const apiBase = getApiUrl()
   const photoSrc = (() => {
     if (!student?.photo_url) return '/profile-placeholder.svg'
@@ -72,12 +122,58 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
 
   function pickRandom() {
     if (!filtered.length) return
-    const pool = current ? filtered.filter(t => t.id !== current.id) : filtered
-    const base = pool.length ? pool : filtered
-    setCurrent(base[Math.floor(Math.random() * base.length)])
+    const next = pickNextThumun(filtered, pickDeckRef, current?.id ?? null)
+    if (next) {
+      setCurrent(next)
+      setError('')
+    }
   }
 
-  useEffect(() => { setCurrent(null) }, [mode, juz, fiveHizb, quranQuarter, quranHalf, testNaqza])
+  function selectManualThumun(thumunId) {
+    const t = filtered.find(x => x.id === Number(thumunId))
+    if (!t) return
+    consumeFromPickDeck(pickDeckRef, t.id)
+    setCurrent(t)
+    setError('')
+    setShowManualPick(false)
+  }
+
+  useEffect(() => {
+    resetPickDeck(pickDeckRef)
+  }, [mode, juz, fiveHizb, quranQuarter, quranHalf, testNaqza])
+
+  useEffect(() => {
+    if (!thumuns.length || !initialDraft?.currentId || current) return
+    const t = thumuns.find(x => x.id === initialDraft.currentId)
+    if (t) {
+      setCurrent(t)
+      setDraftRestored(true)
+    }
+  }, [thumuns, initialDraft, current])
+
+  useEffect(() => {
+    if (!current) return
+    if (filtered.some(t => t.id === current.id)) return
+    setCurrent(null)
+  }, [mode, juz, fiveHizb, quranQuarter, quranHalf, testNaqza, filtered, current])
+
+  useEffect(() => {
+    if (!current) {
+      clearTestDraft(student.id)
+      return
+    }
+    writeTestDraft(student.id, {
+      currentId: current.id,
+      fatha,
+      taradud,
+      mode,
+      testNaqza,
+      juz,
+      fiveHizb,
+      quranQuarter,
+      quranHalf,
+    })
+  }, [student.id, current, fatha, taradud, mode, testNaqza, juz, fiveHizb, quranQuarter, quranHalf])
 
   const refreshStudent = useCallback(async () => {
     const { students: list } = await students.list()
@@ -139,6 +235,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         passed,
         naqzaAfter: passed ? (updated?.current_naqza ?? null) : student.current_naqza,
       })
+      clearTestDraft(student.id)
       resetCounters()
     } catch (e) {
       setError(e?.message || 'تعذر حفظ المحاولة')
@@ -253,8 +350,52 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         </div>
 
         <button type="button" className="btn btn--primary test-pick-btn" onClick={pickRandom} disabled={!filtered.length}>
-          <i className="fa-solid fa-shuffle" /> اختر ثُمُناً ({filtered.length})
+          <i className="fa-solid fa-shuffle" /> اختر ثُمُناً عشوائياً ({filtered.length})
         </button>
+        <p className="meta test-pick-hint">يُعرَض كل ثمن مرة قبل التكرار — عشوائية عادلة</p>
+
+        <button
+          type="button"
+          className="btn btn--ghost test-manual-toggle"
+          onClick={() => setShowManualPick(v => !v)}
+          disabled={!filtered.length}
+        >
+          <i className={`fa-solid fa-${showManualPick ? 'chevron-up' : 'list'}`} />
+          {showManualPick ? 'إخفاء القائمة' : 'اختيار الثمن يدوياً'}
+        </button>
+
+        {showManualPick && (
+          <div className="test-manual-pick">
+            <label className="field">
+              <span className="field__label">بحث برقم الثمن أو بداية الآية</span>
+              <input
+                className="input"
+                type="search"
+                inputMode="search"
+                placeholder="مثال: 142 أو «الحمد»"
+                value={manualQuery}
+                onChange={e => setManualQuery(e.target.value)}
+              />
+            </label>
+            <div className="test-manual-pick__list" role="listbox" aria-label="اختيار الثمن">
+              {manualOptions.length === 0 ? (
+                <p className="meta test-manual-pick__empty">لا نتائج — غيّر البحث أو الوضع</p>
+              ) : manualOptions.map(t => (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="option"
+                  aria-selected={current?.id === t.id}
+                  className={`test-manual-pick__item ${current?.id === t.id ? 'test-manual-pick__item--active' : ''}`}
+                  onClick={() => selectManualThumun(t.id)}
+                >
+                  <span className="test-manual-pick__id">#{t.id}</span>
+                  <span className="test-manual-pick__name">{t.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {filterHint && <p className="alert alert--error" style={{ marginTop: 8, textAlign: 'center' }}>{filterHint}</p>}
       </SectionCard>
@@ -307,7 +448,22 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
           </div>
         </div>
 
-        {error && <div className="alert alert--error" style={{ marginTop: 12 }}>{error}</div>}
+        {draftRestored && (
+          <div className="alert alert--info" style={{ marginTop: 12 }}>
+            <i className="fa-solid fa-rotate-left" /> تم استرجاع مسودة الاختبار السابقة — يمكنك إعادة الحفظ مباشرة.
+          </div>
+        )}
+
+        {error && (
+          <div className="alert alert--error test-save-error" style={{ marginTop: 12 }}>
+            <p>{error}</p>
+            {current && (
+              <button type="button" className="btn btn--primary btn--sm" disabled={saving} onClick={finalize}>
+                {saving ? 'جاري الحفظ…' : 'إعادة المحاولة'}
+              </button>
+            )}
+          </div>
+        )}
       </SectionCard>
 
       <div className="test-sticky-bar test-sticky-bar--enhanced">

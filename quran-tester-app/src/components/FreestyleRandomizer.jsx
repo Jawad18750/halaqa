@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import {
   QUARTER_LABELS,
   HALF_LABELS,
@@ -9,6 +9,7 @@ import {
   fiveHizbLabel,
   emptyFilterHint,
 } from '../lib/labels.js'
+import { pickNextThumun, resetPickDeck } from '../lib/thumunPick.js'
 import StatTile from './ui/StatTile.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 import PageHeader from './ui/PageHeader.jsx'
@@ -23,6 +24,7 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
   const [half, setHalf] = useState('')
   const [current, setCurrent] = useState(null)
   const [highlight, setHighlight] = useState(false)
+  const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
 
@@ -36,7 +38,10 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
     return emptyFilterHint(mode, { juz, fiveHizb, quarter, half })
   }, [filtered.length, mode, juz, fiveHizb, quarter, half])
 
-  useEffect(() => { setCurrent(null) }, [mode, naqza, juz, fiveHizb, quarter, half, thumuns])
+  useEffect(() => {
+    setCurrent(null)
+    resetPickDeck(pickDeckRef)
+  }, [mode, naqza, juz, fiveHizb, quarter, half, thumuns])
 
   function resetModeFilters() {
     setJuz('')
@@ -44,13 +49,14 @@ export default function FreestyleRandomizer({ thumuns, loading, theme = 'light',
     setQuarter('')
     setHalf('')
     setCurrent(null)
+    resetPickDeck(pickDeckRef)
   }
 
   function pickRandom() {
     if (!filtered.length) return
-    const pool = current ? filtered.filter(t => t.id !== current.id) : filtered
-    const base = pool.length ? pool : filtered
-    setCurrent(base[Math.floor(Math.random() * base.length)])
+    const next = pickNextThumun(filtered, pickDeckRef, current?.id ?? null)
+    if (!next) return
+    setCurrent(next)
     setHighlight(true)
     setTimeout(() => setHighlight(false), 900)
   }

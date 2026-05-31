@@ -11,13 +11,13 @@ export function setToken(next) {
   else localStorage.removeItem('token')
 }
 
-async function request(path, options = {}) {
+async function request(path, options = {}, timeoutMs = 15000) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const url = `${API_URL}${path}`
   if (DEBUG_API) console.log('API request →', options.method || 'GET', url)
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort('timeout'), 15000)
+  const timeout = setTimeout(() => controller.abort('timeout'), timeoutMs)
   try {
     const res = await fetch(url, { ...options, headers, signal: controller.signal })
     const isJson = (res.headers.get('content-type') || '').includes('application/json')
@@ -87,7 +87,7 @@ export const students = {
 
 // Sessions
 export const sessions = {
-  async create(input) { return await request('/sessions', { method: 'POST', body: JSON.stringify(input) }) },
+  async create(input) { return await request('/sessions', { method: 'POST', body: JSON.stringify(input) }, 30000) },
   async forStudent(id) { return await request(`/sessions/student/${id}`) },
   async weekly() { return await request('/sessions/weekly') },
   async overview(from, to) {
