@@ -17,7 +17,7 @@ const IMPROVER_WINDOW_SIZE = 3
 const INITIAL_LIST_LIMIT = 3
 const RANK_TONES = ['gold', 'silver', 'bronze']
 
-export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
+export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onStudentsWithoutGuardian }) {
   const [week, setWeek] = useState(null)
   const [list, setList] = useState([])
   const [remaining, setRemaining] = useState(0)
@@ -235,11 +235,11 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
       items.push({
         id: 'students-no-guardian',
         tone: 'info',
-        icon: 'fa-solid fa-user-plus',
+        icon: 'fa-solid fa-user-shield',
         title: `${guardianMetrics.studentsWithoutGuardian} طالب دون ولي أمر مسجّل`,
-        body: 'أضف بيانات ولي الأمر من ملف الطالب لتفعيل متابعة النتائج والإشعارات.',
-        action: 'addStudent',
-        actionLabel: 'إضافة طالب',
+        body: 'افتح ملف كل طالب وأضف بيانات ولي الأمر لتفعيل متابعة النتائج والإشعارات عبر Telegram.',
+        action: 'studentsWithoutGuardian',
+        actionLabel: 'عرض الطلاب وإكمال البيانات',
       })
     }
     items.push({
@@ -255,7 +255,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
   }, [guardianMetrics])
 
   function handleAnnouncementAction(action) {
-    if (action === 'addStudent') onAddStudent?.()
+    if (action === 'studentsWithoutGuardian') onStudentsWithoutGuardian?.()
+    else if (action === 'addStudent') onAddStudent?.()
     else onNavigate?.(action)
   }
 
@@ -518,9 +519,9 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent }) {
                 رسائل Telegram
               </button>
               {guardianMetrics.studentsWithoutGuardian > 0 && (
-                <button type="button" className="btn btn--ghost btn--sm dash-guardians__action dash-guardians__action--wide" onClick={() => onAddStudent?.()}>
-                  <i className="fa-solid fa-user-plus" />
-                  إضافة طالب مع ولي
+                <button type="button" className="btn btn--ghost btn--sm dash-guardians__action dash-guardians__action--wide" onClick={() => onStudentsWithoutGuardian?.()}>
+                  <i className="fa-solid fa-user-shield" />
+                  إكمال بيانات أولياء الأمور ({guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')})
                 </button>
               )}
             </div>

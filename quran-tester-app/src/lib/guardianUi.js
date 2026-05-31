@@ -155,15 +155,24 @@ export function guardianStats(list) {
   return { total: rows.length, linked, needsInvite: needs }
 }
 
-export function guardianCoverageStats(guardiansList, studentsList) {
-  const linkedStudentIds = new Set()
+export function linkedStudentIdSet(guardiansList) {
+  const ids = new Set()
   for (const g of guardiansList || []) {
     for (const s of g.students || []) {
-      if (s?.id) linkedStudentIds.add(s.id)
+      if (s?.id) ids.add(s.id)
     }
   }
+  return ids
+}
+
+export function studentsMissingGuardian(guardiansList, studentsList) {
+  const linkedStudentIds = linkedStudentIdSet(guardiansList)
+  return (studentsList || []).filter(s => !linkedStudentIds.has(s.id))
+}
+
+export function guardianCoverageStats(guardiansList, studentsList) {
   const students = studentsList || []
-  const withoutGuardian = students.filter(s => !linkedStudentIds.has(s.id)).length
+  const withoutGuardian = studentsMissingGuardian(guardiansList, students).length
   return {
     ...guardianStats(guardiansList),
     studentsWithoutGuardian: withoutGuardian,

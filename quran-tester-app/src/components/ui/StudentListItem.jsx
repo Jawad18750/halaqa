@@ -25,6 +25,7 @@ export default function StudentListItem({
   menuOpen,
   onMenuToggle,
   onMenuClose,
+  missingGuardian = false,
 }) {
   const naqzaDisplay = (n) => {
     const num = Number(n)
@@ -87,6 +88,9 @@ export default function StudentListItem({
           <p className="student-item__name">{student.name}</p>
           <p className="student-item__meta">
             <span className="student-item__naqza">{naqzaShort(student.current_naqza)}</span>
+            {missingGuardian && (
+              <span className="student-item__status-label student-item__status-label--guardian">بدون ولي أمر</span>
+            )}
             {testedThisWeek && (
               <span className="student-item__status-label student-item__status-label--done">مُختبر</span>
             )}

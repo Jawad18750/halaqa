@@ -36,6 +36,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [thumuns, setThumuns] = useState([])
   const [loading, setLoading] = useState(true)
+  const [studentsListFocus, setStudentsListFocus] = useState(null)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [fontScale, setFontScale] = useState(() => Number(localStorage.getItem('fontScale') || 1))
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem('contrast') === '1')
@@ -100,6 +101,14 @@ export default function App() {
 
   function goStudentsList() {
     setSelectedStudent(null)
+    setStudentsListFocus(null)
+    setView('students')
+    setReturnView(null)
+  }
+
+  function goStudentsWithoutGuardian() {
+    setSelectedStudent(null)
+    setStudentsListFocus('no-guardian')
     setView('students')
     setReturnView(null)
   }
@@ -167,7 +176,12 @@ export default function App() {
     return (
       <div key={viewKey} className={`page motion-page ${WIDE_VIEWS.has(view) ? 'page--wide' : ''}`}>
         {view === 'dashboard' && (
-          <Dashboard onNavigate={navigate} onOpenStudent={openStudent} onAddStudent={goAddStudent} />
+          <Dashboard
+            onNavigate={navigate}
+            onOpenStudent={openStudent}
+            onAddStudent={goAddStudent}
+            onStudentsWithoutGuardian={goStudentsWithoutGuardian}
+          />
         )}
         {view === 'students' && !selectedStudent && (
           <Students
@@ -175,6 +189,8 @@ export default function App() {
             onProfile={s => openStudent(s, 'students')}
             onAddStudent={goAddStudent}
             onNavigate={navigate}
+            listFocus={studentsListFocus}
+            onListFocusConsumed={() => setStudentsListFocus(null)}
           />
         )}
         {view === 'students' && selectedStudent && (

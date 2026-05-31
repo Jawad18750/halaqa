@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { students, sessions, guardians, getApiUrl } from '../api'
 import { buildNaqzaLabels } from '../lib/labels.js'
-import { guardianCoverageStats } from '../lib/guardianUi.js'
+import { guardianCoverageStats, studentsMissingGuardian } from '../lib/guardianUi.js'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import StudentListItem from './ui/StudentListItem.jsx'
@@ -13,7 +13,7 @@ const WEEK_FILTERS = [
   { id: 'tested', label: 'مُختبر' },
 ]
 
-export default function Students({ onSelect, onProfile, onAddStudent, onNavigate }) {
+export default function Students({ onSelect, onProfile, onAddStudent, onNavigate, listFocus, onListFocusConsumed }) {
   const [list, setList] = useState([])
   const [guardianList, setGuardianList] = useState([])
   const [testedIds, setTestedIds] = useState(new Set())
@@ -21,6 +21,7 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [weekFilter, setWeekFilter] = useState('all')
+  const [guardianFocus, setGuardianFocus] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [menuId, setMenuId] = useState(null)
   const [editNumber, setEditNumber] = useState(1)
@@ -71,6 +72,13 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
   useEffect(() => { load() }, [])
 
   useEffect(() => {
+    if (listFocus === 'no-guardian') {
+      setGuardianFocus(true)
+      onListFocusConsumed?.()
+    }
+  }, [listFocus, onListFocusConsumed])
+
+  useEffect(() => {
     fetch('/quran-thumun-data.json').then(r => r.json()).then(d => setThumuns(d.thumuns || [])).catch(() => {})
   }, [])
 
@@ -114,15 +122,26 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
     [list, testedIds]
   )
 
+  const missingGuardianStudents = useMemo(
+    () => studentsMissingGuardian(guardianList, list),
+    [guardianList, list]
+  )
+
+  const missingGuardianIds = useMemo(
+    () => new Set(missingGuardianStudents.map(s => s.id)),
+    [missingGuardianStudents]
+  )
+
   const filtered = useMemo(() => {
     const q = query.trim()
     let base = q
       ? list.filter(s => String(s.number).includes(q) || (s.name || '').includes(q))
       : list
+    if (guardianFocus) base = base.filter(s => missingGuardianIds.has(s.id))
     if (weekFilter === 'tested') base = base.filter(s => testedIds.has(s.id))
     if (weekFilter === 'pending') base = base.filter(s => !testedIds.has(s.id))
     return [...base].sort((a, b) => Number(a.number || 0) - Number(b.number || 0))
-  }, [list, query, weekFilter, testedIds])
+  }, [list, query, weekFilter, testedIds, guardianFocus, missingGuardianIds])
 
   function photoSrc(s) {
     if (!s?.photo_url) return placeholder
@@ -137,7 +156,28 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
 
   return (
     <div className="students-page">
-      {!loading && list.length > 0 && (
+      {guardianFocus && (
+        <section className="students-guardian-focus" aria-label="إكمال بيانات أولياء الأمور">
+          <div className="students-guardian-focus__main">
+            <span className="students-guardian-focus__icon" aria-hidden>
+              <i className="fa-solid fa-user-shield" />
+            </span>
+            <div className="students-guardian-focus__text">
+              <strong>إكمال بيانات أولياء الأمور</strong>
+              <p className="meta">
+                {missingGuardianStudents.length > 0
+                  ? `${missingGuardianStudents.length} طالب بدون ولي أمر — افتح ملف الطالب وأضف بيانات ولي الأمر من قسم «أولياء الأمور».`
+                  : 'تم ربط جميع الطلاب بأولياء أمور.'}
+              </p>
+            </div>
+          </div>
+          <button type="button" className="btn btn--ghost btn--sm" onClick={() => setGuardianFocus(false)}>
+            عرض كل الطلاب
+          </button>
+        </section>
+      )}
+
+      {!loading && list.length > 0 && !guardianFocus && (
         <section className="students-guardian-strip" aria-label="أولياء الأمور و Telegram">
           <div className="students-guardian-strip__main">
             <span className="students-guardian-strip__icon" aria-hidden>
@@ -214,7 +254,9 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
         <p className="students-toolbar__meta">
           {loading
             ? 'جاري التحميل…'
-            : `${filtered.length} طالب${weekFilter === 'all' ? ` · ${notTestedCount} لم يُختبر` : ''}`}
+            : guardianFocus
+              ? `${filtered.length} طالب بدون ولي أمر`
+              : `${filtered.length} طالب${weekFilter === 'all' ? ` · ${notTestedCount} لم يُختبر` : ''}`}
         </p>
       </div>
 
@@ -224,9 +266,15 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
         <div className="loading">جاري التحميل…</div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          title={query.trim() || weekFilter !== 'all' ? 'لا نتائج' : 'لا يوجد طلاب'}
-          subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : weekFilter === 'pending' ? 'جميع الطلاب اُختبروا هذا الأسبوع' : undefined}
-          action={!query.trim() && weekFilter === 'all' && (
+          title={guardianFocus ? 'لا طلاب بدون ولي أمر' : query.trim() || weekFilter !== 'all' ? 'لا نتائج' : 'لا يوجد طلاب'}
+          subtitle={guardianFocus
+            ? 'جميع الطلاب لديهم ولي أمر مسجّل — يمكنك إرسال دعوات Telegram من صفحة أولياء الأمور.'
+            : query.trim() ? 'جرّب بحثاً مختلفاً' : weekFilter === 'pending' ? 'جميع الطلاب اُختبروا هذا الأسبوع' : undefined}
+          action={guardianFocus ? (
+            <button type="button" className="btn btn--primary btn--sm" onClick={() => onNavigate?.('guardians')}>
+              <i className="fa-solid fa-user-group" /> إدارة أولياء الأمور
+            </button>
+          ) : !query.trim() && weekFilter === 'all' && (
             <button type="button" className="btn btn--primary btn--sm" onClick={() => onAddStudent?.()}>
               <i className="fa-solid fa-user-plus" /> إضافة أول طالب
             </button>
@@ -242,6 +290,7 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
               placeholder={placeholder}
               naqzaLabels={naqzaLabels}
               testedThisWeek={testedIds.has(s.id)}
+              missingGuardian={guardianFocus || missingGuardianIds.has(s.id)}
               editing={editingId === s.id}
               editNumber={editNumber}
               editName={editName}
