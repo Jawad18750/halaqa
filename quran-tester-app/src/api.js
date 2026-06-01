@@ -39,7 +39,11 @@ async function request(path, options = {}, timeoutMs = 15000) {
       let msg = body?.error || res.statusText || 'Request failed'
       if (res.status === 401 && !body?.error) msg = 'غير مصرح'
       if (/Network timeout/i.test(String(msg))) msg = 'انتهت مهلة الشبكة'
-      throw new Error(msg)
+      const err = new Error(msg)
+      err.status = res.status
+      if (body?.existingGuardianId) err.existingGuardianId = body.existingGuardianId
+      if (body?.existingGuardian) err.existingGuardian = body.existingGuardian
+      throw err
     }
     return body
   } catch (e) {

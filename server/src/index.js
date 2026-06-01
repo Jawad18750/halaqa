@@ -11,6 +11,7 @@ import telegramRoutes from './routes/telegram.js'
 import notificationRoutes from './routes/notifications.js'
 import { registerWebhookOnStartup } from './lib/telegramBot.js'
 import { startTelegramPolling, stopTelegramPolling } from './lib/telegramPolling.js'
+import { normalizeGuardianPhonesInDb } from './lib/guardiansService.js'
 
 const app = express()
 
@@ -97,6 +98,13 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 4000
 app.listen(port, () => {
   console.log(`Halaqa server listening on http://localhost:${port}`)
+  normalizeGuardianPhonesInDb()
+    .then((result) => {
+      if (result.updated || result.merged) {
+        console.log('[guardians] normalized phone numbers', result)
+      }
+    })
+    .catch((e) => console.error('[guardians] phone normalize failed', e.message))
   registerWebhookOnStartup()
     .then(mode => {
       if (mode === 'polling') {

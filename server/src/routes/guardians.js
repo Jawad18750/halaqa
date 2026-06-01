@@ -20,6 +20,7 @@ function handleError(res, e) {
   const status = e.status || 500
   const body = { error: e.message || 'internal error' }
   if (e.existingGuardianId) body.existingGuardianId = e.existingGuardianId
+  if (e.existingGuardian) body.existingGuardian = e.existingGuardian
   return res.status(status).json(body)
 }
 
@@ -106,8 +107,8 @@ router.patch('/links/:linkId', async (req, res) => {
 
 router.delete('/links/:linkId', async (req, res) => {
   try {
-    await deleteGuardianLink(req.user.id, req.params.linkId)
-    res.status(204).end()
+    const result = await deleteGuardianLink(req.user.id, req.params.linkId)
+    res.json(result)
   } catch (e) {
     handleError(res, e)
   }

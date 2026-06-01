@@ -150,11 +150,14 @@ export default function GuardianCard({
   }
 
   async function handleRemoveLink() {
-    const ok = await confirmDialog('حذف الربط', `إزالة ${row.name} من هذا الطالب؟`)
+    const ok = await confirmDialog(
+      'إزالة ولي الأمر',
+      'سيتم إزالة ولي الأمر من هذا الطالب. إذا لم يكن مرتبطاً بأي طالب آخر، سيُحذف رقمه بالكامل ويمكنك إضافته من جديد.'
+    )
     if (!ok) return
     try {
-      await guardians.removeLink(row.link_id)
-      onToast?.('تم الحذف')
+      const result = await guardians.removeLink(row.link_id)
+      onToast?.(result?.guardianDeleted ? 'تمت الإزالة وحُذف رقم ولي الأمر' : 'تمت الإزالة من هذا الطالب')
       onRefresh?.()
       onRemoveLink?.(row)
     } catch (e) {

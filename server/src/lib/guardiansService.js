@@ -4,6 +4,21 @@ import { normalizePhoneE164 } from './phone.js'
 
 const LINK_CODE_TTL_MS = 24 * 60 * 60 * 1000
 
+async function findGuardianByPhone(userId, phoneE164) {
+  if (!phoneE164) return null
+  const { rows } = await pool.query(
+    'select id, name, phone_e164, notes, created_at, updated_at from guardians where user_id=$1 and phone_e164=$2',
+    [userId, phoneE164]
+  )
+  return rows[0] || null
+}
+
+function attachDuplicateError(err, existing) {
+  err.existingGuardianId = existing?.id
+  err.existingGuardian = existing || null
+  return err
+}
+
 export async function listGuardiansForUser(userId) {
   const { rows } = await pool.query(
     `select g.id, g.name, g.phone_e164, g.notes, g.created_at, g.updated_at,
@@ -37,6 +52,14 @@ export async function createGuardian(userId, { name, phone, notes }) {
   if (!phone_e164) throw Object.assign(new Error('رقم الهاتف غير صالح'), { status: 400 })
   if (!name?.trim()) throw Object.assign(new Error('الاسم مطلوب'), { status: 400 })
 
+  const existing = await findGuardianByPhone(userId, phone_e164)
+  if (existing) {
+    throw attachDuplicateError(
+      Object.assign(new Error('ولي أمر بهذا الرقم موجود مسبقاً'), { status: 409 }),
+      existing
+    )
+  }
+
   try {
     const { rows } = await pool.query(
       `insert into guardians(user_id, name, phone_e164, notes)
@@ -47,22 +70,61 @@ export async function createGuardian(userId, { name, phone, notes }) {
     return rows[0]
   } catch (e) {
     if (String(e.message).includes('unique')) {
-      const existing = await pool.query(
-        'select id, name, phone_e164 from guardians where user_id=$1 and phone_e164=$2',
-        [userId, phone_e164]
+      const dup = await findGuardianByPhone(userId, phone_e164)
+      throw attachDuplicateError(
+        Object.assign(new Error('ولي أمر بهذا الرقم موجود مسبقاً'), { status: 409 }),
+        dup
       )
-      const err = Object.assign(new Error('ولي أمر بهذا الرقم موجود مسبقاً'), { status: 409 })
-      err.existingGuardianId = existing.rows[0]?.id
-      throw err
     }
     throw e
   }
 }
 
+async function resolveGuardianForLink(userId, input) {
+  if (input.guardianId) {
+    return assertGuardianOwned(userId, input.guardianId)
+  }
+
+  const phone_e164 = normalizePhoneE164(input.phone)
+  if (!phone_e164) throw Object.assign(new Error('رقم الهاتف غير صالح'), { status: 400 })
+  if (!input.name?.trim()) throw Object.assign(new Error('الاسم مطلوب'), { status: 400 })
+
+  const existing = await findGuardianByPhone(userId, phone_e164)
+  if (existing) {
+    const nextName = input.name.trim()
+    const nextNotes = input.notes?.trim() || null
+    const shouldUpdate =
+      (nextName && nextName !== existing.name)
+      || (input.notes !== undefined && nextNotes !== (existing.notes || null))
+
+    if (shouldUpdate) {
+      const { rows } = await pool.query(
+        `update guardians
+         set name = coalesce(nullif($1, ''), name),
+             notes = case when $3 then $2 else notes end,
+             updated_at = now()
+         where id = $4 and user_id = $5
+         returning id, name, phone_e164, notes, created_at, updated_at`,
+        [nextName, nextNotes, input.notes !== undefined, existing.id, userId]
+      )
+      return rows[0] || existing
+    }
+    return existing
+  }
+
+  return createGuardian(userId, {
+    name: input.name,
+    phone: phone_e164,
+    notes: input.notes,
+  })
+}
+
 export async function updateGuardian(userId, guardianId, { name, phone, notes }) {
+  const current = await assertGuardianOwned(userId, guardianId)
   const fields = []
   const vals = []
   let idx = 1
+  let nextPhone = current.phone_e164
 
   if (name !== undefined) {
     if (!String(name).trim()) throw Object.assign(new Error('الاسم مطلوب'), { status: 400 })
@@ -72,6 +134,7 @@ export async function updateGuardian(userId, guardianId, { name, phone, notes })
   if (phone !== undefined) {
     const phone_e164 = normalizePhoneE164(phone)
     if (!phone_e164) throw Object.assign(new Error('رقم الهاتف غير صالح'), { status: 400 })
+    nextPhone = phone_e164
     fields.push(`phone_e164=$${idx++}`)
     vals.push(phone_e164)
   }
@@ -80,6 +143,16 @@ export async function updateGuardian(userId, guardianId, { name, phone, notes })
     vals.push(notes?.trim() || null)
   }
   if (!fields.length) throw Object.assign(new Error('لا توجد حقول للتحديث'), { status: 400 })
+
+  if (phone !== undefined) {
+    const duplicate = await findGuardianByPhone(userId, nextPhone)
+    if (duplicate && duplicate.id !== guardianId) {
+      throw attachDuplicateError(
+        Object.assign(new Error('رقم الهاتف مستخدم لولي آخر'), { status: 409 }),
+        duplicate
+      )
+    }
+  }
 
   vals.push(userId, guardianId)
   try {
@@ -93,7 +166,11 @@ export async function updateGuardian(userId, guardianId, { name, phone, notes })
     return rows[0]
   } catch (e) {
     if (String(e.message).includes('unique')) {
-      throw Object.assign(new Error('رقم الهاتف مستخدم لولي آخر'), { status: 409 })
+      const duplicate = await findGuardianByPhone(userId, nextPhone)
+      throw attachDuplicateError(
+        Object.assign(new Error('رقم الهاتف مستخدم لولي آخر'), { status: 409 }),
+        duplicate
+      )
     }
     throw e
   }
@@ -118,7 +195,7 @@ export async function assertStudentOwned(userId, studentId) {
 
 export async function assertGuardianOwned(userId, guardianId) {
   const { rows } = await pool.query(
-    'select id, name from guardians where id=$1 and user_id=$2',
+    'select id, name, phone_e164, notes, created_at, updated_at from guardians where id=$1 and user_id=$2',
     [guardianId, userId]
   )
   if (!rows.length) throw Object.assign(new Error('ولي الأمر غير موجود'), { status: 404 })
@@ -162,19 +239,17 @@ async function clearPrimaryForStudent(client, studentId, exceptLinkId = null) {
 export async function linkGuardianToStudent(userId, studentId, input) {
   await assertStudentOwned(userId, studentId)
 
-  let guardianId = input.guardianId
-  let guardian
-
-  if (guardianId) {
-    guardian = await assertGuardianOwned(userId, guardianId)
-  } else {
-    guardian = await createGuardian(userId, {
-      name: input.name,
-      phone: input.phone,
-      notes: input.notes,
-    })
-    guardianId = guardian.id
+  let reused = false
+  if (!input.guardianId) {
+    const phone_e164 = normalizePhoneE164(input.phone)
+    if (phone_e164) {
+      const existing = await findGuardianByPhone(userId, phone_e164)
+      reused = Boolean(existing)
+    }
   }
+
+  const guardian = await resolveGuardianForLink(userId, input)
+  const guardianId = guardian.id
 
   const client = await pool.connect()
   try {
@@ -210,7 +285,7 @@ export async function linkGuardianToStudent(userId, studentId, input) {
     )
 
     await client.query('commit')
-    return { link: rows[0], guardian }
+    return { link: rows[0], guardian, reused }
   } catch (e) {
     await client.query('rollback')
     throw e
@@ -273,7 +348,7 @@ export async function updateGuardianLink(userId, linkId, { relationship, is_prim
 
 export async function deleteGuardianLink(userId, linkId) {
   const linkQ = await pool.query(
-    `select gs.*, g.user_id
+    `select gs.*, g.user_id, g.id as guardian_id
      from guardian_students gs
      join guardians g on g.id = gs.guardian_id
      where gs.id = $1 and g.user_id = $2`,
@@ -292,11 +367,32 @@ export async function deleteGuardianLink(userId, linkId) {
     }
   }
 
-  await pool.query('delete from guardian_students where id=$1', [linkId])
+  const client = await pool.connect()
+  try {
+    await client.query('begin')
+    await client.query('delete from guardian_students where id=$1', [linkId])
+
+    const remaining = await client.query(
+      'select id from guardian_students where guardian_id=$1 limit 1',
+      [link.guardian_id]
+    )
+    let guardianDeleted = false
+    if (!remaining.rows.length) {
+      await client.query('delete from guardians where id=$1 and user_id=$2', [link.guardian_id, userId])
+      guardianDeleted = true
+    }
+
+    await client.query('commit')
+    return { guardianDeleted }
+  } catch (e) {
+    await client.query('rollback')
+    throw e
+  } finally {
+    client.release()
+  }
 }
 
 function generateLinkCode() {
-  // 6-digit numeric code — easy to read and type (100000–999999)
   return String(crypto.randomInt(100000, 1000000))
 }
 
@@ -340,4 +436,65 @@ export async function revokeTelegramLink(userId, guardianId) {
      where guardian_id=$1 and used_at is null`,
     [guardianId]
   )
+}
+
+async function mergeGuardianRecords(userId, fromId, toId) {
+  if (fromId === toId) return
+
+  const { rows: links } = await pool.query(
+    'select id, student_id from guardian_students where guardian_id=$1',
+    [fromId]
+  )
+  for (const link of links) {
+    const { rows: existing } = await pool.query(
+      'select id from guardian_students where guardian_id=$1 and student_id=$2',
+      [toId, link.student_id]
+    )
+    if (existing.length) {
+      await pool.query('delete from guardian_students where id=$1', [link.id])
+    } else {
+      await pool.query('update guardian_students set guardian_id=$1 where id=$2', [toId, link.id])
+    }
+  }
+
+  const { rows: targetTelegram } = await pool.query(
+    'select guardian_id from guardian_telegram where guardian_id=$1',
+    [toId]
+  )
+  if (!targetTelegram.length) {
+    await pool.query('update guardian_telegram set guardian_id=$1 where guardian_id=$2', [toId, fromId])
+  } else {
+    await pool.query('delete from guardian_telegram where guardian_id=$1', [fromId])
+  }
+
+  await pool.query('delete from telegram_link_codes where guardian_id=$1', [fromId])
+  await pool.query('delete from guardians where id=$1 and user_id=$2', [fromId, userId])
+}
+
+export async function normalizeGuardianPhonesInDb() {
+  const { rows } = await pool.query('select id, user_id, phone_e164 from guardians order by created_at asc')
+  let updated = 0
+  let merged = 0
+
+  for (const row of rows) {
+    const canonical = normalizePhoneE164(row.phone_e164)
+    if (!canonical) continue
+
+    const stillThere = await pool.query('select id, phone_e164 from guardians where id=$1', [row.id])
+    if (!stillThere.rows.length) continue
+
+    if (canonical === stillThere.rows[0].phone_e164) continue
+
+    const dup = await findGuardianByPhone(row.user_id, canonical)
+    if (dup && dup.id !== row.id) {
+      await mergeGuardianRecords(row.user_id, row.id, dup.id)
+      merged += 1
+      continue
+    }
+
+    await pool.query('update guardians set phone_e164=$1, updated_at=now() where id=$2', [canonical, row.id])
+    updated += 1
+  }
+
+  return { updated, merged, total: rows.length }
 }

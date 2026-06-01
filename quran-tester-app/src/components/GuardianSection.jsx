@@ -60,16 +60,20 @@ export default function GuardianSection({ student, onToast }) {
     setSaving(true)
     setError('')
     try {
-      const { guardian } = await guardians.linkToStudent(student.id, {
+      const { guardian, reused } = await guardians.linkToStudent(student.id, {
         name: form.name.trim(),
         phone: form.phone.trim(),
         relationship: form.relationship.trim() || null,
       })
       setNewGuardian(guardian)
       setFormMode('invite')
-      onToast?.('تم الحفظ — أرسل الدعوة الآن')
+      onToast?.(reused ? 'تم ربط ولي موجود مسبقاً — أرسل الدعوة الآن' : 'تم الحفظ — أرسل الدعوة الآن')
     } catch (e) {
-      setError(e.message)
+      if (e.status === 409 && e.existingGuardian) {
+        setError(`${e.message} (${e.existingGuardian.name} — ${e.existingGuardian.phone_e164})`)
+      } else {
+        setError(e.message)
+      }
     } finally {
       setSaving(false)
     }
@@ -99,6 +103,7 @@ export default function GuardianSection({ student, onToast }) {
     <div className="guardian-section">
       <p className="meta guardian-section__hint">
         اختر واتساب أو Telegram أو SMS — ولي الأمر يضغط الرابط أو يرسل الرقم (6 أرقام) للبوت.
+        أدخل الهاتف بصيغة <span dir="ltr">091xxxxxxx</span> أو <span dir="ltr">+21891xxxxxxx</span>.
       </p>
 
       {error && <div className="alert alert--error" style={{ marginBottom: 8 }}>{error}</div>}
@@ -154,7 +159,8 @@ export default function GuardianSection({ student, onToast }) {
                 </div>
                 <div className="field">
                   <label>الهاتف</label>
-                  <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="09xxxxxxxx" required />
+                  <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="091xxxxxxx أو +21891xxxxxxx" required />
+                  <p className="meta">يُحفظ الرقم بصيغة موحّدة تلقائياً (+218…).</p>
                 </div>
                 <div className="field">
                   <label>صلة القرابة (اختياري)</label>

@@ -157,7 +157,20 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
         await load()
       }
     } catch (e) {
-      setError(e.message)
+      if (e.status === 409 && e.existingGuardian) {
+        const existing = e.existingGuardian
+        setError(`${e.message} — ${existing.name} (${existing.phone_e164})`)
+        if (!editRow) {
+          openEditSheet({
+            ...existing,
+            students: existing.students || [],
+            student_count: existing.student_count || 0,
+            telegram_linked: existing.telegram_linked || false,
+          })
+        }
+      } else {
+        setError(e.message)
+      }
     } finally {
       setSaving(false)
     }
@@ -342,7 +355,8 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
                   </label>
                   <label className="field">
                     <span className="field__label">الهاتف</span>
-                    <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="09xxxxxxxx" required />
+                    <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="091xxxxxxx أو +21891xxxxxxx" required />
+                    <p className="meta">يُحفظ الرقم بصيغة موحّدة تلقائياً (+218…).</p>
                   </label>
                   <label className="field">
                     <span className="field__label">ملاحظات (اختياري)</span>
