@@ -355,8 +355,8 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
                   </label>
                   <label className="field">
                     <span className="field__label">الهاتف</span>
-                    <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="091xxxxxxx أو +21891xxxxxxx" required />
-                    <p className="meta">يُحفظ الرقم بصيغة موحّدة تلقائياً (+218…).</p>
+                    <input className="input" type="tel" dir="ltr" lang="en" inputMode="tel" autoComplete="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="091xxxxxxx" required />
+                    <p className="meta">أو الصيغة الدولية: <span dir="ltr" lang="en">+21891xxxxxxx</span></p>
                   </label>
                   <label className="field">
                     <span className="field__label">ملاحظات (اختياري)</span>

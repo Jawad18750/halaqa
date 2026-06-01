@@ -89,10 +89,16 @@ export default function GuardianFormRows({
                   className="input"
                   type="tel"
                   dir="ltr"
-                  placeholder="091xxxxxxx أو +21891xxxxxxx"
+                  lang="en"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="091xxxxxxx"
                   value={row.phone}
                   onChange={e => onUpdate(row.id, { phone: e.target.value })}
                 />
+                <p className="meta guardian-form-row__phone-hint">
+                  أو الصيغة الدولية: <span dir="ltr" lang="en">+21891xxxxxxx</span>
+                </p>
               </label>
             </>
           )}
