@@ -1,11 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import { sessions, students, guardians, getApiUrl } from '../api'
-import { modeLabel, formatThumunId } from '../lib/labels.js'
+import {
+  modeLabel,
+  formatThumunId,
+  toDateOnly,
+  formatRangeLabel,
+  formatDateLabel,
+  formatLatn,
+  formatLatn1,
+} from '../lib/labels.js'
 import { isTelegramActive } from '../lib/guardianUi.js'
 import { buildHalaqaSignature, joinMessageBlocks } from '../lib/messageContext.js'
 import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 import PageHeader from './ui/PageHeader.jsx'
+import DateRangePanel from './ui/DateRangePanel.jsx'
+import DashboardWidget from './ui/DashboardWidget.jsx'
 import EmptyState from './ui/EmptyState.jsx'
+import StatTile from './ui/StatTile.jsx'
 import Toast from './ui/Toast.jsx'
 import GuardianMessageSheet from './ui/GuardianMessageSheet.jsx'
 import LeaderboardPodium from './ui/LeaderboardPodium.jsx'
@@ -70,7 +81,23 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
       endDate.setDate(endDate.getDate() + 6)
       setFrom(start)
       setTo(toDateOnly(endDate))
-    } catch {}
+    } catch (e) {
+      setError(String(e?.message || e))
+    }
+  }
+
+  async function reload() {
+    setLoading(true)
+    setError('')
+    try {
+      const data = await sessions.overview(from, to)
+      setRows(Array.isArray(data?.sessions) ? data.sessions : [])
+    } catch (e) {
+      setRows([])
+      setError(String(e?.message || e))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const studentById = useMemo(() => {
@@ -170,6 +197,11 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
   const topThree = useMemo(() => filtered.filter(x => x.rank <= 3), [filtered])
   const rest = useMemo(() => filtered.filter(x => x.rank > 3), [filtered])
   const showPodium = !query.trim() && topThree.length > 0
+  const listTitle = showPodium && rest.length > 0
+    ? 'باقي الترتيب'
+    : query.trim()
+      ? `${formatLatn(filtered.length)} نتيجة`
+      : `${formatLatn(filtered.length)} طالب`
 
   async function notifyParent(item) {
     setNotifyingId(item.id)
@@ -180,7 +212,6 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
         setToast('لا يوجد ولي أمر مربوط — أرسل دعوة Telegram أولاً')
         return
       }
-      const rangeLabel = formatRangeLabel(from, to)
       setReportItem(item)
       setIncludeRankInReport(false)
       setMessageDraft(buildWeeklyReportMessage(item, from, to, { sheikhName, masjidName, includeRank: false }))
@@ -194,73 +225,47 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
   }
 
   return (
-    <div className="leaderboard-page stack">
+    <div className="reports-page stack">
       <PageHeader
         title="لوحة الصدارة"
         subtitle={formatRangeLabel(from, to)}
         onBack={onBack}
+        actions={(
+          <button type="button" className="btn btn--ghost btn--sm" onClick={reload} disabled={loading}>
+            <i className="fa-solid fa-rotate" /> تحديث
+          </button>
+        )}
       />
 
       {toast && <Toast message={toast} onDone={() => setToast('')} />}
 
-      <section className="leaderboard-panel leaderboard-panel--filter">
-        <div className="leaderboard-filter">
-          <div className="leaderboard-filter__dates">
-            <label className="leaderboard-filter__date">
-              <span className="leaderboard-filter__date-label">من</span>
-              <input className="input" type="date" value={from} onChange={e => setFrom(e.target.value)} />
-            </label>
-            <span className="leaderboard-filter__sep" aria-hidden>—</span>
-            <label className="leaderboard-filter__date">
-              <span className="leaderboard-filter__date-label">إلى</span>
-              <input className="input" type="date" value={to} onChange={e => setTo(e.target.value)} />
-            </label>
-          </div>
-          <button type="button" className="btn btn--ghost btn--sm leaderboard-filter__week" onClick={useCurrentWeek}>
-            <i className="fa-solid fa-calendar-week" aria-hidden />
-            هذا الأسبوع
-          </button>
-        </div>
-
-        <div className="students-search leaderboard-filter__search">
-          <i className="fa-solid fa-magnifying-glass" aria-hidden />
-          <input
-            className="students-search__input"
-            placeholder="بحث بالاسم أو الرقم"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            aria-label="بحث في الترتيب"
-          />
-          {query && (
-            <button type="button" className="students-search__clear" aria-label="مسح" onClick={() => setQuery('')}>
-              <i className="fa-solid fa-xmark" />
-            </button>
-          )}
-        </div>
-      </section>
+      <DateRangePanel
+        from={from}
+        to={to}
+        onFromChange={setFrom}
+        onToChange={setTo}
+        onCurrentWeek={useCurrentWeek}
+        search={query}
+        onSearchChange={setQuery}
+        searchLabel="بحث في الترتيب"
+        footer={loading ? 'جاري التحميل…' : `${formatLatn(filtered.length)} في الترتيب`}
+      />
 
       {!loading && leaderboard.length > 0 && (
-        <section className="leaderboard-summary" aria-label="ملخص الفترة">
-          <div className="leaderboard-summary__item">
-            <span className="leaderboard-summary__value">{num(summary.students)}</span>
-            <span className="leaderboard-summary__label">طلاب</span>
-          </div>
-          <div className="leaderboard-summary__item">
-            <span className="leaderboard-summary__value">{num(summary.attempts)}</span>
-            <span className="leaderboard-summary__label">محاولات</span>
-          </div>
-          <div className="leaderboard-summary__item leaderboard-summary__item--accent">
-            <span className="leaderboard-summary__value">{num1(summary.avgScore)}</span>
-            <span className="leaderboard-summary__label">متوسط</span>
-          </div>
-          <div className="leaderboard-summary__item leaderboard-summary__item--ok">
-            <span className="leaderboard-summary__value">{num1(summary.passRate)}%</span>
-            <span className="leaderboard-summary__label">نجاح</span>
-          </div>
-        </section>
+        <div className="stat-grid stat-grid--fit reports-summary">
+          <StatTile label="طلاب" value={formatLatn(summary.students)} icon="fa-solid fa-users" />
+          <StatTile label="محاولات" value={formatLatn(summary.attempts)} icon="fa-solid fa-list-check" />
+          <StatTile label="متوسط" value={formatLatn1(summary.avgScore)} icon="fa-solid fa-chart-line" tone="accent" />
+          <StatTile label="نجاح" value={`${formatLatn1(summary.passRate)}%`} icon="fa-solid fa-trophy" tone="success" />
+        </div>
       )}
 
-      {error && <div className="alert alert--error">{error}</div>}
+      {error && (
+        <div className="alert alert--error cluster" style={{ justifyContent: 'space-between' }}>
+          <span>{error}</span>
+          <button type="button" className="btn btn--sm" onClick={reload}>إعادة المحاولة</button>
+        </div>
+      )}
 
       {loading ? (
         <div className="loading">جاري التحميل…</div>
@@ -268,27 +273,21 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
         <EmptyState
           title={query.trim() ? 'لا نتائج' : 'لا توجد بيانات لهذه الفترة'}
           subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : 'غيّر الفترة أو انتظر اختبارات جديدة'}
+          icon="fa-trophy"
         />
       ) : (
         <>
           {showPodium && (
-            <LeaderboardPodium
-              entries={topThree}
-              onOpenStudent={openProfile}
-              photoFor={photoFor}
-            />
+            <DashboardWidget title="أفضل ثلاثة" icon="fa-medal" variant="gold">
+              <LeaderboardPodium
+                entries={topThree}
+                onOpenStudent={openProfile}
+                photoFor={photoFor}
+              />
+            </DashboardWidget>
           )}
 
-          <section className="leaderboard-list-panel">
-            {showPodium && rest.length > 0 && (
-              <h2 className="leaderboard-list-panel__title">باقي الترتيب</h2>
-            )}
-            {!showPodium && filtered.length > 0 && (
-              <h2 className="leaderboard-list-panel__title">
-                {query.trim() ? `${filtered.length} نتيجة` : `${filtered.length} طالب`}
-              </h2>
-            )}
-
+          <DashboardWidget title={listTitle} icon="fa-ranking-star" badge={formatLatn(showPodium ? rest.length : filtered.length)}>
             <div className="leaderboard-list">
               {(showPodium ? rest : filtered).map(item => (
                 <LeaderboardRankRow
@@ -303,7 +302,7 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
                 />
               ))}
             </div>
-          </section>
+          </DashboardWidget>
         </>
       )}
 
@@ -353,60 +352,15 @@ function buildWeeklyReportMessage(item, from, to, { sheikhName, masjidName, incl
     '📊 التقرير الأسبوعي لمتابعة الطالب',
     headerLines,
     [
-      `عدد الاختبارات: ${num(item.attempts)}`,
-      `متوسط الدرجات: ${num1(item.avgScore)}`,
-      `أعلى درجة: ${num(item.bestScore)}`,
-      `نسبة الاختبارات المجتازة: ${num1(item.passRate)}%`,
+      `عدد الاختبارات: ${formatLatn(item.attempts)}`,
+      `متوسط الدرجات: ${formatLatn1(item.avgScore)}`,
+      `أعلى درجة: ${formatLatn(item.bestScore)}`,
+      `نسبة الاختبارات المجتازة: ${formatLatn1(item.passRate)}%`,
     ],
     'هذه رسالة متابعة من حلقة القرآن الكريم، ولا يلزم الرد عليها.',
     halaqaFooter,
     `🤲 بارك الله في ${item.student_name}، ووفقه للمراجعة والإتقان.`,
   ])
-}
-
-function formatDateLabel(value) {
-  if (!value) return '—'
-  try {
-    return new Date(`${value}T12:00:00`).toLocaleDateString('ar-EG', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      numberingSystem: 'latn',
-    })
-  } catch {
-    return value
-  }
-}
-
-function formatRangeLabel(from, to) {
-  if (!from && !to) return 'اختر الفترة'
-  try {
-    const opts = { day: 'numeric', month: 'short' }
-    const f = from ? new Date(`${from}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
-    const t = to ? new Date(`${to}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
-    return `${f} — ${t}`
-  } catch {
-    return `${from} — ${to}`
-  }
-}
-
-function toDateOnly(v) {
-  if (!v) return ''
-  if (typeof v === 'string') {
-    const m = v.match(/^\d{4}-\d{2}-\d{2}/)
-    if (m) return m[0]
-    if (v.includes('T')) return v.split('T')[0]
-  }
-  try {
-    const d = new Date(v)
-    if (!isNaN(d)) {
-      const yyyy = d.getFullYear()
-      const mm = String(d.getMonth() + 1).padStart(2, '0')
-      const dd = String(d.getDate()).padStart(2, '0')
-      return `${yyyy}-${mm}-${dd}`
-    }
-  } catch {}
-  return ''
 }
 
 function parseTime(value) {
@@ -424,15 +378,4 @@ function topMapKey(map) {
 function average(values) {
   if (!values.length) return 0
   return values.reduce((a, b) => a + Number(b || 0), 0) / values.length
-}
-
-function num(n) {
-  if (n === null || n === undefined) return '—'
-  const v = Number(n)
-  return Number.isFinite(v) ? v.toLocaleString('ar-EG-u-nu-latn') : String(n)
-}
-
-function num1(n) {
-  const v = Number(n || 0)
-  return v.toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 1 })
 }

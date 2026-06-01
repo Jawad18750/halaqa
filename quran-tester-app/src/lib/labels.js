@@ -161,3 +161,58 @@ export function rankLabel(rank) {
   if (n === 3) return 'المركز 3'
   return `المركز ${n}`
 }
+
+export function toDateOnly(v) {
+  if (!v) return ''
+  if (typeof v === 'string') {
+    const m = v.match(/^\d{4}-\d{2}-\d{2}/)
+    if (m) return m[0]
+    if (v.includes('T')) return v.split('T')[0]
+  }
+  try {
+    const d = new Date(v)
+    if (!isNaN(d)) {
+      const yyyy = d.getFullYear()
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
+      return `${yyyy}-${mm}-${dd}`
+    }
+  } catch {}
+  return ''
+}
+
+export function formatRangeLabel(from, to) {
+  if (!from && !to) return 'اختر الفترة'
+  try {
+    const opts = { day: 'numeric', month: 'short' }
+    const f = from ? new Date(`${from}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
+    const t = to ? new Date(`${to}T12:00:00`).toLocaleDateString('ar-EG-u-nu-latn', opts) : '—'
+    return `${f} — ${t}`
+  } catch {
+    return `${from} — ${to}`
+  }
+}
+
+export function formatDateLabel(value) {
+  if (!value) return '—'
+  try {
+    return new Date(`${value}T12:00:00`).toLocaleDateString('ar-EG', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      numberingSystem: 'latn',
+    })
+  } catch {
+    return value
+  }
+}
+
+export function formatLatn(n, opts = {}) {
+  if (n === null || n === undefined) return '—'
+  const v = Number(n)
+  return Number.isFinite(v) ? v.toLocaleString('ar-EG-u-nu-latn', opts) : String(n)
+}
+
+export function formatLatn1(n) {
+  return formatLatn(n, { maximumFractionDigits: 1 })
+}

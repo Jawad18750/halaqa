@@ -1,5 +1,6 @@
 import Badge from './Badge.jsx'
 import Clamp from '../Clamp.jsx'
+import EditableSessionTime from './EditableSessionTime.jsx'
 import {
   modeLabel,
   resultLabel,
@@ -9,20 +10,50 @@ import {
   formatThumunId,
   formatNaqza,
   dayName,
+  formatLatn,
 } from '../../lib/labels.js'
 
-export default function SessionCard({ session, thumuns, className = '', onDelete }) {
+export default function SessionCard({
+  session,
+  thumuns,
+  className = '',
+  onDelete,
+  studentNumber,
+  studentName,
+  allowTimeEdit = false,
+  onTimeSaved,
+  onTimeError,
+}) {
   if (!session) return null
   const passed = Boolean(session.passed)
   const attemptIso = formatAttemptDate(session)
   const thumun = (thumuns || []).find(x => x.id === Number(session.thumun_id))
   const naqzaVal = session.naqza ?? thumun?.naqza
+  const showStudent = studentName || studentNumber != null
 
   return (
     <article className={`session-card ${passed ? 'session-card--pass' : 'session-card--fail'} ${className}`.trim()}>
+      {showStudent && (
+        <div className="session-card__student">
+          {studentNumber != null && (
+            <span className="session-card__student-num">{formatLatn(studentNumber)}</span>
+          )}
+          <strong className="session-card__student-name">{studentName || '—'}</strong>
+        </div>
+      )}
+
       <header className="session-card__head">
         <Badge variant={passed ? 'pass' : 'fail'}>{resultLabel(passed)}</Badge>
-        <time className="session-card__date meta">{formatLocaleDateTime(attemptIso)}</time>
+        {allowTimeEdit ? (
+          <EditableSessionTime
+            session={session}
+            onSaved={onTimeSaved}
+            onError={onTimeError}
+            compact
+          />
+        ) : (
+          <time className="session-card__date meta">{formatLocaleDateTime(attemptIso)}</time>
+        )}
       </header>
 
       <div className="session-card__thumun">
