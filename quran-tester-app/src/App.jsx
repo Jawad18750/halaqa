@@ -57,8 +57,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     localStorage.setItem('theme', theme)
-    const link = document.querySelector("link[rel='icon']")
-    if (link) link.href = theme === 'dark' ? '/quran-white.png' : '/quran.png'
+    const iconHref = theme === 'dark' ? '/quran-white.png' : '/quran.png'
+    document.querySelectorAll("link[rel='icon'], link[rel='apple-touch-icon'][sizes='512x512']").forEach((link) => {
+      link.href = iconHref
+    })
   }, [theme])
 
   useEffect(() => {
