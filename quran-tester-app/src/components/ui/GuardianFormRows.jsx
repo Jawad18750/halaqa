@@ -89,7 +89,7 @@ export default function GuardianFormRows({
                   className="input"
                   type="tel"
                   dir="ltr"
-                  placeholder="09xxxxxxxx"
+                  placeholder="091xxxxxxx أو +21891xxxxxxx"
                   value={row.phone}
                   onChange={e => onUpdate(row.id, { phone: e.target.value })}
                 />

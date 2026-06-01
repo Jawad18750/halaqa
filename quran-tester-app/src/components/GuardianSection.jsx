@@ -1,25 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { guardians } from '../api'
 import GuardianCard from './ui/GuardianCard.jsx'
+import GuardianFormRows from './ui/GuardianFormRows.jsx'
 import GuardianInvitePanel from './ui/GuardianInvitePanel.jsx'
 import GuardianInviteModal from './ui/GuardianInviteModal.jsx'
 import GuardianMessageSheet from './ui/GuardianMessageSheet.jsx'
-import { isTelegramActive } from '../lib/guardianUi.js'
+import { emptyGuardianRow, isTelegramActive } from '../lib/guardianUi.js'
 
 export default function GuardianSection({ student, onToast }) {
   const [rows, setRows] = useState([])
+  const [existingGuardians, setExistingGuardians] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [formMode, setFormMode] = useState('add')
-  const [newGuardian, setNewGuardian] = useState(null)
-  const [form, setForm] = useState({ name: '', phone: '', relationship: '' })
+  const [linkedGuardians, setLinkedGuardians] = useState([])
+  const [guardianRows, setGuardianRows] = useState([])
   const [saving, setSaving] = useState(false)
   const [messageTargets, setMessageTargets] = useState([])
   const [showMessageSheet, setShowMessageSheet] = useState(false)
   const [inviteFallback, setInviteFallback] = useState(null)
 
-  async function load() {
+  const linkedGuardianIds = useMemo(() => new Set(rows.map(r => r.id)), [rows])
+
+  const availableExistingGuardians = useMemo(
+    () => existingGuardians.filter(g => !linkedGuardianIds.has(g.id)),
+    [existingGuardians, linkedGuardianIds]
+  )
+
+  async function loadStudentGuardians() {
     setLoading(true)
     setError('')
     try {
@@ -32,47 +41,113 @@ export default function GuardianSection({ student, onToast }) {
     }
   }
 
-  useEffect(() => { load() }, [student?.id])
+  async function loadExistingGuardians() {
+    try {
+      const { guardians: list } = await guardians.list()
+      setExistingGuardians(list || [])
+    } catch {
+      setExistingGuardians([])
+    }
+  }
+
+  useEffect(() => { loadStudentGuardians() }, [student?.id])
+
+  useEffect(() => {
+    if (showForm) loadExistingGuardians()
+  }, [showForm, student?.id])
 
   function openAddForm() {
-    setForm({ name: '', phone: '', relationship: '' })
+    setGuardianRows([
+      emptyGuardianRow({
+        isPrimary: rows.length === 0,
+        notifyOnResult: rows.length === 0,
+      }),
+    ])
+    setLinkedGuardians([])
     setFormMode('add')
-    setNewGuardian(null)
     setShowForm(true)
+    setError('')
   }
 
   function closeAddForm() {
     setShowForm(false)
     setFormMode('add')
-    setNewGuardian(null)
-    setForm({ name: '', phone: '', relationship: '' })
+    setLinkedGuardians([])
+    setGuardianRows([])
+    setError('')
   }
 
   async function finishInviteStep() {
     closeAddForm()
     onToast?.('تمت الإضافة')
-    await load()
+    await loadStudentGuardians()
+  }
+
+  function addGuardianRow() {
+    setGuardianRows(prev => [...prev, emptyGuardianRow({ isPrimary: false, notifyOnResult: false })])
+  }
+
+  function updateGuardianRow(rowId, patch) {
+    setGuardianRows(prev => prev.map(r => (r.id === rowId ? { ...r, ...patch } : r)))
+  }
+
+  function removeGuardianRow(rowId) {
+    setGuardianRows(prev => prev.filter(r => r.id !== rowId))
   }
 
   async function handleAdd(e) {
     e.preventDefault()
-    if (!form.name.trim() || !form.phone.trim()) return
+    if (!guardianRows.length) return
+
     setSaving(true)
     setError('')
+
     try {
-      const { guardian, reused } = await guardians.linkToStudent(student.id, {
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-        relationship: form.relationship.trim() || null,
-      })
-      setNewGuardian(guardian)
+      let primarySet = rows.some(r => r.is_primary)
+      const linked = []
+      let reusedAny = false
+
+      for (const row of guardianRows) {
+        if (row.mode === 'existing') {
+          if (!row.guardianId) {
+            throw new Error('اختر ولي أمراً من القائمة أو أضف ولياً جديداً')
+          }
+          const { guardian, reused } = await guardians.linkToStudent(student.id, {
+            guardianId: row.guardianId,
+            relationship: row.relationship.trim() || null,
+            is_primary: row.isPrimary && !primarySet,
+            notify_on_result: row.notifyOnResult,
+          })
+          linked.push(guardian || availableExistingGuardians.find(g => g.id === row.guardianId))
+          if (reused) reusedAny = true
+          if (row.isPrimary) primarySet = true
+          continue
+        }
+
+        if (!row.name.trim() || !row.phone.trim()) {
+          throw new Error('أدخل اسم ولي الأمر ورقم الهاتف، أو اختر ولياً موجوداً')
+        }
+
+        const { guardian, reused } = await guardians.linkToStudent(student.id, {
+          name: row.name.trim(),
+          phone: row.phone.trim(),
+          relationship: row.relationship.trim() || null,
+          is_primary: row.isPrimary && !primarySet,
+          notify_on_result: row.notifyOnResult,
+        })
+        linked.push(guardian)
+        if (reused) reusedAny = true
+        if (row.isPrimary) primarySet = true
+      }
+
+      setLinkedGuardians(linked.filter(Boolean))
       setFormMode('invite')
-      onToast?.(reused ? 'تم ربط ولي موجود مسبقاً — أرسل الدعوة الآن' : 'تم الحفظ — أرسل الدعوة الآن')
-    } catch (e) {
-      if (e.status === 409 && e.existingGuardian) {
-        setError(`${e.message} (${e.existingGuardian.name} — ${e.existingGuardian.phone_e164})`)
+      onToast?.(reusedAny ? 'تم ربط ولي موجود مسبقاً — أرسل الدعوة الآن' : 'تم الحفظ — أرسل الدعوة الآن')
+    } catch (err) {
+      if (err.status === 409 && err.existingGuardian) {
+        setError(`${err.message} (${err.existingGuardian.name} — ${err.existingGuardian.phone_e164})`)
       } else {
-        setError(e.message)
+        setError(err.message)
       }
     } finally {
       setSaving(false)
@@ -84,7 +159,7 @@ export default function GuardianSection({ student, onToast }) {
     try {
       await guardians.updateLink(row.link_id, { is_primary: true })
       onToast?.('تم تعيين ولي أساسي')
-      await load()
+      await loadStudentGuardians()
     } catch (e) {
       setError(e.message)
     }
@@ -93,7 +168,7 @@ export default function GuardianSection({ student, onToast }) {
   async function toggleNotify(row) {
     try {
       await guardians.updateLink(row.link_id, { notify_on_result: !row.notify_on_result })
-      await load()
+      await loadStudentGuardians()
     } catch (e) {
       setError(e.message)
     }
@@ -103,7 +178,7 @@ export default function GuardianSection({ student, onToast }) {
     <div className="guardian-section">
       <p className="meta guardian-section__hint">
         اختر واتساب أو Telegram أو SMS — ولي الأمر يضغط الرابط أو يرسل الرقم (6 أرقام) للبوت.
-        أدخل الهاتف بصيغة <span dir="ltr">091xxxxxxx</span> أو <span dir="ltr">+21891xxxxxxx</span>.
+        يمكنك اختيار ولي مسجّل مسبقاً أو إضافة ولي جديد.
       </p>
 
       {error && <div className="alert alert--error" style={{ marginBottom: 8 }}>{error}</div>}
@@ -125,7 +200,7 @@ export default function GuardianSection({ student, onToast }) {
                 student={student}
                 onTogglePrimary={togglePrimary}
                 onToggleNotify={toggleNotify}
-                onRefresh={load}
+                onRefresh={loadStudentGuardians}
                 onToast={onToast}
                 onSendMessage={isTelegramActive(row) ? g => { setMessageTargets([g]); setShowMessageSheet(true) } : undefined}
               />
@@ -133,13 +208,14 @@ export default function GuardianSection({ student, onToast }) {
           </ul>
 
           {showForm ? (
-            formMode === 'invite' && newGuardian ? (
+            formMode === 'invite' && linkedGuardians.length > 0 ? (
               <div className="guardian-form guardian-form--invite stack">
                 <p className="guardian-form__invite-heading">
-                  <i className="fa-solid fa-circle-check" aria-hidden /> تمت إضافة {newGuardian.name}
+                  <i className="fa-solid fa-circle-check" aria-hidden />
+                  {' '}تم ربط {linkedGuardians.length === 1 ? linkedGuardians[0].name : `${linkedGuardians.length} أولياء`}
                 </p>
                 <GuardianInvitePanel
-                  guardians={[newGuardian]}
+                  guardians={linkedGuardians}
                   studentName={student.name}
                   compact
                   onToast={onToast}
@@ -153,25 +229,21 @@ export default function GuardianSection({ student, onToast }) {
               </div>
             ) : (
               <form className="guardian-form stack" onSubmit={handleAdd}>
-                <div className="field">
-                  <label>الاسم</label>
-                  <input className="input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
-                </div>
-                <div className="field">
-                  <label>الهاتف</label>
-                  <input className="input" type="tel" dir="ltr" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="091xxxxxxx أو +21891xxxxxxx" required />
-                  <p className="meta">يُحفظ الرقم بصيغة موحّدة تلقائياً (+218…).</p>
-                </div>
-                <div className="field">
-                  <label>صلة القرابة (اختياري)</label>
-                  <input className="input" value={form.relationship} onChange={e => setForm(f => ({ ...f, relationship: e.target.value }))} placeholder="أب، أم، …" />
-                </div>
-                <div className="cluster">
-                  <button type="submit" className="btn btn--primary btn--sm" disabled={saving}>
-                    {saving ? 'جاري الحفظ…' : 'حفظ ومتابعة'}
-                  </button>
-                  <button type="button" className="btn btn--ghost btn--sm" onClick={closeAddForm}>إلغاء</button>
-                </div>
+                <GuardianFormRows
+                  rows={guardianRows}
+                  existingGuardians={availableExistingGuardians}
+                  onAdd={addGuardianRow}
+                  onUpdate={updateGuardianRow}
+                  onRemove={removeGuardianRow}
+                />
+                {guardianRows.length > 0 && (
+                  <div className="cluster">
+                    <button type="submit" className="btn btn--primary btn--sm" disabled={saving}>
+                      {saving ? 'جاري الحفظ…' : 'حفظ ومتابعة'}
+                    </button>
+                    <button type="button" className="btn btn--ghost btn--sm" onClick={closeAddForm}>إلغاء</button>
+                  </div>
+                )}
               </form>
             )
           ) : (
