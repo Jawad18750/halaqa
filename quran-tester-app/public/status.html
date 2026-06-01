@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>حالة نظام الحلقة</title>
+    <link rel="icon" type="image/png" href="/quran.png" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f4f7f8;
+        --card: #fff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --ok: #059669;
+        --bad: #dc2626;
+        --warn: #d97706;
+        --border: #dbe4ea;
+        --accent: #0e7490;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b1116;
+          --card: #121a22;
+          --text: #e5eef5;
+          --muted: #94a3b8;
+          --border: #243040;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 24px 16px 40px;
+      }
+      .wrap { max-width: 720px; margin: 0 auto; }
+      h1 { margin: 0 0 8px; font-size: 1.5rem; }
+      .lead { margin: 0 0 20px; color: var(--muted); line-height: 1.6; }
+      .banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 18px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        margin-bottom: 16px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: var(--muted);
+      }
+      .dot--ok { background: var(--ok); box-shadow: 0 0 0 6px color-mix(in srgb, var(--ok) 18%, transparent); }
+      .dot--bad { background: var(--bad); box-shadow: 0 0 0 6px color-mix(in srgb, var(--bad) 18%, transparent); }
+      .dot--warn { background: var(--warn); box-shadow: 0 0 0 6px color-mix(in srgb, var(--warn) 18%, transparent); }
+      .grid { display: grid; gap: 12px; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 16px;
+      }
+      .card h2 { margin: 0 0 8px; font-size: 1rem; }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 6px 0;
+        border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+        font-size: 0.95rem;
+      }
+      .row:first-of-type { border-top: none; padding-top: 0; }
+      .label { color: var(--muted); }
+      .value { font-weight: 600; text-align: left; direction: ltr; }
+      .status-pill {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .status-pill--ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+      .status-pill--bad { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+      .status-pill--warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
+      .actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+      a.btn, button.btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px 14px;
+        text-decoration: none;
+        cursor: pointer;
+        font: inherit;
+      }
+      a.btn--primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      footer { margin-top: 24px; color: var(--muted); font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>حالة نظام الحلقة</h1>
+      <p class="lead">فحص سريع لتوفر التطبيق وواجهة البرمجة وقاعدة البيانات.</p>
+
+      <div class="banner" id="overall">
+        <span class="dot" id="overall-dot" aria-hidden="true"></span>
+        <div>
+          <strong id="overall-title">جاري الفحص…</strong>
+          <div class="label" id="overall-sub">يرجى الانتظار</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>الواجهة الأمامية</h2>
+          <div class="row"><span class="label">الحالة</span><span class="value" id="front-status">—</span></div>
+          <div class="row"><span class="label">الرابط</span><span class="value" id="front-url">—</span></div>
+        </section>
+
+        <section class="card">
+          <h2>واجهة البرمجة (API)</h2>
+          <div class="row"><span class="label">الحالة</span><span class="value" id="api-status">—</span></div>
+          <div class="row"><span class="label">قاعدة البيانات</span><span class="value" id="api-db">—</span></div>
+          <div class="row"><span class="label">زمن الاستجابة</span><span class="value" id="api-latency">—</span></div>
+          <div class="row"><span class="label">مدة التشغيل</span><span class="value" id="api-uptime">—</span></div>
+          <div class="row"><span class="label">Telegram</span><span class="value" id="api-telegram">—</span></div>
+        </section>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="refresh">تحديث</button>
+        <a class="btn btn--primary" href="/">فتح التطبيق</a>
+      </div>
+
+      <footer>
+        آخر فحص: <span id="checked-at" dir="ltr">—</span>
+      </footer>
+    </div>
+
+    <script>
+      const API_URL = location.hostname === 'halaqa.abdeljawad.com'
+        ? 'https://api.halaqa.abdeljawad.com'
+        : 'http://localhost:4000'
+
+      function pill(text, kind) {
+        return `<span class="status-pill status-pill--${kind}">${text}</span>`
+      }
+
+      function fmtUptime(sec) {
+        const h = Math.floor(sec / 3600)
+        const m = Math.floor((sec % 3600) / 60)
+        return `${h}h ${m}m`
+      }
+
+      async function runCheck() {
+        const overallDot = document.getElementById('overall-dot')
+        const overallTitle = document.getElementById('overall-title')
+        const overallSub = document.getElementById('overall-sub')
+        document.getElementById('front-status').innerHTML = pill('يعمل', 'ok')
+        document.getElementById('front-url').textContent = location.origin
+
+        let apiOk = false
+        let dbOk = false
+        try {
+          const t0 = performance.now()
+          const res = await fetch(`${API_URL}/status`, { cache: 'no-store' })
+          const body = await res.json()
+          const ms = Math.round(performance.now() - t0)
+          apiOk = res.ok && body.ok
+          dbOk = !!body.db
+          document.getElementById('api-status').innerHTML = apiOk ? pill('متاح', 'ok') : pill('تعطل', 'bad')
+          document.getElementById('api-db').innerHTML = dbOk ? pill('متصل', 'ok') : pill('غير متصل', 'bad')
+          document.getElementById('api-latency').textContent = `${body.latencyMs ?? ms} ms`
+          document.getElementById('api-uptime').textContent = body.uptimeSeconds != null ? fmtUptime(body.uptimeSeconds) : '—'
+          document.getElementById('api-telegram').innerHTML = body.telegramConfigured
+            ? pill('مُعد', 'ok')
+            : pill('غير مُعد', 'warn')
+        } catch (e) {
+          document.getElementById('api-status').innerHTML = pill('تعذر الاتصال', 'bad')
+          document.getElementById('api-db').innerHTML = pill('—', 'bad')
+          document.getElementById('api-latency').textContent = '—'
+          document.getElementById('api-uptime').textContent = '—'
+          document.getElementById('api-telegram').innerHTML = pill('—', 'warn')
+        }
+
+        const allOk = apiOk && dbOk
+        overallDot.className = `dot ${allOk ? 'dot--ok' : apiOk ? 'dot--warn' : 'dot--bad'}`
+        overallTitle.textContent = allOk ? 'جميع الأنظمة تعمل' : apiOk ? 'الخدمة جزئية' : 'هناك مشكلة'
+        overallSub.textContent = allOk
+          ? 'التطبيق وواجهة البرمجة وقاعدة البيانات متاحة.'
+          : 'راجع تفاصيل API أدناه أو حاول التحديث بعد قليل.'
+        document.getElementById('checked-at').textContent = new Date().toLocaleString('ar-EG')
+      }
+
+      document.getElementById('refresh').addEventListener('click', runCheck)
+      runCheck()
+      setInterval(runCheck, 60000)
+    </script>
+  </body>
+</html>

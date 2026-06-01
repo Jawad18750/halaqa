@@ -2663,7 +2663,7 @@ select.input { appearance: none; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .student-item {
@@ -2674,6 +2674,10 @@ select.input { appearance: none; }
   padding: 6px 8px;
   min-height: 58px;
   border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.student-item--menu-open {
+  z-index: 50;
 }
 
 .student-item:last-child { border-bottom: none; }
@@ -2863,7 +2867,7 @@ select.input { appearance: none; }
   position: absolute;
   top: calc(100% - 6px);
   inset-inline-end: 6px;
-  z-index: var(--z-local);
+  z-index: 60;
   min-width: 148px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -2872,6 +2876,19 @@ select.input { appearance: none; }
   overflow: hidden;
   transform-origin: top center;
   animation: motionMenuEnter var(--motion-fast) var(--ease-out) both;
+}
+
+.student-item:last-child .student-item__menu,
+.student-item:only-child .student-item__menu {
+  top: auto;
+  bottom: calc(100% + 4px);
+  transform-origin: bottom center;
+  animation: motionMenuEnterUp var(--motion-fast) var(--ease-out) both;
+}
+
+@keyframes motionMenuEnterUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes motionMenuEnter {

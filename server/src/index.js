@@ -67,6 +67,34 @@ app.get('/health', async (req, res) => {
   }
 })
 
+app.get('/status', async (req, res) => {
+  const startedAt = Date.now()
+  let db = false
+  let dbError = null
+  try {
+    const r = await pool.query('select 1 as ok')
+    db = r.rows[0].ok === 1
+  } catch (e) {
+    dbError = e.message
+  }
+
+  const ok = db
+  res.status(ok ? 200 : 503).json({
+    ok,
+    service: 'halaqa-api',
+    db,
+    dbError,
+    uptimeSeconds: Math.floor(process.uptime()),
+    version: '0.1.0',
+    node: process.version,
+    telegramConfigured: Boolean(process.env.TELEGRAM_BOT_TOKEN),
+    webhookConfigured: Boolean(process.env.TELEGRAM_WEBHOOK_URL || process.env.TELEGRAM_USE_POLLING !== '1'),
+    environment: process.env.NODE_ENV || 'development',
+    checkedAt: new Date().toISOString(),
+    latencyMs: Date.now() - startedAt,
+  })
+})
+
 app.use('/auth', authRoutes)
 app.use('/students', studentRoutes)
 app.use('/sessions', sessionRoutes)

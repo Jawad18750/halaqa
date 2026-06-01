@@ -64,7 +64,7 @@ export default function StudentListItem({
   }
 
   return (
-    <li className="student-item">
+    <li className={`student-item${menuOpen ? ' student-item--menu-open' : ''}`}>
       <button type="button" className="student-item__tap" onClick={() => onProfile(student)}>
         <span className="student-item__number" aria-label={`رقم ${student.number}`}>
           {student.number}
