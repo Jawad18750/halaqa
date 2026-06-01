@@ -1,4 +1,6 @@
 RewriteEngine On
+RewriteRule ^status/?$ status.html [L]
+RewriteRule ^status\.html$ /status [R=301,L]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

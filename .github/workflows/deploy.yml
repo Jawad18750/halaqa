@@ -45,6 +45,8 @@ jobs:
           # SPA fallback for CyberPanel/OpenLiteSpeed
           cat > artifact_frontend/.htaccess << 'EOF'
           RewriteEngine On
+          RewriteRule ^status/?$ status.html [L]
+          RewriteRule ^status\.html$ /status [R=301,L]
           RewriteCond %{REQUEST_FILENAME} -f [OR]
           RewriteCond %{REQUEST_FILENAME} -d
           RewriteRule ^ - [L]

@@ -52,6 +52,10 @@ export async function deleteWebhook() {
   return telegramRequest('deleteWebhook', { drop_pending_updates: false })
 }
 
+export async function getWebhookInfo() {
+  return telegramRequest('getWebhookInfo', {})
+}
+
 export async function getUpdates({ offset = 0, timeout = 25, signal } = {}) {
   const token = getToken()
   if (!token) throw new Error('TELEGRAM_BOT_TOKEN not configured')

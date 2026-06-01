@@ -6,10 +6,11 @@
     <meta name="robots" content="noindex" />
     <title>حالة نظام الحلقة</title>
     <link rel="icon" type="image/png" href="/quran.png" />
+    <link rel="canonical" href="/status" />
     <style>
       :root {
         color-scheme: light dark;
-        --bg: #f4f7f8;
+        --bg: #eef3f6;
         --card: #fff;
         --text: #0f172a;
         --muted: #64748b;
@@ -35,61 +36,101 @@
         font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
         background: var(--bg);
         color: var(--text);
-        padding: 24px 16px 40px;
+        padding: 24px 16px 48px;
       }
-      .wrap { max-width: 720px; margin: 0 auto; }
-      h1 { margin: 0 0 8px; font-size: 1.5rem; }
-      .lead { margin: 0 0 20px; color: var(--muted); line-height: 1.6; }
+      .wrap { max-width: 920px; margin: 0 auto; }
+      h1 { margin: 0 0 8px; font-size: 1.65rem; }
+      .lead { margin: 0 0 20px; color: var(--muted); line-height: 1.65; }
       .banner {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 16px 18px;
-        border-radius: 14px;
+        gap: 14px;
+        padding: 18px 20px;
+        border-radius: 16px;
         border: 1px solid var(--border);
         background: var(--card);
-        margin-bottom: 16px;
+        margin-bottom: 18px;
       }
       .dot {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
         flex-shrink: 0;
         background: var(--muted);
       }
-      .dot--ok { background: var(--ok); box-shadow: 0 0 0 6px color-mix(in srgb, var(--ok) 18%, transparent); }
-      .dot--bad { background: var(--bad); box-shadow: 0 0 0 6px color-mix(in srgb, var(--bad) 18%, transparent); }
-      .dot--warn { background: var(--warn); box-shadow: 0 0 0 6px color-mix(in srgb, var(--warn) 18%, transparent); }
-      .grid { display: grid; gap: 12px; }
+      .dot--ok { background: var(--ok); box-shadow: 0 0 0 7px color-mix(in srgb, var(--ok) 18%, transparent); }
+      .dot--bad { background: var(--bad); box-shadow: 0 0 0 7px color-mix(in srgb, var(--bad) 18%, transparent); }
+      .dot--warn { background: var(--warn); box-shadow: 0 0 0 7px color-mix(in srgb, var(--warn) 18%, transparent); }
+      .grid { display: grid; gap: 14px; }
+      .grid--2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
       .card {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px 16px;
+        border-radius: 16px;
+        padding: 16px 18px;
       }
-      .card h2 { margin: 0 0 8px; font-size: 1rem; }
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card h2 i { color: var(--accent); font-style: normal; }
       .row {
         display: flex;
         justify-content: space-between;
+        align-items: baseline;
         gap: 12px;
-        padding: 6px 0;
+        padding: 7px 0;
         border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
         font-size: 0.95rem;
       }
       .row:first-of-type { border-top: none; padding-top: 0; }
       .label { color: var(--muted); }
-      .value { font-weight: 600; text-align: left; direction: ltr; }
+      .value, .num {
+        font-weight: 600;
+        text-align: left;
+        direction: ltr;
+        unicode-bidi: isolate;
+        font-variant-numeric: lining-nums tabular-nums;
+      }
+      .value--wrap { max-width: 62%; word-break: break-all; }
       .status-pill {
         display: inline-block;
-        padding: 2px 10px;
+        padding: 3px 10px;
         border-radius: 999px;
         font-size: 0.85rem;
         font-weight: 700;
+        direction: rtl;
+        unicode-bidi: isolate;
       }
       .status-pill--ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
       .status-pill--bad { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
       .status-pill--warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
-      .actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .stat {
+        padding: 12px;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--accent) 8%, var(--card));
+        border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+        text-align: center;
+      }
+      .stat__n {
+        font-size: 1.45rem;
+        font-weight: 800;
+        line-height: 1.1;
+        direction: ltr;
+        unicode-bidi: isolate;
+        font-variant-numeric: lining-nums tabular-nums;
+      }
+      .stat__l { margin-top: 4px; color: var(--muted); font-size: 0.82rem; }
+      .actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
       a.btn, button.btn {
         appearance: none;
         border: 1px solid var(--border);
@@ -106,13 +147,24 @@
         border-color: var(--accent);
         color: #fff;
       }
-      footer { margin-top: 24px; color: var(--muted); font-size: 0.85rem; }
+      footer { margin-top: 24px; color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+      .checks { display: grid; gap: 8px; margin-top: 6px; }
+      .check-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--border) 35%, transparent);
+      }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" />
   </head>
   <body>
     <div class="wrap">
       <h1>حالة نظام الحلقة</h1>
-      <p class="lead">فحص سريع لتوفر التطبيق وواجهة البرمجة وقاعدة البيانات.</p>
+      <p class="lead">لوحة مراقبة عامة لتوفر التطبيق، واجهة البرمجة، قاعدة البيانات، Telegram، وإحصائيات المنصة.</p>
 
       <div class="banner" id="overall">
         <span class="dot" id="overall-dot" aria-hidden="true"></span>
@@ -122,22 +174,63 @@
         </div>
       </div>
 
-      <div class="grid">
+      <div class="grid grid--2">
         <section class="card">
-          <h2>الواجهة الأمامية</h2>
+          <h2><i class="fa-solid fa-globe"></i> الواجهة الأمامية</h2>
           <div class="row"><span class="label">الحالة</span><span class="value" id="front-status">—</span></div>
-          <div class="row"><span class="label">الرابط</span><span class="value" id="front-url">—</span></div>
+          <div class="row"><span class="label">الرابط</span><span class="value value--wrap" id="front-url">—</span></div>
+          <div class="row"><span class="label">زمن تحميل الصفحة</span><span class="value num" id="front-load">—</span></div>
         </section>
 
         <section class="card">
-          <h2>واجهة البرمجة (API)</h2>
+          <h2><i class="fa-solid fa-server"></i> واجهة البرمجة (API)</h2>
           <div class="row"><span class="label">الحالة</span><span class="value" id="api-status">—</span></div>
-          <div class="row"><span class="label">قاعدة البيانات</span><span class="value" id="api-db">—</span></div>
-          <div class="row"><span class="label">زمن الاستجابة</span><span class="value" id="api-latency">—</span></div>
-          <div class="row"><span class="label">مدة التشغيل</span><span class="value" id="api-uptime">—</span></div>
-          <div class="row"><span class="label">Telegram</span><span class="value" id="api-telegram">—</span></div>
+          <div class="row"><span class="label">الرابط</span><span class="value value--wrap" id="api-url">—</span></div>
+          <div class="row"><span class="label">البيئة</span><span class="value" id="api-env">—</span></div>
+          <div class="row"><span class="label">Node.js</span><span class="value num" id="api-node">—</span></div>
+          <div class="row"><span class="label">الإصدار</span><span class="value num" id="api-version">—</span></div>
+        </section>
+
+        <section class="card">
+          <h2><i class="fa-solid fa-database"></i> قاعدة البيانات</h2>
+          <div class="row"><span class="label">الاتصال</span><span class="value" id="api-db">—</span></div>
+          <div class="row"><span class="label">زمن الاستعلام</span><span class="value num" id="api-db-latency">—</span></div>
+          <div class="row"><span class="label">زمن API الكامل</span><span class="value num" id="api-latency">—</span></div>
+          <div class="row"><span class="label">مدة تشغيل الخادم</span><span class="value num" id="api-uptime">—</span></div>
+          <div class="row"><span class="label">الذاكرة (RSS)</span><span class="value num" id="api-mem-rss">—</span></div>
+          <div class="row"><span class="label">Heap مستخدم</span><span class="value num" id="api-mem-heap">—</span></div>
+        </section>
+
+        <section class="card">
+          <h2><i class="fa-brands fa-telegram"></i> Telegram</h2>
+          <div class="row"><span class="label">البوت</span><span class="value" id="tg-bot">—</span></div>
+          <div class="row"><span class="label">الوضع</span><span class="value" id="tg-mode">—</span></div>
+          <div class="row"><span class="label">Webhook</span><span class="value value--wrap" id="tg-webhook">—</span></div>
+          <div class="row"><span class="label">تحديثات معلّقة</span><span class="value num" id="tg-pending">—</span></div>
+          <div class="row"><span class="label">آخر خطأ</span><span class="value value--wrap" id="tg-error">—</span></div>
         </section>
       </div>
+
+      <section class="card" style="margin-top: 14px;">
+        <h2><i class="fa-solid fa-chart-column"></i> إحصائيات المنصة</h2>
+        <div class="stats-grid">
+          <div class="stat"><div class="stat__n num" id="stat-users">—</div><div class="stat__l">حسابات</div></div>
+          <div class="stat"><div class="stat__n num" id="stat-students">—</div><div class="stat__l">طلاب</div></div>
+          <div class="stat"><div class="stat__n num" id="stat-sessions">—</div><div class="stat__l">اختبارات</div></div>
+          <div class="stat"><div class="stat__n num" id="stat-guardians">—</div><div class="stat__l">أولياء أمور</div></div>
+          <div class="stat"><div class="stat__n num" id="stat-tg-linked">—</div><div class="stat__l">Telegram مربوط</div></div>
+          <div class="stat"><div class="stat__n num" id="stat-notify-24h">—</div><div class="stat__l">إشعارات 24 س</div></div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top: 14px;">
+        <h2><i class="fa-solid fa-heart-pulse"></i> فحوصات سريعة</h2>
+        <div class="checks">
+          <div class="check-item"><span>/health</span><span id="check-health">—</span></div>
+          <div class="check-item"><span>/status</span><span id="check-status">—</span></div>
+          <div class="check-item"><span>الواجهة /status</span><span id="check-front-status">—</span></div>
+        </div>
+      </section>
 
       <div class="actions">
         <button class="btn" type="button" id="refresh">تحديث</button>
@@ -145,14 +238,25 @@
       </div>
 
       <footer>
-        آخر فحص: <span id="checked-at" dir="ltr">—</span>
+        آخر فحص: <span class="num" id="checked-at">—</span>
+        <br />
+        <span class="num" id="checked-iso">—</span>
       </footer>
     </div>
 
     <script>
+      const pageLoadMs = Math.round(performance.now())
       const API_URL = location.hostname === 'halaqa.abdeljawad.com'
         ? 'https://api.halaqa.abdeljawad.com'
         : 'http://localhost:4000'
+
+      const num = new Intl.NumberFormat('en-US')
+      const fmtNum = (n) => (n == null || Number.isNaN(n) ? '—' : num.format(n))
+      const fmtDate = (d) => new Date(d).toLocaleString('ar-EG', {
+        numberingSystem: 'latn',
+        dateStyle: 'medium',
+        timeStyle: 'medium',
+      })
 
       function pill(text, kind) {
         return `<span class="status-pill status-pill--${kind}">${text}</span>`
@@ -161,38 +265,97 @@
       function fmtUptime(sec) {
         const h = Math.floor(sec / 3600)
         const m = Math.floor((sec % 3600) / 60)
-        return `${h}h ${m}m`
+        const s = sec % 60
+        return `${num.format(h)}h ${num.format(m)}m ${num.format(s)}s`
+      }
+
+      function setText(id, value) {
+        const el = document.getElementById(id)
+        if (el) el.textContent = value ?? '—'
+      }
+
+      function setHtml(id, value) {
+        const el = document.getElementById(id)
+        if (el) el.innerHTML = value ?? '—'
+      }
+
+      async function ping(path) {
+        const t0 = performance.now()
+        const res = await fetch(`${API_URL}${path}`, { cache: 'no-store' })
+        const ms = Math.round(performance.now() - t0)
+        const ok = res.ok
+        let body = null
+        try { body = await res.json() } catch {}
+        return { ok, ms, body }
       }
 
       async function runCheck() {
         const overallDot = document.getElementById('overall-dot')
         const overallTitle = document.getElementById('overall-title')
         const overallSub = document.getElementById('overall-sub')
-        document.getElementById('front-status').innerHTML = pill('يعمل', 'ok')
-        document.getElementById('front-url').textContent = location.origin
+
+        setHtml('front-status', pill('يعمل', 'ok'))
+        setText('front-url', location.origin)
+        setText('front-load', `${fmtNum(pageLoadMs)} ms`)
+        setHtml('check-front-status', pill('200 OK', 'ok'))
 
         let apiOk = false
         let dbOk = false
+        let body = null
+
         try {
-          const t0 = performance.now()
-          const res = await fetch(`${API_URL}/status`, { cache: 'no-store' })
-          const body = await res.json()
-          const ms = Math.round(performance.now() - t0)
-          apiOk = res.ok && body.ok
-          dbOk = !!body.db
-          document.getElementById('api-status').innerHTML = apiOk ? pill('متاح', 'ok') : pill('تعطل', 'bad')
-          document.getElementById('api-db').innerHTML = dbOk ? pill('متصل', 'ok') : pill('غير متصل', 'bad')
-          document.getElementById('api-latency').textContent = `${body.latencyMs ?? ms} ms`
-          document.getElementById('api-uptime').textContent = body.uptimeSeconds != null ? fmtUptime(body.uptimeSeconds) : '—'
-          document.getElementById('api-telegram').innerHTML = body.telegramConfigured
-            ? pill('مُعد', 'ok')
-            : pill('غير مُعد', 'warn')
+          const health = await ping('/health')
+          setHtml('check-health', health.ok
+            ? pill(`${fmtNum(health.ms)} ms`, 'ok')
+            : pill('فشل', 'bad'))
+
+          const status = await ping('/status')
+          body = status.body
+          apiOk = status.ok && body?.ok
+          dbOk = !!body?.db
+          setHtml('check-status', status.ok
+            ? pill(`${fmtNum(status.ms)} ms`, 'ok')
+            : pill('فشل', 'bad'))
+
+          setHtml('api-status', apiOk ? pill('متاح', 'ok') : pill('تعطل', 'bad'))
+          setHtml('api-db', dbOk ? pill('متصل', 'ok') : pill('غير متصل', 'bad'))
+          setText('api-url', body?.urls?.api || API_URL)
+          setText('api-env', body?.environment || '—')
+          setText('api-node', body?.node || '—')
+          setText('api-version', body?.version || '—')
+          setText('api-db-latency', body?.dbLatencyMs != null ? `${fmtNum(body.dbLatencyMs)} ms` : '—')
+          setText('api-latency', body?.latencyMs != null ? `${fmtNum(body.latencyMs)} ms` : '—')
+          setText('api-uptime', body?.uptimeSeconds != null ? fmtUptime(body.uptimeSeconds) : '—')
+          setText('api-mem-rss', body?.memoryMb?.rss != null ? `${fmtNum(body.memoryMb.rss)} MB` : '—')
+          setText('api-mem-heap', body?.memoryMb?.heapUsed != null ? `${fmtNum(body.memoryMb.heapUsed)} MB` : '—')
+
+          const tg = body?.telegram || {}
+          setText('tg-bot', tg.configured ? `@${tg.botUsername}` : '—')
+          const modeLabels = {
+            webhook: 'Webhook',
+            polling: 'Polling',
+            disabled: 'غير مفعّل',
+            webhook_missing: 'Webhook غير مسجّل',
+            webhook_error: 'Webhook — خطأ',
+          }
+          const modeKind = tg.mode === 'webhook' ? 'ok' : tg.mode === 'disabled' ? 'warn' : 'bad'
+          setHtml('tg-mode', pill(modeLabels[tg.mode] || tg.mode || '—', modeKind))
+          setText('tg-webhook', tg.webhookUrl || '—')
+          setText('tg-pending', tg.pendingUpdates != null ? fmtNum(tg.pendingUpdates) : '—')
+          setText('tg-error', tg.lastError || '—')
+
+          const s = body?.stats || {}
+          setText('stat-users', fmtNum(s.users))
+          setText('stat-students', fmtNum(s.students))
+          setText('stat-sessions', fmtNum(s.sessions))
+          setText('stat-guardians', fmtNum(s.guardians))
+          setText('stat-tg-linked', fmtNum(s.guardians_telegram_linked))
+          setText('stat-notify-24h', fmtNum(s.notifications_24h))
         } catch (e) {
-          document.getElementById('api-status').innerHTML = pill('تعذر الاتصال', 'bad')
-          document.getElementById('api-db').innerHTML = pill('—', 'bad')
-          document.getElementById('api-latency').textContent = '—'
-          document.getElementById('api-uptime').textContent = '—'
-          document.getElementById('api-telegram').innerHTML = pill('—', 'warn')
+          setHtml('api-status', pill('تعذر الاتصال', 'bad'))
+          setHtml('api-db', pill('—', 'bad'))
+          setHtml('check-health', pill('فشل', 'bad'))
+          setHtml('check-status', pill('فشل', 'bad'))
         }
 
         const allOk = apiOk && dbOk
@@ -200,8 +363,11 @@
         overallTitle.textContent = allOk ? 'جميع الأنظمة تعمل' : apiOk ? 'الخدمة جزئية' : 'هناك مشكلة'
         overallSub.textContent = allOk
           ? 'التطبيق وواجهة البرمجة وقاعدة البيانات متاحة.'
-          : 'راجع تفاصيل API أدناه أو حاول التحديث بعد قليل.'
-        document.getElementById('checked-at').textContent = new Date().toLocaleString('ar-EG')
+          : 'راجع التفاصيل أدناه أو حاول التحديث بعد قليل.'
+
+        const now = new Date()
+        setText('checked-at', fmtDate(now))
+        setText('checked-iso', now.toISOString())
       }
 
       document.getElementById('refresh').addEventListener('click', runCheck)

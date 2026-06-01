@@ -25,7 +25,7 @@ export default function About({ onBack }) {
       <p className="meta" style={{ textAlign: 'center' }}>
         © {new Date().getFullYear()} حلقة — جميع الحقوق محفوظة
         {' · '}
-        <a href="/status.html" target="_blank" rel="noopener noreferrer">حالة النظام</a>
+        <a href="/status" target="_blank" rel="noopener noreferrer">حالة النظام</a>
       </p>
     </div>
   )
