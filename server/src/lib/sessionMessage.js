@@ -88,9 +88,10 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
   const date = formatArabicDateTime(session.attempt_at || session.created_at)
   const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
 
-  const resultLine = passed
-    ? 'النتيجة: ✅ أتمّ الاختبار بنجاح'
-    : 'النتيجة: 📖 يحتاج إلى مراجعة إضافية'
+  const resultLine = passed ? 'النتيجة: (ناجح)' : 'النتيجة: (لم ينجح)'
+  const scoreLine = passed
+    ? `الدرجة: ${score} — ${grade}`
+    : `الدرجة: ${score}`
 
   const closing = passed
     ? `🤲 بارك الله في ${studentName}، وزاده إتقانًا وثباتًا.`
@@ -101,7 +102,7 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
     [
       `الطالب: ${studentName}`,
       resultLine,
-      `الدرجة: ${score} — ${grade}`,
+      scoreLine,
     ],
     testDetails,
     `التاريخ: ${date}`,
