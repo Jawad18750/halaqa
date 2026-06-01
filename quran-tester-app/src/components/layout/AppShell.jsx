@@ -5,8 +5,6 @@ import SiteFooter from './SiteFooter.jsx'
 import Drawer from '../Drawer.jsx'
 import ConfirmDialog from '../ui/ConfirmDialog.jsx'
 
-const BUILD_TAG = import.meta.env.VITE_BUILD_TAG || 'dev'
-
 export default function AppShell({
   theme,
   view,
@@ -76,7 +74,6 @@ export default function AppShell({
         onContrastChange={onContrastChange}
       />
       <ConfirmDialog />
-      <div className="build-tag">الإصدار: {BUILD_TAG}</div>
     </div>
   )
 }

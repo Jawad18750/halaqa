@@ -1,3 +1,5 @@
+const BUILD_TAG = import.meta.env.VITE_BUILD_TAG || 'dev'
+
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -6,6 +8,7 @@ export default function SiteFooter() {
         <span>طُور بواسطة عبدالجواد الميلادي</span>
       </a>
       <p className="site-footer__note">لا تنسونا من صالح دعائكم لي ولوالديّ ولأسرتي</p>
+      <p className="site-footer__version">الإصدار: {BUILD_TAG}</p>
     </footer>
   )
 }
