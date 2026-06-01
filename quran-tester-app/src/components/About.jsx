@@ -22,7 +22,11 @@ export default function About({ onBack }) {
           <li><i className="fa-solid fa-font" style={{ marginInlineEnd: 8 }} />الخط: IBM Plex Sans Arabic</li>
         </ul>
       </SectionCard>
-      <p className="meta" style={{ textAlign: 'center' }}>© {new Date().getFullYear()} حلقة — جميع الحقوق محفوظة</p>
+      <p className="meta" style={{ textAlign: 'center' }}>
+        © {new Date().getFullYear()} حلقة — جميع الحقوق محفوظة
+        {' · '}
+        <a href="/status.html" target="_blank" rel="noopener noreferrer">حالة النظام</a>
+      </p>
     </div>
   )
 }
