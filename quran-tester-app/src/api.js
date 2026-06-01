@@ -1,4 +1,17 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+const PRODUCTION_API_BY_HOST = {
+  'halaqa.abdeljawad.com': 'https://api.halaqa.abdeljawad.com',
+}
+
+function resolveApiUrl() {
+  const fromEnv = import.meta.env.VITE_API_URL
+  if (typeof window !== 'undefined') {
+    const fromHost = PRODUCTION_API_BY_HOST[window.location.hostname]
+    if (fromHost) return fromHost
+  }
+  return fromEnv || 'http://localhost:4000'
+}
+
+const API_URL = resolveApiUrl()
 const DEBUG_API =
   (import.meta.env?.DEV ?? false) ||
   String(import.meta.env?.VITE_DEBUG_API || '') === '1'
@@ -32,6 +45,10 @@ async function request(path, options = {}, timeoutMs = 15000) {
   } catch (e) {
     if (e?.name === 'AbortError' || e === 'timeout') {
       throw new Error('انتهت مهلة الشبكة')
+    }
+    const msg = String(e?.message || '')
+    if (/load failed|failed to fetch|networkerror|network error/i.test(msg)) {
+      throw new Error('تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.')
     }
     throw e
   } finally {

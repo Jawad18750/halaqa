@@ -20,7 +20,12 @@ export default function Auth({ onAuthed }) {
         : auth.register(username.trim(), password.trim(), email.trim()))
       onAuthed(user)
     } catch (e) {
-      setError(e.message)
+      const msg = String(e?.message || '')
+      if (/load failed|failed to fetch|networkerror|network error/i.test(msg)) {
+        setError('تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.')
+      } else {
+        setError(msg || 'حدث خطأ غير متوقع')
+      }
     }
   }
 

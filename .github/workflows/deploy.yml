@@ -30,6 +30,14 @@ jobs:
           VITE_API_URL: https://api.halaqa.abdeljawad.com
         run: npm run build
 
+      - name: Verify production API URL in bundle
+        working-directory: quran-tester-app
+        run: |
+          if ! grep -q 'api.halaqa.abdeljawad.com' dist/assets/index-*.js; then
+            echo 'ERROR: production bundle missing api.halaqa.abdeljawad.com'
+            exit 1
+          fi
+
       - name: Prepare frontend artifact
         run: |
           mkdir -p artifact_frontend
