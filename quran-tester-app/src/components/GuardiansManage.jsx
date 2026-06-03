@@ -235,63 +235,63 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
         <StatTile label="بحاجة دعوة" value={stats.needsInvite} icon="fa-solid fa-paper-plane" tone="warn" />
       </div>
 
-      <div className="guardians-panel">
-        <div className="guardians-toolbar">
-          <div className="guardians-toolbar__row">
-            <div className="students-search guardians-toolbar__search">
-              <i className="fa-solid fa-magnifying-glass" aria-hidden />
-              <input
-                className="students-search__input"
-                placeholder="بحث بالاسم أو الهاتف"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                aria-label="بحث"
-              />
-              {query && (
-                <button type="button" className="students-search__clear" aria-label="مسح" onClick={() => setQuery('')}>
-                  <i className="fa-solid fa-xmark" />
-                </button>
-              )}
-            </div>
-            <button type="button" className="btn btn--primary students-toolbar__add" aria-label="إضافة ولي" onClick={openAddSheet}>
-              <i className="fa-solid fa-plus" />
-            </button>
-          </div>
-
-          <div className="guardians-filter students-filter" role="tablist" aria-label="تصفية الحالة">
-            {STATUS_FILTERS.map(f => (
-              <button
-                key={f.id}
-                type="button"
-                role="tab"
-                aria-selected={statusFilter === f.id}
-                className={`students-filter__chip ${statusFilter === f.id ? 'students-filter__chip--active' : ''}`}
-                onClick={() => setStatusFilter(f.id)}
-              >
-                {f.label}
+      <section className="guardians-toolbar students-toolbar" aria-label="بحث وتصفية أولياء الأمور">
+        <div className="guardians-toolbar__row students-toolbar__row">
+          <div className="students-search guardians-toolbar__search">
+            <i className="fa-solid fa-magnifying-glass" aria-hidden />
+            <input
+              className="students-search__input"
+              placeholder="بحث بالاسم أو الهاتف"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              aria-label="بحث"
+            />
+            {query && (
+              <button type="button" className="students-search__clear" aria-label="مسح" onClick={() => setQuery('')}>
+                <i className="fa-solid fa-xmark" />
               </button>
-            ))}
+            )}
           </div>
+          <button type="button" className="btn btn--primary students-toolbar__add" aria-label="إضافة ولي" onClick={openAddSheet}>
+            <i className="fa-solid fa-plus" />
+          </button>
+        </div>
 
-          <div className="guardians-toolbar__footer">
-            <p className="guardians-toolbar__count">
-              {loading ? 'جاري التحميل…' : `${filtered.length} ولي أمر`}
-            </p>
-            <div className="guardians-toolbar__actions">
-              {linkedList.length > 0 && !selectMode && (
-                <button type="button" className="btn btn--ghost btn--sm guardians-toolbar__bulk" onClick={startSelectMode}>
-                  <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
-                </button>
-              )}
-              {unlinkedList.length > 0 && (
-                <button type="button" className="btn btn--ghost btn--sm guardians-toolbar__bulk" onClick={openBulkInvite}>
-                  <i className="fa-solid fa-share-from-square" /> دعوة ({unlinkedList.length})
-                </button>
-              )}
-            </div>
+        <div className="guardians-filter students-filter guardians-filter--scroll" role="tablist" aria-label="تصفية الحالة">
+          {STATUS_FILTERS.map(f => (
+            <button
+              key={f.id}
+              type="button"
+              role="tab"
+              aria-selected={statusFilter === f.id}
+              className={`students-filter__chip ${statusFilter === f.id ? 'students-filter__chip--active' : ''}`}
+              onClick={() => setStatusFilter(f.id)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="guardians-toolbar__footer">
+          <p className="students-toolbar__meta guardians-toolbar__count">
+            {loading ? 'جاري التحميل…' : `${filtered.length} ولي أمر`}
+          </p>
+          <div className="guardians-toolbar__actions">
+            {linkedList.length > 0 && !selectMode && (
+              <button type="button" className="btn btn--ghost btn--sm" onClick={startSelectMode} title="رسالة مخصصة">
+                <i className="fa-solid fa-paper-plane" aria-hidden />
+                <span className="guardians-toolbar__action-label">رسالة</span>
+              </button>
+            )}
+            {unlinkedList.length > 0 && (
+              <button type="button" className="btn btn--ghost btn--sm" onClick={openBulkInvite} title="دعوة جماعية">
+                <i className="fa-solid fa-share-from-square" aria-hidden />
+                <span className="guardians-toolbar__action-label">دعوة ({unlinkedList.length})</span>
+              </button>
+            )}
           </div>
         </div>
-      </div>
+      </section>
 
       {error && <div className="alert alert--error">{error}</div>}
 

@@ -9,6 +9,7 @@ import backupRoutes from './routes/backup.js'
 import guardianRoutes from './routes/guardians.js'
 import telegramRoutes from './routes/telegram.js'
 import notificationRoutes from './routes/notifications.js'
+import attendanceRoutes from './routes/attendance.js'
 import { registerWebhookOnStartup, isTelegramConfigured, getWebhookInfo } from './lib/telegramBot.js'
 import { startTelegramPolling, stopTelegramPolling } from './lib/telegramPolling.js'
 import { normalizeGuardianPhonesInDb } from './lib/guardiansService.js'
@@ -162,11 +163,12 @@ app.use('/sessions', sessionRoutes)
 app.use('/backup', backupRoutes)
 app.use('/guardians', guardianRoutes)
 app.use('/notifications', notificationRoutes)
+app.use('/attendance', attendanceRoutes)
 app.use('/telegram', telegramRoutes)
 
 // 404 handler for API routes to help debug missing endpoints
 app.use((req, res, next) => {
-  const prefixes = ['/auth', '/students', '/sessions', '/guardians', '/notifications', '/telegram', '/backup']
+  const prefixes = ['/auth', '/students', '/sessions', '/guardians', '/notifications', '/attendance', '/telegram', '/backup']
   if (prefixes.some(p => req.path.startsWith(p))) {
     return res.status(404).type('text/plain').send(`Not Found: ${req.method} ${req.path}`)
   }
@@ -205,4 +207,3 @@ app.listen(port, () => {
 
 process.on('SIGTERM', () => stopTelegramPolling())
 process.on('SIGINT', () => stopTelegramPolling())
-

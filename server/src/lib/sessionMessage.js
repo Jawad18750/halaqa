@@ -73,7 +73,7 @@ function buildTestDetails(session, thumuns) {
   return ''
 }
 
-export function buildSessionResultMessage({ studentName, session, sheikhName, masjidName }) {
+export function buildSessionResultMessage({ studentName, session, sheikhName, masjidName, attendanceLine }) {
   let thumuns = []
   try {
     thumuns = loadThumunData().list || []
@@ -105,6 +105,7 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
       scoreLine,
     ],
     testDetails,
+    attendanceLine || '',
     `التاريخ: ${date}`,
     AUTO_DISCLAIMER,
     halaqaFooter,

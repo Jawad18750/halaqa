@@ -23,6 +23,7 @@ export async function listGuardiansForUser(userId) {
   const { rows } = await pool.query(
     `select g.id, g.name, g.phone_e164, g.notes, g.created_at, g.updated_at,
             count(distinct gs.student_id)::int as student_count,
+            bool_or(coalesce(gs.notify_weekly_attendance, false)) as notify_weekly_attendance,
             gt.telegram_chat_id is not null as telegram_linked,
             coalesce(gt.opt_out, false) as telegram_opt_out,
             gt.linked_at as telegram_linked_at,
@@ -205,7 +206,7 @@ export async function assertGuardianOwned(userId, guardianId) {
 export async function listGuardiansForStudent(userId, studentId) {
   await assertStudentOwned(userId, studentId)
   const { rows } = await pool.query(
-    `select gs.id as link_id, gs.relationship, gs.is_primary, gs.notify_on_result,
+    `select gs.id as link_id, gs.relationship, gs.is_primary, gs.notify_on_result, gs.notify_weekly_attendance,
             g.id, g.name, g.phone_e164, g.notes,
             gt.telegram_chat_id is not null as telegram_linked,
             coalesce(gt.opt_out, false) as telegram_opt_out,
@@ -262,18 +263,20 @@ export async function linkGuardianToStudent(userId, studentId, input) {
     const isFirst = !existingPrimary.rows.length
     const isPrimary = input.is_primary === true || isFirst
     const notifyOnResult = input.notify_on_result === true || isPrimary
+    const notifyWeeklyAttendance = input.notify_weekly_attendance === true
 
     if (isPrimary) {
       await clearPrimaryForStudent(client, studentId)
     }
 
     const { rows } = await client.query(
-      `insert into guardian_students(guardian_id, student_id, relationship, is_primary, notify_on_result)
-       values($1, $2, $3, $4, $5)
+      `insert into guardian_students(guardian_id, student_id, relationship, is_primary, notify_on_result, notify_weekly_attendance)
+       values($1, $2, $3, $4, $5, $6)
        on conflict (guardian_id, student_id) do update set
          relationship=coalesce(excluded.relationship, guardian_students.relationship),
          is_primary=excluded.is_primary,
-         notify_on_result=excluded.notify_on_result
+         notify_on_result=excluded.notify_on_result,
+         notify_weekly_attendance=excluded.notify_weekly_attendance
        returning *`,
       [
         guardianId,
@@ -281,6 +284,7 @@ export async function linkGuardianToStudent(userId, studentId, input) {
         input.relationship?.trim() || null,
         isPrimary,
         notifyOnResult,
+        notifyWeeklyAttendance,
       ]
     )
 
@@ -294,7 +298,7 @@ export async function linkGuardianToStudent(userId, studentId, input) {
   }
 }
 
-export async function updateGuardianLink(userId, linkId, { relationship, is_primary, notify_on_result }) {
+export async function updateGuardianLink(userId, linkId, { relationship, is_primary, notify_on_result, notify_weekly_attendance }) {
   const linkQ = await pool.query(
     `select gs.*, g.user_id
      from guardian_students gs
@@ -327,6 +331,10 @@ export async function updateGuardianLink(userId, linkId, { relationship, is_prim
     if (notify_on_result !== undefined) {
       fields.push(`notify_on_result=$${idx++}`)
       vals.push(!!notify_on_result)
+    }
+    if (notify_weekly_attendance !== undefined) {
+      fields.push(`notify_weekly_attendance=$${idx++}`)
+      vals.push(!!notify_weekly_attendance)
     }
     if (!fields.length) throw Object.assign(new Error('لا توجد حقول للتحديث'), { status: 400 })
 

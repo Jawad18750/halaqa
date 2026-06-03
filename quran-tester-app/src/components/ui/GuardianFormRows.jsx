@@ -130,6 +130,14 @@ export default function GuardianFormRows({
               />
               إشعار بالنتائج
             </label>
+            <label className="add-student-check">
+              <input
+                type="checkbox"
+                checked={row.notifyWeeklyAttendance}
+                onChange={e => onUpdate(row.id, { notifyWeeklyAttendance: e.target.checked })}
+              />
+              ملخص حضور أسبوعي
+            </label>
           </div>
         </div>
       ))}

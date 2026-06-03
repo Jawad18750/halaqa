@@ -48,11 +48,12 @@ router.post(
     try {
       const hash = await bcrypt.hash(password, 10)
       const { rows } = await pool.query(
-        'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email, sheikh_name, masjid_name',
+        'insert into users(username, password_hash, email) values($1,$2,$3) returning id, username, email, sheikh_name, masjid_name, study_days, holiday_country, holiday_overrides',
         [username, hash, email || null]
       )
       const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
-      res.json({ token, user: rows[0] })
+      const user = await getUserSettings(rows[0].id)
+      res.json({ token, user })
     } catch (e) {
       if (String(e.message).includes('unique')) return res.status(409).json({ error: 'اسم المستخدم موجود بالفعل' })
       res.status(500).json({ error: 'تعذر إنشاء الحساب' })
@@ -67,22 +68,15 @@ router.post(
   const { username, password } = req.body || {}
   if (!username || !password) return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبة' })
   const { rows } = await pool.query(
-    'select id, username, password_hash, sheikh_name, masjid_name from users where username=$1 or email=$1',
+    'select id, username, password_hash from users where username=$1 or email=$1',
     [username]
   )
   if (!rows.length) return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' })
   const ok = await bcrypt.compare(password, rows[0].password_hash)
   if (!ok) return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' })
   const token = jwt.sign({ sub: rows[0].id }, process.env.JWT_SECRET, { expiresIn: '7d' })
-  res.json({
-    token,
-    user: {
-      id: rows[0].id,
-      username: rows[0].username,
-      sheikh_name: rows[0].sheikh_name || '',
-      masjid_name: rows[0].masjid_name || '',
-    },
-  })
+  const user = await getUserSettings(rows[0].id)
+  res.json({ token, user })
 })
 
 router.get('/me', async (req, res) => {
@@ -105,8 +99,8 @@ router.patch('/settings', async (req, res) => {
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
     if (!token) return res.status(401).json({ error: 'Unauthorized' })
     const payload = jwt.verify(token, process.env.JWT_SECRET)
-    const { sheikh_name, masjid_name } = req.body || {}
-    const user = await updateUserSettings(payload.sub, { sheikh_name, masjid_name })
+    const { sheikh_name, masjid_name, study_days, holiday_country, holiday_overrides } = req.body || {}
+    const user = await updateUserSettings(payload.sub, { sheikh_name, masjid_name, study_days, holiday_country, holiday_overrides })
     res.json({ user })
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message || 'تعذر حفظ الإعدادات' })
@@ -194,4 +188,3 @@ router.post(
     res.status(500).json({ error: 'تعذر إعادة التعيين' })
   }
 })
-

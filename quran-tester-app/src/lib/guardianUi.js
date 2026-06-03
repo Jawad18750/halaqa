@@ -112,7 +112,7 @@ export function guardianCardTitle(row, students = []) {
   return phone ? `ولي أمر · ${phone}` : 'ولي أمر'
 }
 
-export function guardianCardSubtitle(row, students = []) {
+export function guardianCardSubtitle(row) {
   if (row?.notes?.trim()) return row.notes.trim()
   return null
 }
@@ -199,6 +199,7 @@ export function emptyGuardianRow(overrides = {}) {
     relationship: '',
     isPrimary: true,
     notifyOnResult: true,
+    notifyWeeklyAttendance: false,
     ...overrides,
   }
 }
@@ -215,9 +216,12 @@ export function saveSiblingGuardianTemplate(rows) {
       relationship: r.relationship,
       isPrimary: r.isPrimary,
       notifyOnResult: r.notifyOnResult,
+      notifyWeeklyAttendance: r.notifyWeeklyAttendance,
     }))
     sessionStorage.setItem(SIBLING_TEMPLATE_KEY, JSON.stringify(payload))
-  } catch {}
+  } catch {
+    // Template persistence is best-effort only.
+  }
 }
 
 export function loadSiblingGuardianTemplate() {

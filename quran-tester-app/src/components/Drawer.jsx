@@ -7,6 +7,7 @@ const NAV_GROUPS = [
     label: 'عمل يومي',
     items: [
       { view: 'dashboard', icon: 'fa-gauge', label: 'الرئيسية' },
+      { view: 'attendance', icon: 'fa-clipboard-check', label: 'الحضور' },
       { view: 'students', icon: 'fa-users', label: 'الطلاب' },
       { view: 'guardians', icon: 'fa-user-group', label: 'أولياء الأمور' },
       { view: 'freestyle', icon: 'fa-wand-magic-sparkles', label: 'الوضع الحر' },
@@ -16,6 +17,7 @@ const NAV_GROUPS = [
     label: 'تقارير',
     items: [
       { view: 'weekly', icon: 'fa-calendar-week', label: 'نظرة زمنية' },
+      { view: 'attendanceLog', icon: 'fa-clipboard-list', label: 'سجل الحضور' },
       { view: 'leaderboard', icon: 'fa-trophy', label: 'لوحة الصدارة' },
     ],
   },

@@ -51,6 +51,7 @@ export default function GuardianCard({
   onCopyPhone,
   onTogglePrimary,
   onToggleNotify,
+  onToggleWeeklyAttendance,
   onRemoveLink,
   onOpenStudent,
   onToast,
@@ -77,8 +78,15 @@ export default function GuardianCard({
   const displayTitle = guardianCardTitle(row, students)
   const displaySubtitle = guardianCardSubtitle(row, students)
   const placeholderName = isPlaceholderGuardianName(row.name)
-  const previewStudents = showStudents ? students.slice(0, 4) : []
-  const hiddenStudentCount = Math.max(0, students.length - previewStudents.length)
+  const isExpanded = expanded
+  const canExpand = variant === 'manage' || variant === 'profile'
+  const profileStatusLine = [
+    tg.label,
+    row.notify_on_result ? 'نتائج' : '',
+    row.notify_weekly_attendance ? 'حضور' : '',
+  ]
+    .filter(Boolean)
+    .join(' · ')
 
   async function sendInvite(guardianRow, channel) {
     if (linked) {
@@ -182,7 +190,15 @@ export default function GuardianCard({
   }
 
   return (
-    <li className={`guardian-card guardian-card--${variant} ${linked ? 'guardian-card--linked' : 'guardian-card--needs-invite'} ${selectMode && selected ? 'guardian-card--selected' : ''}`}>
+    <li
+      className={[
+        'guardian-card',
+        `guardian-card--${variant}`,
+        linked ? 'guardian-card--linked' : 'guardian-card--needs-invite',
+        isExpanded ? 'guardian-card--expanded' : '',
+        selectMode && selected ? 'guardian-card--selected' : '',
+      ].filter(Boolean).join(' ')}
+    >
       <div className="guardian-card__header">
         {selectMode && (
           <label className="guardian-card__select">
@@ -201,7 +217,7 @@ export default function GuardianCard({
           </span>
           <div className="guardian-card__info">
             <div className="guardian-card__name">
-              {row.is_primary && variant === 'manage' && (
+              {row.is_primary && (
                 <span className="guardian-primary" title="ولي أساسي">
                   <i className="fa-solid fa-star" />
                 </span>
@@ -211,38 +227,50 @@ export default function GuardianCard({
             {displaySubtitle && variant === 'manage' && (
               <p className="guardian-card__notes meta">{displaySubtitle}</p>
             )}
-            <button type="button" className="guardian-card__phone" onClick={handleCopyPhone} title="نسخ الرقم">
-              <span dir="ltr">{row.phone_e164}</span>
-              <i className="fa-regular fa-copy" aria-hidden />
-            </button>
+            {variant === 'profile' ? (
+              <>
+                <button type="button" className="guardian-card__phone guardian-card__phone--row" onClick={handleCopyPhone} title="نسخ الرقم">
+                  <span dir="ltr">{row.phone_e164}</span>
+                  <i className="fa-regular fa-copy" aria-hidden />
+                </button>
+                {!isExpanded && profileStatusLine && (
+                  <p className="guardian-card__status meta">{profileStatusLine}</p>
+                )}
+              </>
+            ) : (
+              <button type="button" className="guardian-card__phone" onClick={handleCopyPhone} title="نسخ الرقم">
+                <span dir="ltr">{row.phone_e164}</span>
+                <i className="fa-regular fa-copy" aria-hidden />
+              </button>
+            )}
           </div>
         </div>
 
         <div className="guardian-card__actions">
           {variant === 'profile' && (
-            <>
-              {!row.is_primary && onTogglePrimary && (
-                <button type="button" className="btn btn--ghost btn--icon" onClick={() => onTogglePrimary(row)} title="تعيين أساسي">
-                  <i className="fa-regular fa-star" />
-                </button>
-              )}
-              {onToggleNotify && (
-                <button
-                  type="button"
-                  className={`btn btn--ghost btn--icon ${row.notify_on_result ? 'guardian-notify--on' : ''}`}
-                  onClick={() => onToggleNotify(row)}
-                  title="إشعار بالنتائج"
-                >
-                  <i className="fa-solid fa-bell" />
-                </button>
-              )}
-              <button type="button" className="btn btn--ghost btn--icon" onClick={handleRemoveLink} title="حذف الربط">
-                <i className="fa-solid fa-trash" />
-              </button>
-            </>
+            <button
+              type="button"
+              className="btn btn--ghost btn--icon guardian-card__expand"
+              onClick={toggleExpand}
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? 'إخفاء الإعدادات' : 'إعدادات ولي الأمر'}
+            >
+              <i className={`fa-solid fa-chevron-${isExpanded ? 'up' : 'down'}`} aria-hidden />
+            </button>
           )}
           {variant === 'manage' && (
             <>
+              {canExpand && (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--icon guardian-card__expand"
+                  onClick={toggleExpand}
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? 'إخفاء التفاصيل' : 'عرض التفاصيل'}
+                >
+                  <i className={`fa-solid fa-chevron-${isExpanded ? 'up' : 'down'}`} aria-hidden />
+                </button>
+              )}
               {onEdit && (
                 <button type="button" className="btn btn--ghost btn--icon" onClick={() => onEdit(row)} title="تعديل">
                   <i className="fa-solid fa-pen" />
@@ -256,109 +284,82 @@ export default function GuardianCard({
         </div>
       </div>
 
-      <div className="guardian-card__meta-row">
-        <span className={`guardian-badge ${tg.className}`}>{tg.label}</span>
-        {variant === 'profile' && row.is_primary && (
-          <span className="guardian-badge guardian-badge--primary">
-            <i className="fa-solid fa-star" aria-hidden /> ولي أساسي
-          </span>
-        )}
-        {variant === 'profile' && row.relationship && (
-          <span className="guardian-card__relationship">{row.relationship}</span>
-        )}
-        {variant === 'profile' && row.notify_on_result && (
-          <span className="guardian-badge guardian-badge--ok">إشعار بالنتائج</span>
-        )}
-        {variant === 'manage' && studentCount > 0 && (
-          <button
-            type="button"
-            className={`guardian-card__students-toggle ${expanded ? 'guardian-card__students-toggle--open' : ''}`}
-            onClick={showStudents && students.length > 4 ? toggleExpand : undefined}
-            aria-expanded={showStudents && students.length > 4 ? expanded : undefined}
-            disabled={!showStudents || students.length <= 4}
-          >
-            <i className="fa-solid fa-user-group" aria-hidden />
-            {studentCount} {studentCount === 1 ? 'طالب' : 'طلاب'}
-            {showStudents && students.length > 4 && (
-              <i className={`fa-solid fa-chevron-${expanded ? 'up' : 'down'}`} aria-hidden />
-            )}
-          </button>
-        )}
-      </div>
-
-      {variant === 'manage' && previewStudents.length > 0 && (
-        <div className="guardian-card__students guardian-card__students--preview">
-          {previewStudents.map(s => (
-            <button
-              key={s.id}
-              type="button"
-              className="guardian-card__student-chip"
-              onClick={() => onOpenStudent?.({ id: s.id, number: s.number, name: s.name })}
-            >
-              <span className="guardian-card__student-num">{s.number}</span>
-              {s.name}
-            </button>
-          ))}
-          {hiddenStudentCount > 0 && (
+      {variant === 'manage' && (
+        <div className="guardian-card__meta-row">
+          <span className={`guardian-badge ${tg.className}`}>{tg.label}</span>
+          {studentCount > 0 && (
             <button
               type="button"
-              className="guardian-card__student-chip guardian-card__student-chip--more"
+              className={`guardian-card__students-toggle ${isExpanded ? 'guardian-card__students-toggle--open' : ''}`}
               onClick={toggleExpand}
+              aria-expanded={isExpanded}
             >
-              +{hiddenStudentCount}
+              <i className="fa-solid fa-user-group" aria-hidden />
+              {studentCount} {studentCount === 1 ? 'طالب' : 'طلاب'}
             </button>
           )}
         </div>
       )}
 
-      {linked ? (
-        <div className="guardian-card__linked-wrap">
-          <div className="guardian-card__telegram-info">
-            <p className="guardian-card__linked-note">
-              <i className="fa-brands fa-telegram" aria-hidden />
-              {telegramActive
-                ? 'مربوط عبر Telegram — ستصل النتائج تلقائيًا'
-                : 'مربوط عبر Telegram — الإشعارات متوقفة حاليًا'}
-            </p>
-            <dl className="guardian-card__telegram-meta">
-              <div>
-                <dt>حساب Telegram</dt>
-                <dd>{formatTelegramAccountLabel(row)}</dd>
-              </div>
-              {formatTelegramLinkedAt(row.telegram_linked_at) && (
-                <div>
-                  <dt>تاريخ الربط</dt>
-                  <dd>{formatTelegramLinkedAt(row.telegram_linked_at)}</dd>
-                </div>
-              )}
-              <div>
-                <dt>حالة الإشعارات</dt>
-                <dd>{telegramNotificationStatusLabel(row)}</dd>
-              </div>
-            </dl>
-          </div>
-          <div className="guardian-card__linked-actions">
-            {telegramActive && onSendMessage && (
-              <button type="button" className="btn btn--ghost btn--sm guardian-card__message-btn" onClick={() => onSendMessage(row)}>
-                <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
+      {variant === 'profile' && isExpanded && (
+        <div className="guardian-card__profile-body">
+          <div className="guardian-card__profile-toggles" role="group" aria-label="إعدادات ولي الأمر">
+            {!row.is_primary && onTogglePrimary && (
+              <button type="button" className="guardian-profile-toggle" onClick={() => onTogglePrimary(row)} title="تعيين ولي أساسي">
+                <i className="fa-regular fa-star" aria-hidden />
               </button>
             )}
-            <button type="button" className="btn btn--ghost btn--sm guardian-card__revoke-btn" onClick={handleRevokeTelegram} title="إلغاء ربط حساب Telegram لولي الأمر">
-              <i className="fa-solid fa-link-slash" /> إلغاء ربط Telegram
-            </button>
-            <p className="meta guardian-card__revoke-hint">ينطبق على حساب ولي الأمر — جميع الطلاب المرتبطين.</p>
+            {onToggleNotify && (
+              <button
+                type="button"
+                className={`guardian-profile-toggle ${row.notify_on_result ? 'guardian-profile-toggle--on' : ''}`}
+                onClick={() => onToggleNotify(row)}
+                aria-pressed={row.notify_on_result}
+                title="إشعار بالنتائج"
+              >
+                <i className="fa-solid fa-bell" aria-hidden />
+              </button>
+            )}
+            {onToggleWeeklyAttendance && (
+              <button
+                type="button"
+                className={`guardian-profile-toggle ${row.notify_weekly_attendance ? 'guardian-profile-toggle--on' : ''}`}
+                onClick={() => onToggleWeeklyAttendance(row)}
+                aria-pressed={row.notify_weekly_attendance}
+                title="ملخص حضور أسبوعي"
+              >
+                <i className="fa-solid fa-calendar-check" aria-hidden />
+              </button>
+            )}
           </div>
-        </div>
-      ) : (
-        <div className="guardian-card__invites-wrap">
-          <p className="guardian-card__invites-label">إرسال دعوة</p>
-          <InviteButtons row={row} sending={sendingId} onSend={sendInvite} />
+
+          {linked ? (
+            <div className="guardian-card__profile-actions">
+              {telegramActive && onSendMessage && (
+                <button type="button" className="btn btn--ghost btn--sm" onClick={() => onSendMessage(row)}>
+                  <i className="fa-solid fa-paper-plane" aria-hidden /> رسالة
+                </button>
+              )}
+              <button type="button" className="btn btn--ghost btn--sm" onClick={handleRevokeTelegram}>
+                <i className="fa-solid fa-link-slash" aria-hidden /> فك الربط
+              </button>
+            </div>
+          ) : (
+            <InviteButtons row={row} sending={sendingId} onSend={sendInvite} />
+          )}
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm guardian-card__remove-student"
+            onClick={handleRemoveLink}
+          >
+            <i className="fa-solid fa-user-minus" aria-hidden /> إزالة من الطالب
+          </button>
         </div>
       )}
 
-      {showStudents && expanded && students.length > 4 && (
+      {variant === 'manage' && isExpanded && showStudents && (
         <div className="guardian-card__students guardian-card__students--expanded">
-          {students.slice(4).map(s => (
+          {students.map(s => (
             <button
               key={s.id}
               type="button"
@@ -366,9 +367,42 @@ export default function GuardianCard({
               onClick={() => onOpenStudent?.({ id: s.id, number: s.number, name: s.name })}
             >
               <span className="guardian-card__student-num">{s.number}</span>
-              {s.name}
+              <span className="guardian-card__student-name">{s.name}</span>
             </button>
           ))}
+        </div>
+      )}
+
+      {variant === 'manage' && isExpanded && linked && (
+        <div className="guardian-card__linked-wrap">
+          <p className="guardian-card__linked-line meta">
+            <i className="fa-brands fa-telegram" aria-hidden />
+            <span>{formatTelegramAccountLabel(row)}</span>
+            <span className="guardian-card__linked-dot" aria-hidden>·</span>
+            <span>{telegramNotificationStatusLabel(row)}</span>
+            {formatTelegramLinkedAt(row.telegram_linked_at) && (
+              <>
+                <span className="guardian-card__linked-dot" aria-hidden>·</span>
+                <span>{formatTelegramLinkedAt(row.telegram_linked_at)}</span>
+              </>
+            )}
+          </p>
+          <div className="guardian-card__linked-actions">
+            {telegramActive && onSendMessage && (
+              <button type="button" className="btn btn--ghost btn--sm guardian-card__message-btn" onClick={() => onSendMessage(row)}>
+                <i className="fa-solid fa-paper-plane" /> رسالة
+              </button>
+            )}
+            <button type="button" className="btn btn--ghost btn--sm guardian-card__revoke-btn" onClick={handleRevokeTelegram} title="إلغاء ربط Telegram">
+              <i className="fa-solid fa-link-slash" /> إلغاء الربط
+            </button>
+          </div>
+        </div>
+      )}
+
+      {variant === 'manage' && isExpanded && !linked && (
+        <div className="guardian-card__invites-wrap">
+          <InviteButtons row={row} sending={sendingId} onSend={sendInvite} />
         </div>
       )}
 

@@ -1,6 +1,11 @@
 import { Router } from 'express'
 import { requireAuth } from '../middleware/auth.js'
-import { broadcastMessage, getNotificationLog } from '../lib/notificationService.js'
+import {
+  broadcastMessage,
+  getNotificationLog,
+  sendWeeklyAttendanceNotifications,
+  sendAttendanceOverviewReport,
+} from '../lib/notificationService.js'
 import { pool } from '../lib/db.js'
 
 const router = Router()
@@ -18,6 +23,32 @@ router.post('/broadcast', async (req, res) => {
       targetType,
       targetId: targetId || null,
       targetIds: targetIds || null,
+    })
+    res.json(result)
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.post('/attendance-weekly', async (req, res) => {
+  try {
+    const result = await sendWeeklyAttendanceNotifications({
+      userId: req.user.id,
+      from: req.body?.from,
+      to: req.body?.to,
+    })
+    res.json(result)
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.post('/attendance-overview-report', async (req, res) => {
+  try {
+    const result = await sendAttendanceOverviewReport({
+      userId: req.user.id,
+      from: req.body?.from,
+      to: req.body?.to,
     })
     res.json(result)
   } catch (e) {

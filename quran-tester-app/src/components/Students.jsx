@@ -13,7 +13,7 @@ const WEEK_FILTERS = [
   { id: 'tested', label: 'مُختبر' },
 ]
 
-export default function Students({ onSelect, onProfile, onAddStudent, onNavigate, listFocus, onListFocusConsumed }) {
+export default function Students({ onSelect, onProfile, onAddStudent, onNavigate, onPrintQr, listFocus, onListFocusConsumed }) {
   const [list, setList] = useState([])
   const [guardianList, setGuardianList] = useState([])
   const [testedIds, setTestedIds] = useState(new Set())
@@ -201,6 +201,9 @@ export default function Students({ onSelect, onProfile, onAddStudent, onNavigate
             </button>
             <button type="button" className="btn btn--ghost btn--sm" onClick={() => onNavigate?.('broadcast')}>
               <i className="fa-solid fa-paper-plane" /> رسالة مخصصة
+            </button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => onPrintQr?.()}>
+              <i className="fa-solid fa-qrcode" /> طباعة الرموز
             </button>
             <button type="button" className="btn btn--primary btn--sm" onClick={() => onAddStudent?.()}>
               <i className="fa-solid fa-user-plus" /> إضافة طالب

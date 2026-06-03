@@ -52,6 +52,25 @@
 - Saved config at `/root/.pm2/dump.pm2` via `pm2 save`.
 - If reboot: `pm2 resurrect` (or `pm2 startup` if needed).
 
+## Weekly Attendance Telegram
+- Weekly parent attendance summaries are sent by script, not by the API process itself.
+- Intended schedule: Saturday evening Tripoli time, summarizing the previous halaqa week.
+- Manual run:
+  ```
+  cd /home/deploy/halaqa_src_current/server
+  npm run attendance:weekly
+  ```
+- Optional scoped run:
+  ```
+  npm run attendance:weekly -- --username=sheikh
+  npm run attendance:weekly -- --from=YYYY-MM-DD --to=YYYY-MM-DD
+  ```
+- Cron example (server timezone should be Africa/Tripoli, or adjust the hour):
+  ```
+  0 20 * * 6 cd /home/deploy/halaqa_src_current/server && /usr/bin/npm run attendance:weekly >> /var/log/halaqa-attendance-weekly.log 2>&1
+  ```
+- Messages are sent only for student/guardian links with `notify_weekly_attendance = true`, and still respect Telegram opt-out.
+
 ## Logs
 - PM2 logs: `/root/.pm2/logs/halaqa-api-out.log` and `...-error.log`
 - Quick tail: `pm2 logs halaqa-api --lines 100`
@@ -59,4 +78,3 @@
 ## Known Good Releases (reference)
 - Frontend canonical: `/home/deploy/halaqa_src_current/quran-tester-app/dist` (current)
 - Backend canonical: `/home/deploy/halaqa_src_current/server` (current)
-

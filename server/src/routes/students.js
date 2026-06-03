@@ -5,6 +5,7 @@ import multer from 'multer'
 import sharp from 'sharp'
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 
 const router = Router()
 router.use(requireAuth)
@@ -38,11 +39,12 @@ router.post('/', async (req, res) => {
   const { number, name } = req.body || {}
   if (!number || !name) return res.status(400).json({ error: 'number and name are required' })
   try {
+    const qrToken = crypto.randomUUID().replace(/-/g, '')
     const { rows } = await pool.query(
-      `insert into students(user_id, number, name)
-       values($1, $2, $3)
-       returning id, number, name, current_naqza, created_at, updated_at`,
-      [req.user.id, number, name]
+      `insert into students(user_id, number, name, qr_token)
+       values($1, $2, $3, $4)
+       returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+      [req.user.id, number, name, qrToken]
     )
     res.status(201).json({ student: rows[0] })
   } catch (e) {

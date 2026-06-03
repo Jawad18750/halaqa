@@ -15,7 +15,6 @@ import {
 } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import DateRangePanel from './ui/DateRangePanel.jsx'
-import DashboardWidget from './ui/DashboardWidget.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import SessionCard from './ui/SessionCard.jsx'
 import StatTile from './ui/StatTile.jsx'
@@ -26,11 +25,106 @@ function formatNaqzaForThumun(id, thumuns) {
   return formatNaqza(t.naqza, thumuns)
 }
 
+const RESULT_FILTERS = [
+  { id: 'all', label: 'الكل' },
+  { id: 'pass', label: 'نجح' },
+  { id: 'fail', label: 'رسب' },
+]
+
+function WeeklyOverviewToolbar({
+  query,
+  onQueryChange,
+  resultFilter,
+  onResultFilterChange,
+  onPdf,
+  onExcel,
+  exportsDisabled,
+  resultCount,
+  totalCount,
+  loading,
+}) {
+  const hasActive = query.trim() || resultFilter !== 'all'
+
+  return (
+    <section className="weekly-overview-toolbar students-toolbar" aria-label="بحث وتصفية المحاولات">
+      <div className="students-toolbar__row">
+        <div className="students-search">
+          <i className="fa-solid fa-magnifying-glass" aria-hidden />
+          <input
+            className="students-search__input"
+            placeholder="بحث بالاسم أو رقم الطالب"
+            value={query}
+            onChange={e => onQueryChange(e.target.value)}
+            aria-label="بحث عن طالب"
+          />
+          {query && (
+            <button
+              type="button"
+              className="students-search__clear"
+              aria-label="مسح البحث"
+              onClick={() => onQueryChange('')}
+            >
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
+        </div>
+        {hasActive && (
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm weekly-overview-toolbar__reset"
+            onClick={() => {
+              onQueryChange('')
+              onResultFilterChange('all')
+            }}
+          >
+            مسح
+          </button>
+        )}
+      </div>
+
+      <div className="students-filter weekly-overview-toolbar__filters" role="tablist" aria-label="تصفية النتيجة">
+        {RESULT_FILTERS.map(f => (
+          <button
+            key={f.id}
+            type="button"
+            role="tab"
+            aria-selected={resultFilter === f.id}
+            className={`students-filter__chip ${resultFilter === f.id ? 'students-filter__chip--active' : ''}`}
+            onClick={() => onResultFilterChange(f.id)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="weekly-overview-toolbar__exports">
+        <button type="button" className="btn btn--ghost btn--sm" onClick={onPdf} disabled={exportsDisabled}>
+          <i className="fa-solid fa-file-pdf" aria-hidden />
+          PDF
+        </button>
+        <button type="button" className="btn btn--ghost btn--sm" onClick={onExcel} disabled={exportsDisabled}>
+          <i className="fa-solid fa-file-excel" aria-hidden />
+          Excel
+        </button>
+      </div>
+
+      <p className="students-toolbar__meta">
+        {loading
+          ? 'جاري التحميل…'
+          : resultCount === totalCount
+            ? `${formatLatn(resultCount)} محاولة`
+            : `${formatLatn(resultCount)} من ${formatLatn(totalCount)} محاولة`}
+      </p>
+    </section>
+  )
+}
+
 export default function WeeklyOverview({ onBack }) {
   const [data, setData] = useState({ weekStartDate: '', sessions: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
+  const [resultFilter, setResultFilter] = useState('all')
   const [thumuns, setThumuns] = useState([])
   const [from, setFrom] = useState(() => {
     const d = new Date()
@@ -72,15 +166,20 @@ export default function WeeklyOverview({ onBack }) {
     }
   }
 
+  const allSessions = data.sessions || []
+
   const filtered = useMemo(() => {
-    const q = query.trim()
-    const list = data.sessions || []
+    const q = query.trim().toLowerCase()
+    let list = allSessions
+    if (resultFilter === 'pass') list = list.filter(item => item.passed)
+    if (resultFilter === 'fail') list = list.filter(item => !item.passed)
     if (!q) return list
-    return list.filter(item =>
-      String(item.student_number).includes(q) ||
-      (item.student_name || '').includes(q)
-    )
-  }, [data.sessions, query])
+    return list.filter(item => {
+      const name = (item.student_name || '').toLowerCase()
+      const num = String(item.student_number ?? '')
+      return num.includes(q) || name.includes(q)
+    })
+  }, [allSessions, query, resultFilter])
 
   const summary = useMemo(() => {
     const rows = data.sessions || []
@@ -184,8 +283,16 @@ export default function WeeklyOverview({ onBack }) {
     } catch (e) { setError(String(e?.message || e)) }
   }
 
+  const hasSessions = allSessions.length > 0
+  const emptyTitle = query.trim() || resultFilter !== 'all'
+    ? 'لا نتائج'
+    : 'لا توجد سجلات في هذه الفترة'
+  const emptySubtitle = query.trim() || resultFilter !== 'all'
+    ? 'جرّب بحثًا أو تصفية مختلفة، أو اضغط «مسح».'
+    : 'غيّر الفترة أو انتظر اختبارات جديدة'
+
   return (
-    <div className="reports-page stack">
+    <div className="reports-page weekly-overview-page stack">
       <PageHeader
         title="نظرة زمنية"
         subtitle={formatRangeLabel(from, to)}
@@ -197,30 +304,31 @@ export default function WeeklyOverview({ onBack }) {
         )}
       />
 
-      <DateRangePanel
-        from={from}
-        to={to}
-        onFromChange={setFrom}
-        onToChange={setTo}
-        onCurrentWeek={useCurrentWeek}
-        search={query}
-        onSearchChange={setQuery}
-        searchPlaceholder="بحث بالاسم أو رقم الطالب"
-        footer={loading ? 'جاري التحميل…' : `${formatLatn(filtered.length)} محاولة${query.trim() ? ' مطابقة' : ''}`}
-        actions={(
-          <>
-            <button type="button" className="btn btn--ghost btn--sm" onClick={exportWeeklyPDF} disabled={!data.sessions.length}>
-              <i className="fa-solid fa-file-pdf" /> PDF
-            </button>
-            <button type="button" className="btn btn--ghost btn--sm" onClick={exportWeeklyExcel} disabled={!data.sessions.length}>
-              <i className="fa-solid fa-file-excel" /> Excel
-            </button>
-          </>
-        )}
+      <div className="weekly-overview-dates">
+        <DateRangePanel
+          from={from}
+          to={to}
+          onFromChange={setFrom}
+          onToChange={setTo}
+          onCurrentWeek={useCurrentWeek}
+        />
+      </div>
+
+      <WeeklyOverviewToolbar
+        query={query}
+        onQueryChange={setQuery}
+        resultFilter={resultFilter}
+        onResultFilterChange={setResultFilter}
+        onPdf={exportWeeklyPDF}
+        onExcel={exportWeeklyExcel}
+        exportsDisabled={!hasSessions}
+        resultCount={filtered.length}
+        totalCount={allSessions.length}
+        loading={loading}
       />
 
-      {!loading && data.sessions.length > 0 && (
-        <div className="stat-grid stat-grid--fit reports-summary">
+      {!loading && hasSessions && (
+        <div className="stat-grid reports-summary weekly-overview-stats">
           <StatTile label="طلاب" value={formatLatn(summary.students)} icon="fa-solid fa-users" />
           <StatTile label="محاولات" value={formatLatn(summary.attempts)} icon="fa-solid fa-list-check" />
           <StatTile label="متوسط الدرجة" value={formatLatn1(summary.avgScore)} icon="fa-solid fa-chart-line" tone="accent" />
@@ -239,18 +347,20 @@ export default function WeeklyOverview({ onBack }) {
         <div className="loading">جاري التحميل…</div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          title={query.trim() ? 'لا نتائج' : 'لا توجد سجلات في هذه الفترة'}
-          subtitle={query.trim() ? 'جرّب بحثاً مختلفاً' : 'غيّر الفترة أو انتظر اختبارات جديدة'}
+          title={emptyTitle}
+          subtitle={emptySubtitle}
           icon="fa-calendar-days"
         />
       ) : (
-        <DashboardWidget
-          title="سجل المحاولات"
-          icon="fa-clock-rotate-left"
-          badge={formatLatn(filtered.length)}
-          variant="default"
-        >
-          <div className="session-list">
+        <section className="weekly-overview-sessions" aria-label="سجل المحاولات">
+          <header className="weekly-overview-sessions__head">
+            <h2 className="weekly-overview-sessions__title">
+              <i className="fa-solid fa-clock-rotate-left" aria-hidden />
+              سجل المحاولات
+            </h2>
+            <span className="weekly-overview-sessions__count">{formatLatn(filtered.length)}</span>
+          </header>
+          <div className="session-list session-list--weekly">
             {filtered.map(item => (
               <SessionCard
                 key={item.id}
@@ -264,7 +374,7 @@ export default function WeeklyOverview({ onBack }) {
               />
             ))}
           </div>
-        </DashboardWidget>
+        </section>
       )}
     </div>
   )

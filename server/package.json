@@ -10,16 +10,18 @@
     "migrate": "node src/db/migrate.js",
     "seed": "SEED_DEMO=1 SEED_DEMO_PHOTOS=1 node src/db/seed.js",
     "seed:no-photos": "SEED_DEMO=1 node src/db/seed.js",
-    "test": "node --test src/lib/messageContext.test.js src/lib/passwordReset.test.js src/lib/phone.test.js"
+    "attendance:weekly": "node scripts/send-weekly-attendance.mjs",
+    "test": "node --test src/lib/messageContext.test.js src/lib/passwordReset.test.js src/lib/phone.test.js src/lib/halaqaCalendar.test.js src/lib/attendanceService.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "date-holidays": "^3.30.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "nodemailer": "^6.9.13",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
+    "nodemailer": "^6.9.13",
     "pg": "^8.12.0",
     "sharp": "^0.33.4"
   },

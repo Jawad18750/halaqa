@@ -118,7 +118,7 @@ export const sessions = {
       if (to) params.set('to', to)
       const qs = params.toString() ? `?${params.toString()}` : ''
       return await request(`/sessions/overview${qs}`)
-    } catch (e) {
+    } catch {
       // Fallback for older server without /overview
       const w = await request('/sessions/weekly')
       return { from: w.weekStartDate, to: w.weekStartDate, sessions: w.sessions || [] }
@@ -128,6 +128,33 @@ export const sessions = {
     return await request(`/sessions/${id}/time`, { method: 'PATCH', body: JSON.stringify({ attemptAt }) })
   },
   async remove(id) { return await request(`/sessions/${id}`, { method: 'DELETE' }) }
+}
+
+// Attendance
+export const attendance = {
+  async today(date) {
+    const qs = date ? `?${new URLSearchParams({ date }).toString()}` : ''
+    return await request(`/attendance/today${qs}`)
+  },
+  async batchSave(date, scans) {
+    return await request('/attendance/batch', {
+      method: 'POST',
+      body: JSON.stringify({ date, scans }),
+    })
+  },
+  async remove(id) {
+    return await request(`/attendance/${id}`, { method: 'DELETE' })
+  },
+  async stickers() {
+    return await request('/attendance/stickers')
+  },
+  async overview(from, to) {
+    const params = new URLSearchParams()
+    if (from) params.set('from', from)
+    if (to) params.set('to', to)
+    const qs = params.toString() ? `?${params.toString()}` : ''
+    return await request(`/attendance/overview${qs}`)
+  },
 }
 
 export function getToken() { return token }
@@ -176,6 +203,18 @@ export const notifications = {
     const qs = params.toString() ? `?${params.toString()}` : ''
     return await request(`/notifications/log${qs}`)
   },
+  async sendWeeklyAttendance(from, to) {
+    return await request('/notifications/attendance-weekly', {
+      method: 'POST',
+      body: JSON.stringify({ from: from || null, to: to || null }),
+    })
+  },
+  async sendAttendanceOverviewReport(from, to) {
+    return await request('/notifications/attendance-overview-report', {
+      method: 'POST',
+      body: JSON.stringify({ from: from || null, to: to || null }),
+    })
+  },
   async listFamilies() { return await request('/notifications/families') },
   async createFamily(name, studentIds) {
     return await request('/notifications/families', {
@@ -199,7 +238,7 @@ export const backup = {
       throw new Error(text || 'فشل تنزيل النسخة الاحتياطية')
     }
     const disposition = res.headers.get('content-disposition') || ''
-    const match = disposition.match(/filename=\"?([^\";]+)\"?/i)
+    const match = disposition.match(/filename="?([^";]+)"?/i)
     const filename = match ? match[1] : 'halaqa-backup.json'
     const blob = await res.blob()
     return { blob, filename }
@@ -211,5 +250,3 @@ export const backup = {
     })
   }
 }
-
-

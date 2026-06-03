@@ -15,6 +15,9 @@ import Broadcast from './components/Broadcast'
 import AddStudent from './components/AddStudent'
 import FreestyleRandomizer from './components/FreestyleRandomizer'
 import Settings from './components/Settings'
+import Attendance from './components/Attendance'
+import QRPrint from './components/QRPrint'
+import AttendanceOverview from './components/AttendanceOverview'
 import AppShell from './components/layout/AppShell'
 import { MessageSettingsProvider } from './lib/MessageSettingsContext.jsx'
 import { auth, getToken } from './api'
@@ -24,9 +27,11 @@ try {
   document.documentElement.dataset.theme = initialTheme
   document.documentElement.style.setProperty('--font-scale', String(Number(localStorage.getItem('fontScale') || 1)))
   document.documentElement.dataset.contrast = localStorage.getItem('contrast') === '1' ? 'high' : 'normal'
-} catch {}
+} catch {
+  // Ignore storage access failures during early app boot.
+}
 
-const WIDE_VIEWS = new Set(['dashboard', 'leaderboard', 'weekly'])
+const WIDE_VIEWS = new Set(['dashboard', 'leaderboard', 'weekly', 'attendance', 'attendanceLog', 'qrcodes'])
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -191,6 +196,7 @@ export default function App() {
             onProfile={s => openStudent(s, 'students')}
             onAddStudent={goAddStudent}
             onNavigate={navigate}
+            onPrintQr={() => navigate('qrcodes')}
             listFocus={studentsListFocus}
             onListFocusConsumed={() => setStudentsListFocus(null)}
           />
@@ -238,6 +244,15 @@ export default function App() {
         {view === 'backup' && <Backup onBack={goDashboard} />}
         {view === 'settings' && (
           <Settings user={user} onBack={goDashboard} onSaved={setUser} />
+        )}
+        {view === 'attendance' && (
+          <Attendance onBack={goDashboard} onPrint={() => navigate('qrcodes')} />
+        )}
+        {view === 'attendanceLog' && (
+          <AttendanceOverview onBack={goDashboard} />
+        )}
+        {view === 'qrcodes' && (
+          <QRPrint user={user} onBack={goDashboard} />
         )}
         {view === 'guardians' && (
           <GuardiansManage onBack={goDashboard} onOpenStudent={openStudent} />

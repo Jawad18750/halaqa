@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { guardians } from '../api'
 import GuardianCard from './ui/GuardianCard.jsx'
 import GuardianFormRows from './ui/GuardianFormRows.jsx'
@@ -28,7 +28,7 @@ export default function GuardianSection({ student, onToast }) {
     [existingGuardians, linkedGuardianIds]
   )
 
-  async function loadStudentGuardians() {
+  const loadStudentGuardians = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
@@ -39,7 +39,7 @@ export default function GuardianSection({ student, onToast }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [student.id])
 
   async function loadExistingGuardians() {
     try {
@@ -50,7 +50,7 @@ export default function GuardianSection({ student, onToast }) {
     }
   }
 
-  useEffect(() => { loadStudentGuardians() }, [student?.id])
+  useEffect(() => { loadStudentGuardians() }, [loadStudentGuardians])
 
   useEffect(() => {
     if (showForm) loadExistingGuardians()
@@ -117,6 +117,7 @@ export default function GuardianSection({ student, onToast }) {
             relationship: row.relationship.trim() || null,
             is_primary: row.isPrimary && !primarySet,
             notify_on_result: row.notifyOnResult,
+            notify_weekly_attendance: row.notifyWeeklyAttendance,
           })
           linked.push(guardian || availableExistingGuardians.find(g => g.id === row.guardianId))
           if (reused) reusedAny = true
@@ -134,6 +135,7 @@ export default function GuardianSection({ student, onToast }) {
           relationship: row.relationship.trim() || null,
           is_primary: row.isPrimary && !primarySet,
           notify_on_result: row.notifyOnResult,
+          notify_weekly_attendance: row.notifyWeeklyAttendance,
         })
         linked.push(guardian)
         if (reused) reusedAny = true
@@ -174,6 +176,15 @@ export default function GuardianSection({ student, onToast }) {
     }
   }
 
+  async function toggleWeeklyAttendance(row) {
+    try {
+      await guardians.updateLink(row.link_id, { notify_weekly_attendance: !row.notify_weekly_attendance })
+      await loadStudentGuardians()
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   return (
     <div className="guardian-section">
       <p className="meta guardian-section__hint">
@@ -200,6 +211,7 @@ export default function GuardianSection({ student, onToast }) {
                 student={student}
                 onTogglePrimary={togglePrimary}
                 onToggleNotify={toggleNotify}
+                onToggleWeeklyAttendance={toggleWeeklyAttendance}
                 onRefresh={loadStudentGuardians}
                 onToast={onToast}
                 onSendMessage={isTelegramActive(row) ? g => { setMessageTargets([g]); setShowMessageSheet(true) } : undefined}

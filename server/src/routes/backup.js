@@ -1,8 +1,10 @@
 import express, { Router } from 'express'
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import { pool } from '../lib/db.js'
 import { requireAuth } from '../middleware/auth.js'
+import { DEFAULT_STUDY_DAYS, normalizeHolidayOverrides } from '../lib/halaqaCalendar.js'
 
 const router = Router()
 // Allow larger payloads for embedded photos
@@ -36,11 +38,14 @@ router.get('/export', async (req, res) => {
   try {
     const includePhotos = (req.query.photos || '').toString() === '1'
 
-    const userQ = await pool.query('select id, username, email, created_at from users where id=$1', [req.user.id])
+    const userQ = await pool.query(
+      'select id, username, email, sheikh_name, masjid_name, study_days, holiday_country, holiday_overrides, created_at from users where id=$1',
+      [req.user.id]
+    )
     const user = userQ.rows[0] || null
 
     const studentsQ = await pool.query(
-      `select id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at
+      `select id, number, name, current_naqza, photo_url, date_of_birth, qr_token, created_at, updated_at
        from students where user_id=$1 order by number asc`,
       [req.user.id]
     )
@@ -64,7 +69,7 @@ router.get('/export', async (req, res) => {
     const guardians = guardiansQ.rows
 
     const guardianStudentsQ = await pool.query(
-      `select gs.id, gs.guardian_id, gs.student_id, gs.relationship, gs.is_primary, gs.notify_on_result
+      `select gs.id, gs.guardian_id, gs.student_id, gs.relationship, gs.is_primary, gs.notify_on_result, gs.notify_weekly_attendance
        from guardian_students gs
        join guardians g on g.id = gs.guardian_id
        where g.user_id = $1`,
@@ -81,6 +86,16 @@ router.get('/export', async (req, res) => {
     )
     const guardianTelegram = guardianTelegramQ.rows
 
+    const attendanceQ = await pool.query(
+      `select ar.*
+       from attendance_records ar
+       join students st on st.id = ar.student_id
+       where st.user_id = $1
+       order by ar.attendance_date desc, ar.recorded_at desc`,
+      [req.user.id]
+    )
+    const attendanceRecords = attendanceQ.rows
+
     const photos = {}
     if (includePhotos) {
       for (const s of students) {
@@ -90,17 +105,19 @@ router.get('/export', async (req, res) => {
     }
 
     const payload = {
-      version: 'halaqa-backup-v2',
+      version: 'halaqa-backup-v3',
       exportedAt: new Date().toISOString(),
       user,
       counts: {
         students: students.length,
         sessions: sessions.length,
+        attendanceRecords: attendanceRecords.length,
         photos: Object.keys(photos).length,
         guardians: guardians.length,
       },
       students,
       sessions,
+      attendanceRecords,
       guardians,
       guardianStudents,
       guardianTelegram,
@@ -121,7 +138,7 @@ router.get('/export', async (req, res) => {
 router.post('/import', async (req, res) => {
   const payload = req.body || {}
   const version = payload?.version
-  if (!payload || (version !== 'halaqa-backup-v1' && version !== 'halaqa-backup-v2')) {
+  if (!payload || !['halaqa-backup-v1', 'halaqa-backup-v2', 'halaqa-backup-v3'].includes(version)) {
     return res.status(400).json({ error: 'invalid or unsupported backup version' })
   }
   const students = Array.isArray(payload.students) ? payload.students : []
@@ -130,6 +147,13 @@ router.post('/import', async (req, res) => {
   const guardians = version === 'halaqa-backup-v2' && Array.isArray(payload.guardians) ? payload.guardians : []
   const guardianStudents = version === 'halaqa-backup-v2' && Array.isArray(payload.guardianStudents) ? payload.guardianStudents : []
   const guardianTelegram = version === 'halaqa-backup-v2' && Array.isArray(payload.guardianTelegram) ? payload.guardianTelegram : []
+  const v3 = version === 'halaqa-backup-v3'
+  const v2Plus = version === 'halaqa-backup-v2' || v3
+  const v3User = v3 && payload.user && typeof payload.user === 'object' ? payload.user : {}
+  const attendanceRecords = v3 && Array.isArray(payload.attendanceRecords) ? payload.attendanceRecords : []
+  const importedGuardians = v2Plus && Array.isArray(payload.guardians) ? payload.guardians : []
+  const importedGuardianStudents = v2Plus && Array.isArray(payload.guardianStudents) ? payload.guardianStudents : []
+  const importedGuardianTelegram = v2Plus && Array.isArray(payload.guardianTelegram) ? payload.guardianTelegram : []
 
   const stats = {
     students: { inserted: 0, updated: 0, skipped: 0, conflicts: 0 },
@@ -138,11 +162,34 @@ router.post('/import', async (req, res) => {
     guardians: { inserted: 0, updated: 0, skipped: 0 },
     guardianStudents: { inserted: 0, updated: 0, skipped: 0 },
     guardianTelegram: { inserted: 0, updated: 0, skipped: 0 },
+    attendanceRecords: { inserted: 0, updated: 0, skipped: 0 },
+    settings: { updated: false },
   }
 
   const client = await pool.connect()
   try {
     await client.query('begin')
+
+    if (v3) {
+      await client.query(
+        `update users
+         set sheikh_name=coalesce($1, sheikh_name),
+             masjid_name=coalesce($2, masjid_name),
+             study_days=coalesce($3, study_days),
+             holiday_country=coalesce($4, holiday_country),
+             holiday_overrides=coalesce($5::jsonb, holiday_overrides)
+         where id=$6`,
+        [
+          v3User.sheikh_name || null,
+          v3User.masjid_name || null,
+          Array.isArray(v3User.study_days) && v3User.study_days.length ? v3User.study_days : DEFAULT_STUDY_DAYS,
+          v3User.holiday_country || 'LY',
+          JSON.stringify(normalizeHolidayOverrides(v3User.holiday_overrides)),
+          req.user.id,
+        ]
+      )
+      stats.settings.updated = true
+    }
 
     // Upsert students scoped to current user
     for (const s of students) {
@@ -151,19 +198,21 @@ router.post('/import', async (req, res) => {
       const updated = s.updated_at || created
       const photoUrl = s.photo_url || null
       const dob = s.date_of_birth || null
+      const qrToken = s.qr_token || crypto.randomUUID().replace(/-/g, '')
       const result = await client.query(
-        `insert into students(id, user_id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at)
-         values($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        `insert into students(id, user_id, number, name, current_naqza, photo_url, date_of_birth, qr_token, created_at, updated_at)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
          on conflict (id) do update set
            number=excluded.number,
            name=excluded.name,
            current_naqza=excluded.current_naqza,
            photo_url=excluded.photo_url,
            date_of_birth=excluded.date_of_birth,
+           qr_token=coalesce(students.qr_token, excluded.qr_token),
            updated_at=excluded.updated_at
          where students.user_id = excluded.user_id
          returning xmax = 0 as inserted`,
-        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, photoUrl, dob, created, updated]
+        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, photoUrl, dob, qrToken, created, updated]
       )
       if (!result.rowCount) {
         stats.students.skipped++
@@ -258,8 +307,33 @@ router.post('/import', async (req, res) => {
       else stats.sessions.updated++
     }
 
-    // Upsert guardians (v2)
-    for (const g of guardians) {
+    for (const ar of attendanceRecords) {
+      if (!ar?.id || !ar?.student_id || !ar?.attendance_date) { stats.attendanceRecords.skipped++; continue }
+      const owned = await client.query('select 1 from students where id=$1 and user_id=$2', [ar.student_id, req.user.id])
+      if (!owned.rows.length) { stats.attendanceRecords.skipped++; continue }
+      const result = await client.query(
+        `insert into attendance_records(id, student_id, attendance_date, recorded_at, source, created_at)
+         values($1,$2,$3::date,$4,$5,$6)
+         on conflict (student_id, attendance_date) do update set
+           recorded_at=excluded.recorded_at,
+           source=excluded.source
+         returning xmax = 0 as inserted`,
+        [
+          ar.id,
+          ar.student_id,
+          ar.attendance_date,
+          ar.recorded_at || new Date().toISOString(),
+          ar.source === 'manual' ? 'manual' : 'qr',
+          ar.created_at || new Date().toISOString(),
+        ]
+      )
+      if (!result.rowCount) { stats.attendanceRecords.skipped++; continue }
+      if (result.rows[0]?.inserted) stats.attendanceRecords.inserted++
+      else stats.attendanceRecords.updated++
+    }
+
+    // Upsert guardians (v2+)
+    for (const g of importedGuardians) {
       if (!g?.id || !g?.name || !g?.phone_e164) { stats.guardians.skipped++; continue }
       const created = g.created_at || new Date().toISOString()
       const updated = g.updated_at || created
@@ -280,7 +354,7 @@ router.post('/import', async (req, res) => {
       else stats.guardians.updated++
     }
 
-    for (const gs of guardianStudents) {
+    for (const gs of importedGuardianStudents) {
       if (!gs?.id || !gs?.guardian_id || !gs?.student_id) { stats.guardianStudents.skipped++; continue }
       const ownedG = await client.query(
         'select 1 from guardians where id=$1 and user_id=$2',
@@ -292,21 +366,22 @@ router.post('/import', async (req, res) => {
       )
       if (!ownedG.rows.length || !ownedS.rows.length) { stats.guardianStudents.skipped++; continue }
       const result = await client.query(
-        `insert into guardian_students(id, guardian_id, student_id, relationship, is_primary, notify_on_result)
-         values($1,$2,$3,$4,$5,$6)
+        `insert into guardian_students(id, guardian_id, student_id, relationship, is_primary, notify_on_result, notify_weekly_attendance)
+         values($1,$2,$3,$4,$5,$6,$7)
          on conflict (id) do update set
            relationship=excluded.relationship,
            is_primary=excluded.is_primary,
-           notify_on_result=excluded.notify_on_result
+           notify_on_result=excluded.notify_on_result,
+           notify_weekly_attendance=excluded.notify_weekly_attendance
          returning xmax = 0 as inserted`,
-        [gs.id, gs.guardian_id, gs.student_id, gs.relationship || null, !!gs.is_primary, !!gs.notify_on_result]
+        [gs.id, gs.guardian_id, gs.student_id, gs.relationship || null, !!gs.is_primary, !!gs.notify_on_result, !!gs.notify_weekly_attendance]
       )
       if (!result.rowCount) { stats.guardianStudents.skipped++; continue }
       if (result.rows[0]?.inserted) stats.guardianStudents.inserted++
       else stats.guardianStudents.updated++
     }
 
-    for (const gt of guardianTelegram) {
+    for (const gt of importedGuardianTelegram) {
       if (!gt?.guardian_id || gt.telegram_chat_id == null) { stats.guardianTelegram.skipped++; continue }
       const ownedG = await client.query(
         'select 1 from guardians where id=$1 and user_id=$2',
@@ -376,4 +451,3 @@ router.post('/import', async (req, res) => {
 })
 
 export default router
-

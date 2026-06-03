@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { sessions, students, guardians, notifications } from '../api'
-import { formatNaqza } from '../lib/labels.js'
+import { sessions, students, guardians, notifications, attendance } from '../api'
+import { formatNaqza, toDateOnly } from '../lib/labels.js'
 import { guardianCoverageStats } from '../lib/guardianUi.js'
 import PageHeader from './ui/PageHeader.jsx'
 import DashboardWidget from './ui/DashboardWidget.jsx'
@@ -24,6 +24,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
   const [thumunList, setThumunList] = useState([])
   const [overviewSessions, setOverviewSessions] = useState([])
   const [guardianList, setGuardianList] = useState([])
+  const [attendanceWeek, setAttendanceWeek] = useState(null)
   const [telegramLinkActivity, setTelegramLinkActivity] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -42,10 +43,20 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
         guardians.list().catch(() => ({ guardians: [] })),
         notifications.log(20).catch(() => ({ entries: [] })),
       ])
+      const weekStart = w?.weekStartDate
+      let attendanceRes = null
+      if (weekStart) {
+        const end = new Date(`${weekStart}T12:00:00`)
+        end.setDate(end.getDate() + 6)
+        attendanceRes = await attendance.overview(weekStart, toDateOnly(end)).catch(() => null)
+      } else {
+        attendanceRes = await attendance.overview().catch(() => null)
+      }
       const s = studentsRes?.students || []
       setWeek(w)
       setList(s)
       setGuardianList(guardiansRes?.guardians || [])
+      setAttendanceWeek(attendanceRes)
       setTelegramLinkActivity(
         (activityRes?.entries || []).filter(e => e.status === 'telegram_linked').slice(0, 3)
       )
@@ -57,6 +68,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       setList([])
       setOverviewSessions([])
       setGuardianList([])
+      setAttendanceWeek(null)
       setTelegramLinkActivity([])
       setRemaining(0)
       setError(e?.message || 'تعذر تحميل البيانات')
@@ -152,6 +164,22 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
     return { target, completed, percent }
   }, [list.length, testedStudentIds])
 
+  const attendanceTotals = attendanceWeek?.totals || null
+  const attendanceTodayStatus = useMemo(() => {
+    const today = attendanceWeek?.today
+    if (!today || !attendanceWeek?.days?.length) return { closed: false }
+    const day = attendanceWeek.days.find(d => d.date === today)
+    return { closed: Boolean(day?.closed), reason: day?.reasons?.[0] || day?.builtInHoliday?.name || '' }
+  }, [attendanceWeek])
+
+  const attendanceWeekRate = Math.min(100, Math.max(0, Number(attendanceTotals?.weekRate ?? 0)))
+  const presentToday = Number(attendanceTotals?.presentToday ?? 0)
+  const presentTodayTotal = Number(attendanceTotals?.presentTodayTotal ?? list.length)
+  const studyDayCount = Number(attendanceTotals?.studyDayCount ?? 0)
+  const absentToday = attendanceTodayStatus.closed
+    ? 0
+    : Math.max(0, presentTodayTotal - presentToday)
+
   const guardianMetrics = useMemo(
     () => guardianCoverageStats(guardianList, list),
     [guardianList, list]
@@ -163,6 +191,15 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
   }, [guardianMetrics.linked, guardianMetrics.total])
 
   const quickAccessItems = useMemo(() => [
+    {
+      id: 'attendance',
+      label: 'الحضور',
+      hint: 'مسح QR سريع',
+      icon: 'fa-solid fa-clipboard-check',
+      tone: 'accent',
+      featured: true,
+      onClick: () => onNavigate?.('attendance'),
+    },
     {
       id: 'students',
       label: 'الطلاب',
@@ -201,6 +238,22 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       onClick: () => onNavigate?.('broadcast'),
     },
     {
+      id: 'qrcodes',
+      label: 'رموز الطلاب',
+      hint: 'طباعة ملصقات',
+      icon: 'fa-solid fa-qrcode',
+      tone: 'default',
+      onClick: () => onNavigate?.('qrcodes'),
+    },
+    {
+      id: 'attendance-log',
+      label: 'سجل الحضور',
+      hint: `${attendanceWeekRate}% هذا الأسبوع`,
+      icon: 'fa-solid fa-clipboard-list',
+      tone: 'default',
+      onClick: () => onNavigate?.('attendanceLog'),
+    },
+    {
       id: 'weekly',
       label: 'نظرة زمنية',
       hint: 'جلسات وجداول',
@@ -216,7 +269,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       tone: 'gold',
       onClick: () => onNavigate?.('leaderboard'),
     },
-  ], [list.length, guardianMetrics.needsInvite, guardianMetrics.linked, onNavigate, onAddStudent])
+  ], [list.length, guardianMetrics.needsInvite, guardianMetrics.linked, attendanceWeekRate, onNavigate, onAddStudent])
 
   const announcements = useMemo(() => {
     const items = []
@@ -265,7 +318,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
   const weekSessions = week?.sessions?.length ?? 0
   const passRate = weekSessions ? Math.round((passCount / weekSessions) * 100) : 0
   const top = topStudents(week)
-  const weekRange = formatWeekRange(week?.weekStartDate)
+  const weekRange = formatWeekRange(attendanceWeek?.from || week?.weekStartDate, attendanceWeek?.to)
 
   if (loading && !week && !error) return <div className="loading">جاري التحميل…</div>
 
@@ -296,18 +349,35 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
             </span>
             {weekRange && <p className="dash-summary__range">{weekRange}</p>}
           </div>
-          <div className="dash-summary__ring" aria-hidden="true">
-            <svg viewBox="0 0 44 44" className="dash-summary__ring-svg">
-              <circle className="dash-summary__ring-track" cx="22" cy="22" r="18" />
-              <circle
-                className="dash-summary__ring-fill"
-                cx="22"
-                cy="22"
-                r="18"
-                style={{ strokeDashoffset: `${113 - (113 * weeklyGoal.percent) / 100}` }}
-              />
-            </svg>
-            <span className="dash-summary__ring-label">{weeklyGoal.percent}%</span>
+          <div className="dash-summary__rings">
+            <div className="dash-summary__ring" title="تقدم الاختبار" aria-hidden="true">
+              <svg viewBox="0 0 44 44" className="dash-summary__ring-svg">
+                <circle className="dash-summary__ring-track" cx="22" cy="22" r="18" />
+                <circle
+                  className="dash-summary__ring-fill"
+                  cx="22"
+                  cy="22"
+                  r="18"
+                  style={{ strokeDashoffset: `${113 - (113 * weeklyGoal.percent) / 100}` }}
+                />
+              </svg>
+              <span className="dash-summary__ring-label">{weeklyGoal.percent}%</span>
+              <span className="dash-summary__ring-caption">اختبار</span>
+            </div>
+            <div className="dash-summary__ring dash-summary__ring--attendance" title="حضور أيام الدراسة" aria-hidden="true">
+              <svg viewBox="0 0 44 44" className="dash-summary__ring-svg">
+                <circle className="dash-summary__ring-track" cx="22" cy="22" r="18" />
+                <circle
+                  className="dash-summary__ring-fill dash-summary__ring-fill--success"
+                  cx="22"
+                  cy="22"
+                  r="18"
+                  style={{ strokeDashoffset: `${113 - (113 * attendanceWeekRate) / 100}` }}
+                />
+              </svg>
+              <span className="dash-summary__ring-label">{attendanceWeekRate}%</span>
+              <span className="dash-summary__ring-caption">حضور</span>
+            </div>
           </div>
         </div>
 
@@ -333,6 +403,34 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
               <div className="dash-kpi__label">اختبارات الأسبوع</div>
             </div>
           </div>
+          <button
+            type="button"
+            className="dash-kpi dash-kpi--success dash-kpi--action"
+            onClick={() => onNavigate?.('attendance')}
+            title="فتح تسجيل الحضور"
+          >
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-calendar-check" /></span>
+            <div>
+              <div className="dash-kpi__value">
+                {attendanceTodayStatus.closed
+                  ? 'عطلة'
+                  : `${presentToday.toLocaleString('ar-EG-u-nu-latn')}/${presentTodayTotal.toLocaleString('ar-EG-u-nu-latn')}`}
+              </div>
+              <div className="dash-kpi__label">الحضور اليوم</div>
+            </div>
+          </button>
+          <button
+            type="button"
+            className="dash-kpi dash-kpi--success dash-kpi--action"
+            onClick={() => onNavigate?.('attendanceLog')}
+            title="فتح سجل الحضور"
+          >
+            <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-clipboard-list" /></span>
+            <div>
+              <div className="dash-kpi__value">{attendanceWeekRate}%</div>
+              <div className="dash-kpi__label">حضور الأسبوع</div>
+            </div>
+          </button>
           <div className="dash-kpi dash-kpi--success">
             <span className="dash-kpi__icon" aria-hidden="true"><i className="fa-solid fa-chart-line" /></span>
             <div>
@@ -342,20 +440,57 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
           </div>
         </div>
 
-        <div className="dash-summary__goal">
-          <div className="dash-summary__goal-text">
-            <span>تقدم هدف الأسبوع</span>
-            <strong>{weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')} / {weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}</strong>
+        <div className="dash-summary__goals">
+          <div className="dash-summary__goal">
+            <div className="dash-summary__goal-text">
+              <span>تقدم الاختبار</span>
+              <strong>
+                {weeklyGoal.completed.toLocaleString('ar-EG-u-nu-latn')}
+                {' / '}
+                {weeklyGoal.target.toLocaleString('ar-EG-u-nu-latn')}
+              </strong>
+            </div>
+            <div
+              className="dash-progress"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={weeklyGoal.percent}
+              aria-label="تقدم الاختبار"
+            >
+              <span className="dash-progress__fill" style={{ width: `${weeklyGoal.percent}%` }} />
+            </div>
           </div>
-          <div
-            className="dash-progress"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={weeklyGoal.percent}
-            aria-label="تقدم هدف الأسبوع"
-          >
-            <span className="dash-progress__fill" style={{ width: `${weeklyGoal.percent}%` }} />
+          <div className="dash-summary__goal">
+            <div className="dash-summary__goal-text">
+              <span>حضور أيام الدراسة</span>
+              <strong>
+                {attendanceWeekRate}%
+                {studyDayCount > 0 && (
+                  <span className="dash-summary__goal-sub">
+                    {' · '}
+                    {studyDayCount.toLocaleString('ar-EG-u-nu-latn')}
+                    {' يوم'}
+                  </span>
+                )}
+              </strong>
+            </div>
+            <div
+              className="dash-progress dash-progress--attendance"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={attendanceWeekRate}
+              aria-label="حضور أيام الدراسة"
+            >
+              <span className="dash-progress__fill dash-progress__fill--success" style={{ width: `${attendanceWeekRate}%` }} />
+            </div>
+            {!attendanceTodayStatus.closed && absentToday > 0 && (
+              <p className="dash-summary__goal-hint meta">
+                {absentToday.toLocaleString('ar-EG-u-nu-latn')}
+                {' غائب اليوم'}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -714,12 +849,13 @@ function WidgetList({ items, showAll, setShowAll, emptyText, emptyIcon, onOpen, 
   )
 }
 
-function formatWeekRange(weekStartDate) {
+function formatWeekRange(weekStartDate, weekEndDate) {
   if (!weekStartDate) return ''
-  const start = new Date(weekStartDate)
+  const start = new Date(`${weekStartDate}T12:00:00`)
   if (Number.isNaN(start.getTime())) return ''
-  const end = new Date(start)
-  end.setDate(end.getDate() + 6)
+  const end = weekEndDate
+    ? new Date(`${weekEndDate}T12:00:00`)
+    : (() => { const d = new Date(start); d.setDate(d.getDate() + 6); return d })()
   const fmt = d => d.toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'short' })
   return `${fmt(start)} — ${fmt(end)}`
 }

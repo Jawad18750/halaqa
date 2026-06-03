@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
 import sharp from 'sharp'
@@ -166,15 +167,17 @@ async function upsertStudents(userId) {
     const name = ARABIC_NAMES[n - 1] || `طالب ${n}`
     const startNaqza = randomInt(8, 20)
     const dob = randomBirthDate()
+    const qrToken = crypto.randomUUID().replace(/-/g, '')
     const { rows } = await pool.query(
-      `insert into students(user_id, number, name, current_naqza, date_of_birth)
-       values($1, $2, $3, $4, $5)
+      `insert into students(user_id, number, name, current_naqza, date_of_birth, qr_token)
+       values($1, $2, $3, $4, $5, $6)
        on conflict (user_id, number) do update
          set name = excluded.name,
              date_of_birth = excluded.date_of_birth,
-             current_naqza = excluded.current_naqza
+             current_naqza = excluded.current_naqza,
+             qr_token = coalesce(students.qr_token, excluded.qr_token)
        returning id, number, name`,
-      [userId, n, name, startNaqza, dob]
+      [userId, n, name, startNaqza, dob, qrToken]
     )
     students.push({ ...rows[0], startNaqza, currentNaqza: startNaqza })
   }
