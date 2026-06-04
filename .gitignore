@@ -37,6 +37,7 @@ pdf_extracted.txt
 
 # Generated data/helpers
 thumuns.from_excel.json
+data-import/quran-thumun-data-vocalized.json
 quran-thumun-data.demo-backup.*.json
 
 # Images not needed in repo root

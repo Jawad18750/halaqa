@@ -48,5 +48,8 @@ npm run dev
 ```
 
 ## Notes
-- Canonical data loaded from `quran-tester-app/public/quran-thumun-data.json`.
+- Canonical data: `quran-tester-app/public/quran-thumun-data.json` (copied to `server/src/data/quran-thumun-data.json` for the API).
+- To apply vocalized verse names (تشكيل), place `quran-thumun-data-vocalized.json` under `data-import/` (or pass a path) and run:
+  `node scripts/merge_vocalized_thumun.mjs`
+  This updates `name` / `surah` / `fiveHizbLabel` by `id` and keeps hizb, quarter, naqza, and grouping fields unchanged.
 - Progression: first pass in a week (Sat/Sun) decrements `current_naqza` once.

@@ -22,7 +22,11 @@
       "hizb": 1,
       "quarter": 1,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 2,
@@ -33,7 +37,11 @@
       "hizb": 1,
       "quarter": 1,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 3,
@@ -44,7 +52,11 @@
       "hizb": 1,
       "quarter": 2,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 4,
@@ -55,7 +67,11 @@
       "hizb": 1,
       "quarter": 2,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 5,
@@ -66,7 +82,11 @@
       "hizb": 1,
       "quarter": 3,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 6,
@@ -77,7 +97,11 @@
       "hizb": 1,
       "quarter": 3,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 7,
@@ -88,7 +112,11 @@
       "hizb": 1,
       "quarter": 4,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 8,
@@ -99,7 +127,11 @@
       "hizb": 1,
       "quarter": 4,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 9,
@@ -110,7 +142,11 @@
       "hizb": 2,
       "quarter": 5,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 10,
@@ -121,7 +157,11 @@
       "hizb": 2,
       "quarter": 5,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 11,
@@ -132,7 +172,11 @@
       "hizb": 2,
       "quarter": 6,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 12,
@@ -143,7 +187,11 @@
       "hizb": 2,
       "quarter": 6,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 13,
@@ -154,7 +202,11 @@
       "hizb": 2,
       "quarter": 7,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 14,
@@ -165,7 +217,11 @@
       "hizb": 2,
       "quarter": 7,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 15,
@@ -176,7 +232,11 @@
       "hizb": 2,
       "quarter": 8,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 16,
@@ -187,7 +247,11 @@
       "hizb": 2,
       "quarter": 8,
       "juz": 1,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 17,
@@ -198,7 +262,11 @@
       "hizb": 3,
       "quarter": 9,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 18,
@@ -209,7 +277,11 @@
       "hizb": 3,
       "quarter": 9,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 19,
@@ -220,7 +292,11 @@
       "hizb": 3,
       "quarter": 10,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 20,
@@ -231,7 +307,11 @@
       "hizb": 3,
       "quarter": 10,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 21,
@@ -242,7 +322,11 @@
       "hizb": 3,
       "quarter": 11,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 22,
@@ -253,7 +337,11 @@
       "hizb": 3,
       "quarter": 11,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 23,
@@ -264,7 +352,11 @@
       "hizb": 3,
       "quarter": 12,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 24,
@@ -275,7 +367,11 @@
       "hizb": 3,
       "quarter": 12,
       "juz": 2,
-      "naqza": 1
+      "naqza": 1,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 25,
@@ -286,7 +382,11 @@
       "hizb": 4,
       "quarter": 13,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 26,
@@ -297,7 +397,11 @@
       "hizb": 4,
       "quarter": 13,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 27,
@@ -308,7 +412,11 @@
       "hizb": 4,
       "quarter": 14,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 28,
@@ -319,7 +427,11 @@
       "hizb": 4,
       "quarter": 14,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 29,
@@ -330,7 +442,11 @@
       "hizb": 4,
       "quarter": 15,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 30,
@@ -341,7 +457,11 @@
       "hizb": 4,
       "quarter": 15,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 31,
@@ -352,7 +472,11 @@
       "hizb": 4,
       "quarter": 16,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 32,
@@ -363,7 +487,11 @@
       "hizb": 4,
       "quarter": 16,
       "juz": 2,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 33,
@@ -374,7 +502,11 @@
       "hizb": 5,
       "quarter": 17,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 34,
@@ -385,7 +517,11 @@
       "hizb": 5,
       "quarter": 17,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 35,
@@ -396,7 +532,11 @@
       "hizb": 5,
       "quarter": 18,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 36,
@@ -407,7 +547,11 @@
       "hizb": 5,
       "quarter": 18,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 37,
@@ -418,7 +562,11 @@
       "hizb": 5,
       "quarter": 19,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 38,
@@ -429,7 +577,11 @@
       "hizb": 5,
       "quarter": 19,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 39,
@@ -440,7 +592,11 @@
       "hizb": 5,
       "quarter": 20,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 40,
@@ -451,7 +607,11 @@
       "hizb": 5,
       "quarter": 20,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 1,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "الحمد لله رب العالمين"
     },
     {
       "id": 41,
@@ -462,7 +622,11 @@
       "hizb": 6,
       "quarter": 21,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 42,
@@ -473,7 +637,11 @@
       "hizb": 6,
       "quarter": 21,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 43,
@@ -484,7 +652,11 @@
       "hizb": 6,
       "quarter": 22,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 44,
@@ -495,7 +667,11 @@
       "hizb": 6,
       "quarter": 22,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 45,
@@ -506,7 +682,11 @@
       "hizb": 6,
       "quarter": 23,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 46,
@@ -517,7 +697,11 @@
       "hizb": 6,
       "quarter": 23,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 47,
@@ -528,7 +712,11 @@
       "hizb": 6,
       "quarter": 24,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 48,
@@ -539,7 +727,11 @@
       "hizb": 6,
       "quarter": 24,
       "juz": 3,
-      "naqza": 2
+      "naqza": 2,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 49,
@@ -550,7 +742,11 @@
       "hizb": 7,
       "quarter": 25,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 50,
@@ -561,7 +757,11 @@
       "hizb": 7,
       "quarter": 25,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 51,
@@ -572,7 +772,11 @@
       "hizb": 7,
       "quarter": 26,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 52,
@@ -583,7 +787,11 @@
       "hizb": 7,
       "quarter": 26,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 53,
@@ -594,7 +802,11 @@
       "hizb": 7,
       "quarter": 27,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 54,
@@ -605,7 +817,11 @@
       "hizb": 7,
       "quarter": 27,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 55,
@@ -616,7 +832,11 @@
       "hizb": 7,
       "quarter": 28,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 56,
@@ -627,7 +847,11 @@
       "hizb": 7,
       "quarter": 28,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 57,
@@ -638,7 +862,11 @@
       "hizb": 8,
       "quarter": 29,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 58,
@@ -649,7 +877,11 @@
       "hizb": 8,
       "quarter": 29,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 59,
@@ -660,7 +892,11 @@
       "hizb": 8,
       "quarter": 30,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 60,
@@ -671,7 +907,11 @@
       "hizb": 8,
       "quarter": 30,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 61,
@@ -682,7 +922,11 @@
       "hizb": 8,
       "quarter": 31,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 62,
@@ -693,7 +937,11 @@
       "hizb": 8,
       "quarter": 31,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 63,
@@ -704,7 +952,11 @@
       "hizb": 8,
       "quarter": 32,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 64,
@@ -715,7 +967,11 @@
       "hizb": 8,
       "quarter": 32,
       "juz": 4,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 65,
@@ -726,7 +982,11 @@
       "hizb": 9,
       "quarter": 33,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 66,
@@ -737,7 +997,11 @@
       "hizb": 9,
       "quarter": 33,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 67,
@@ -748,7 +1012,11 @@
       "hizb": 9,
       "quarter": 34,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 68,
@@ -759,7 +1027,11 @@
       "hizb": 9,
       "quarter": 34,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 69,
@@ -770,7 +1042,11 @@
       "hizb": 9,
       "quarter": 35,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 70,
@@ -781,7 +1057,11 @@
       "hizb": 9,
       "quarter": 35,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 71,
@@ -792,7 +1072,11 @@
       "hizb": 9,
       "quarter": 36,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 72,
@@ -803,7 +1087,11 @@
       "hizb": 9,
       "quarter": 36,
       "juz": 5,
-      "naqza": 3
+      "naqza": 3,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 73,
@@ -814,7 +1102,11 @@
       "hizb": 10,
       "quarter": 37,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 74,
@@ -825,7 +1117,11 @@
       "hizb": 10,
       "quarter": 37,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 75,
@@ -836,7 +1132,11 @@
       "hizb": 10,
       "quarter": 38,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 76,
@@ -847,7 +1147,11 @@
       "hizb": 10,
       "quarter": 38,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 77,
@@ -858,7 +1162,11 @@
       "hizb": 10,
       "quarter": 39,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 78,
@@ -869,7 +1177,11 @@
       "hizb": 10,
       "quarter": 39,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 79,
@@ -880,7 +1192,11 @@
       "hizb": 10,
       "quarter": 40,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 80,
@@ -891,7 +1207,11 @@
       "hizb": 10,
       "quarter": 40,
       "juz": 5,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 2,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "قل أونبئكم بخير"
     },
     {
       "id": 81,
@@ -902,7 +1222,11 @@
       "hizb": 11,
       "quarter": 41,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 82,
@@ -913,7 +1237,11 @@
       "hizb": 11,
       "quarter": 41,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 83,
@@ -924,7 +1252,11 @@
       "hizb": 11,
       "quarter": 42,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 84,
@@ -935,7 +1267,11 @@
       "hizb": 11,
       "quarter": 42,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 85,
@@ -946,7 +1282,11 @@
       "hizb": 11,
       "quarter": 43,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 86,
@@ -957,7 +1297,11 @@
       "hizb": 11,
       "quarter": 43,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 87,
@@ -968,7 +1312,11 @@
       "hizb": 11,
       "quarter": 44,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 88,
@@ -979,7 +1327,11 @@
       "hizb": 11,
       "quarter": 44,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 89,
@@ -990,7 +1342,11 @@
       "hizb": 12,
       "quarter": 45,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 90,
@@ -1001,7 +1357,11 @@
       "hizb": 12,
       "quarter": 45,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 91,
@@ -1012,7 +1372,11 @@
       "hizb": 12,
       "quarter": 46,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 92,
@@ -1023,7 +1387,11 @@
       "hizb": 12,
       "quarter": 46,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 93,
@@ -1034,7 +1402,11 @@
       "hizb": 12,
       "quarter": 47,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 94,
@@ -1045,7 +1417,11 @@
       "hizb": 12,
       "quarter": 47,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 95,
@@ -1056,7 +1432,11 @@
       "hizb": 12,
       "quarter": 48,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 96,
@@ -1067,7 +1447,11 @@
       "hizb": 12,
       "quarter": 48,
       "juz": 6,
-      "naqza": 4
+      "naqza": 4,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 97,
@@ -1078,7 +1462,11 @@
       "hizb": 13,
       "quarter": 49,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 98,
@@ -1089,7 +1477,11 @@
       "hizb": 13,
       "quarter": 49,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 99,
@@ -1100,7 +1492,11 @@
       "hizb": 13,
       "quarter": 50,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 100,
@@ -1111,7 +1507,11 @@
       "hizb": 13,
       "quarter": 50,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 101,
@@ -1122,7 +1522,11 @@
       "hizb": 13,
       "quarter": 51,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 102,
@@ -1133,7 +1537,11 @@
       "hizb": 13,
       "quarter": 51,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 103,
@@ -1144,7 +1552,11 @@
       "hizb": 13,
       "quarter": 52,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 104,
@@ -1155,7 +1567,11 @@
       "hizb": 13,
       "quarter": 52,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 105,
@@ -1166,7 +1582,11 @@
       "hizb": 14,
       "quarter": 53,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 106,
@@ -1177,7 +1597,11 @@
       "hizb": 14,
       "quarter": 53,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 107,
@@ -1188,7 +1612,11 @@
       "hizb": 14,
       "quarter": 54,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 108,
@@ -1199,7 +1627,11 @@
       "hizb": 14,
       "quarter": 54,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 109,
@@ -1210,7 +1642,11 @@
       "hizb": 14,
       "quarter": 55,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 110,
@@ -1221,7 +1657,11 @@
       "hizb": 14,
       "quarter": 55,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 111,
@@ -1232,7 +1672,11 @@
       "hizb": 14,
       "quarter": 56,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 112,
@@ -1243,7 +1687,11 @@
       "hizb": 14,
       "quarter": 56,
       "juz": 7,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 113,
@@ -1254,7 +1702,11 @@
       "hizb": 15,
       "quarter": 57,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 114,
@@ -1265,7 +1717,11 @@
       "hizb": 15,
       "quarter": 57,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 115,
@@ -1276,7 +1732,11 @@
       "hizb": 15,
       "quarter": 58,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 116,
@@ -1287,7 +1747,11 @@
       "hizb": 15,
       "quarter": 58,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 117,
@@ -1298,7 +1762,11 @@
       "hizb": 15,
       "quarter": 59,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 118,
@@ -1309,7 +1777,11 @@
       "hizb": 15,
       "quarter": 59,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 119,
@@ -1320,7 +1792,11 @@
       "hizb": 15,
       "quarter": 60,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 120,
@@ -1331,7 +1807,11 @@
       "hizb": 15,
       "quarter": 60,
       "juz": 8,
-      "naqza": 5
+      "naqza": 5,
+      "fiveHizbGroup": 3,
+      "quranQuarter": 1,
+      "quranHalf": 1,
+      "fiveHizbLabel": "لا يحب الله الجهر بالسوء"
     },
     {
       "id": 121,
@@ -1342,7 +1822,11 @@
       "hizb": 16,
       "quarter": 61,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 122,
@@ -1353,7 +1837,11 @@
       "hizb": 16,
       "quarter": 61,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 123,
@@ -1364,7 +1852,11 @@
       "hizb": 16,
       "quarter": 62,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 124,
@@ -1375,7 +1867,11 @@
       "hizb": 16,
       "quarter": 62,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 125,
@@ -1386,7 +1882,11 @@
       "hizb": 16,
       "quarter": 63,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 126,
@@ -1397,7 +1897,11 @@
       "hizb": 16,
       "quarter": 63,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 127,
@@ -1408,7 +1912,11 @@
       "hizb": 16,
       "quarter": 64,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 128,
@@ -1419,7 +1927,11 @@
       "hizb": 16,
       "quarter": 64,
       "juz": 8,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 129,
@@ -1430,7 +1942,11 @@
       "hizb": 17,
       "quarter": 65,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 130,
@@ -1441,7 +1957,11 @@
       "hizb": 17,
       "quarter": 65,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 131,
@@ -1452,7 +1972,11 @@
       "hizb": 17,
       "quarter": 66,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 132,
@@ -1463,7 +1987,11 @@
       "hizb": 17,
       "quarter": 66,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 133,
@@ -1474,7 +2002,11 @@
       "hizb": 17,
       "quarter": 67,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 134,
@@ -1485,7 +2017,11 @@
       "hizb": 17,
       "quarter": 67,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 135,
@@ -1496,7 +2032,11 @@
       "hizb": 17,
       "quarter": 68,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 136,
@@ -1507,7 +2047,11 @@
       "hizb": 17,
       "quarter": 68,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 137,
@@ -1518,7 +2062,11 @@
       "hizb": 18,
       "quarter": 69,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 138,
@@ -1529,7 +2077,11 @@
       "hizb": 18,
       "quarter": 69,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 139,
@@ -1540,7 +2092,11 @@
       "hizb": 18,
       "quarter": 70,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 140,
@@ -1551,7 +2107,11 @@
       "hizb": 18,
       "quarter": 70,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 141,
@@ -1562,7 +2122,11 @@
       "hizb": 18,
       "quarter": 71,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 142,
@@ -1573,7 +2137,11 @@
       "hizb": 18,
       "quarter": 71,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 143,
@@ -1584,7 +2152,11 @@
       "hizb": 18,
       "quarter": 72,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 144,
@@ -1595,7 +2167,11 @@
       "hizb": 18,
       "quarter": 72,
       "juz": 9,
-      "naqza": 6
+      "naqza": 6,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 145,
@@ -1606,7 +2182,11 @@
       "hizb": 19,
       "quarter": 73,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 146,
@@ -1617,7 +2197,11 @@
       "hizb": 19,
       "quarter": 73,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 147,
@@ -1628,7 +2212,11 @@
       "hizb": 19,
       "quarter": 74,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 148,
@@ -1639,7 +2227,11 @@
       "hizb": 19,
       "quarter": 74,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 149,
@@ -1650,7 +2242,11 @@
       "hizb": 19,
       "quarter": 75,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 150,
@@ -1661,7 +2257,11 @@
       "hizb": 19,
       "quarter": 75,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 151,
@@ -1672,7 +2272,11 @@
       "hizb": 19,
       "quarter": 76,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 152,
@@ -1683,7 +2287,11 @@
       "hizb": 19,
       "quarter": 76,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 153,
@@ -1694,7 +2302,11 @@
       "hizb": 20,
       "quarter": 77,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 154,
@@ -1705,7 +2317,11 @@
       "hizb": 20,
       "quarter": 77,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 155,
@@ -1716,7 +2332,11 @@
       "hizb": 20,
       "quarter": 78,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 156,
@@ -1727,7 +2347,11 @@
       "hizb": 20,
       "quarter": 78,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 157,
@@ -1738,7 +2362,11 @@
       "hizb": 20,
       "quarter": 79,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 158,
@@ -1749,7 +2377,11 @@
       "hizb": 20,
       "quarter": 79,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 159,
@@ -1760,7 +2392,11 @@
       "hizb": 20,
       "quarter": 80,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 160,
@@ -1771,7 +2407,11 @@
       "hizb": 20,
       "quarter": 80,
       "juz": 10,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 4,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "ألـمـص"
     },
     {
       "id": 161,
@@ -1782,7 +2422,11 @@
       "hizb": 21,
       "quarter": 81,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 162,
@@ -1793,7 +2437,11 @@
       "hizb": 21,
       "quarter": 81,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 163,
@@ -1804,7 +2452,11 @@
       "hizb": 21,
       "quarter": 82,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 164,
@@ -1815,7 +2467,11 @@
       "hizb": 21,
       "quarter": 82,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 165,
@@ -1826,7 +2482,11 @@
       "hizb": 21,
       "quarter": 83,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 166,
@@ -1837,7 +2497,11 @@
       "hizb": 21,
       "quarter": 83,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 167,
@@ -1848,7 +2512,11 @@
       "hizb": 21,
       "quarter": 84,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 168,
@@ -1859,7 +2527,11 @@
       "hizb": 21,
       "quarter": 84,
       "juz": 11,
-      "naqza": 7
+      "naqza": 7,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 169,
@@ -1870,7 +2542,11 @@
       "hizb": 22,
       "quarter": 85,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 170,
@@ -1881,7 +2557,11 @@
       "hizb": 22,
       "quarter": 85,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 171,
@@ -1892,7 +2572,11 @@
       "hizb": 22,
       "quarter": 86,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 172,
@@ -1903,7 +2587,11 @@
       "hizb": 22,
       "quarter": 86,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 173,
@@ -1914,7 +2602,11 @@
       "hizb": 22,
       "quarter": 87,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 174,
@@ -1925,7 +2617,11 @@
       "hizb": 22,
       "quarter": 87,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 175,
@@ -1936,7 +2632,11 @@
       "hizb": 22,
       "quarter": 88,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 176,
@@ -1947,7 +2647,11 @@
       "hizb": 22,
       "quarter": 88,
       "juz": 11,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 177,
@@ -1958,7 +2662,11 @@
       "hizb": 23,
       "quarter": 89,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 178,
@@ -1969,7 +2677,11 @@
       "hizb": 23,
       "quarter": 89,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 179,
@@ -1980,7 +2692,11 @@
       "hizb": 23,
       "quarter": 90,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 180,
@@ -1991,7 +2707,11 @@
       "hizb": 23,
       "quarter": 90,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 181,
@@ -2002,7 +2722,11 @@
       "hizb": 23,
       "quarter": 91,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 182,
@@ -2013,7 +2737,11 @@
       "hizb": 23,
       "quarter": 91,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 183,
@@ -2024,7 +2752,11 @@
       "hizb": 23,
       "quarter": 92,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 184,
@@ -2035,7 +2767,11 @@
       "hizb": 23,
       "quarter": 92,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 185,
@@ -2046,7 +2782,11 @@
       "hizb": 24,
       "quarter": 93,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 186,
@@ -2057,7 +2797,11 @@
       "hizb": 24,
       "quarter": 93,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 187,
@@ -2068,7 +2812,11 @@
       "hizb": 24,
       "quarter": 94,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 188,
@@ -2079,7 +2827,11 @@
       "hizb": 24,
       "quarter": 94,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 189,
@@ -2090,7 +2842,11 @@
       "hizb": 24,
       "quarter": 95,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 190,
@@ -2101,7 +2857,11 @@
       "hizb": 24,
       "quarter": 95,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 191,
@@ -2112,7 +2872,11 @@
       "hizb": 24,
       "quarter": 96,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 192,
@@ -2123,7 +2887,11 @@
       "hizb": 24,
       "quarter": 96,
       "juz": 12,
-      "naqza": 8
+      "naqza": 8,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 193,
@@ -2134,7 +2902,11 @@
       "hizb": 25,
       "quarter": 97,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 194,
@@ -2145,7 +2917,11 @@
       "hizb": 25,
       "quarter": 97,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 195,
@@ -2156,7 +2932,11 @@
       "hizb": 25,
       "quarter": 98,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 196,
@@ -2167,7 +2947,11 @@
       "hizb": 25,
       "quarter": 98,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 197,
@@ -2178,7 +2962,11 @@
       "hizb": 25,
       "quarter": 99,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 198,
@@ -2189,7 +2977,11 @@
       "hizb": 25,
       "quarter": 99,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 199,
@@ -2200,7 +2992,11 @@
       "hizb": 25,
       "quarter": 100,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 200,
@@ -2211,7 +3007,11 @@
       "hizb": 25,
       "quarter": 100,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 5,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "إنما السبيل على الذين"
     },
     {
       "id": 201,
@@ -2222,7 +3022,11 @@
       "hizb": 26,
       "quarter": 101,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 202,
@@ -2233,7 +3037,11 @@
       "hizb": 26,
       "quarter": 101,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 203,
@@ -2244,7 +3052,11 @@
       "hizb": 26,
       "quarter": 102,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 204,
@@ -2255,7 +3067,11 @@
       "hizb": 26,
       "quarter": 102,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 205,
@@ -2266,7 +3082,11 @@
       "hizb": 26,
       "quarter": 103,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 206,
@@ -2277,7 +3097,11 @@
       "hizb": 26,
       "quarter": 103,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 207,
@@ -2288,7 +3112,11 @@
       "hizb": 26,
       "quarter": 104,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 208,
@@ -2299,7 +3127,11 @@
       "hizb": 26,
       "quarter": 104,
       "juz": 13,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 209,
@@ -2310,7 +3142,11 @@
       "hizb": 27,
       "quarter": 105,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 210,
@@ -2321,7 +3157,11 @@
       "hizb": 27,
       "quarter": 105,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 211,
@@ -2332,7 +3172,11 @@
       "hizb": 27,
       "quarter": 106,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 212,
@@ -2343,7 +3187,11 @@
       "hizb": 27,
       "quarter": 106,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 213,
@@ -2354,7 +3202,11 @@
       "hizb": 27,
       "quarter": 107,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 214,
@@ -2365,7 +3217,11 @@
       "hizb": 27,
       "quarter": 107,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 215,
@@ -2376,7 +3232,11 @@
       "hizb": 27,
       "quarter": 108,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 216,
@@ -2387,7 +3247,11 @@
       "hizb": 27,
       "quarter": 108,
       "juz": 14,
-      "naqza": 9
+      "naqza": 9,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 217,
@@ -2398,7 +3262,11 @@
       "hizb": 28,
       "quarter": 109,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 218,
@@ -2409,7 +3277,11 @@
       "hizb": 28,
       "quarter": 109,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 219,
@@ -2420,7 +3292,11 @@
       "hizb": 28,
       "quarter": 110,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 220,
@@ -2431,7 +3307,11 @@
       "hizb": 28,
       "quarter": 110,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 221,
@@ -2442,7 +3322,11 @@
       "hizb": 28,
       "quarter": 111,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 222,
@@ -2453,7 +3337,11 @@
       "hizb": 28,
       "quarter": 111,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 223,
@@ -2464,7 +3352,11 @@
       "hizb": 28,
       "quarter": 112,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 224,
@@ -2475,7 +3367,11 @@
       "hizb": 28,
       "quarter": 112,
       "juz": 14,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 225,
@@ -2486,7 +3382,11 @@
       "hizb": 29,
       "quarter": 113,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 226,
@@ -2497,7 +3397,11 @@
       "hizb": 29,
       "quarter": 113,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 227,
@@ -2508,7 +3412,11 @@
       "hizb": 29,
       "quarter": 114,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 228,
@@ -2519,7 +3427,11 @@
       "hizb": 29,
       "quarter": 114,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 229,
@@ -2530,7 +3442,11 @@
       "hizb": 29,
       "quarter": 115,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 230,
@@ -2541,7 +3457,11 @@
       "hizb": 29,
       "quarter": 115,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 231,
@@ -2552,7 +3472,11 @@
       "hizb": 29,
       "quarter": 116,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 232,
@@ -2563,7 +3487,11 @@
       "hizb": 29,
       "quarter": 116,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 233,
@@ -2574,7 +3502,11 @@
       "hizb": 30,
       "quarter": 117,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 234,
@@ -2585,7 +3517,11 @@
       "hizb": 30,
       "quarter": 117,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 235,
@@ -2596,7 +3532,11 @@
       "hizb": 30,
       "quarter": 118,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 236,
@@ -2607,7 +3547,11 @@
       "hizb": 30,
       "quarter": 118,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 237,
@@ -2618,7 +3562,11 @@
       "hizb": 30,
       "quarter": 119,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 238,
@@ -2629,7 +3577,11 @@
       "hizb": 30,
       "quarter": 119,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 239,
@@ -2640,7 +3592,11 @@
       "hizb": 30,
       "quarter": 120,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 240,
@@ -2651,7 +3607,11 @@
       "hizb": 30,
       "quarter": 120,
       "juz": 15,
-      "naqza": 10
+      "naqza": 10,
+      "fiveHizbGroup": 6,
+      "quranQuarter": 2,
+      "quranHalf": 1,
+      "fiveHizbLabel": "أفمن يعلم"
     },
     {
       "id": 241,
@@ -2662,7 +3622,11 @@
       "hizb": 31,
       "quarter": 121,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 242,
@@ -2673,7 +3637,11 @@
       "hizb": 31,
       "quarter": 121,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 243,
@@ -2684,7 +3652,11 @@
       "hizb": 31,
       "quarter": 122,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 244,
@@ -2695,7 +3667,11 @@
       "hizb": 31,
       "quarter": 122,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 245,
@@ -2706,7 +3682,11 @@
       "hizb": 31,
       "quarter": 123,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 246,
@@ -2717,7 +3697,11 @@
       "hizb": 31,
       "quarter": 123,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 247,
@@ -2728,7 +3712,11 @@
       "hizb": 31,
       "quarter": 124,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 248,
@@ -2739,7 +3727,11 @@
       "hizb": 31,
       "quarter": 124,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 249,
@@ -2750,7 +3742,11 @@
       "hizb": 32,
       "quarter": 125,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 250,
@@ -2761,7 +3757,11 @@
       "hizb": 32,
       "quarter": 125,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 251,
@@ -2772,7 +3772,11 @@
       "hizb": 32,
       "quarter": 126,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 252,
@@ -2783,7 +3787,11 @@
       "hizb": 32,
       "quarter": 126,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 253,
@@ -2794,7 +3802,11 @@
       "hizb": 32,
       "quarter": 127,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 254,
@@ -2805,7 +3817,11 @@
       "hizb": 32,
       "quarter": 127,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 255,
@@ -2816,7 +3832,11 @@
       "hizb": 32,
       "quarter": 128,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 256,
@@ -2827,7 +3847,11 @@
       "hizb": 32,
       "quarter": 128,
       "juz": 16,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 257,
@@ -2838,7 +3862,11 @@
       "hizb": 33,
       "quarter": 129,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 258,
@@ -2849,7 +3877,11 @@
       "hizb": 33,
       "quarter": 129,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 259,
@@ -2860,7 +3892,11 @@
       "hizb": 33,
       "quarter": 130,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 260,
@@ -2871,7 +3907,11 @@
       "hizb": 33,
       "quarter": 130,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 261,
@@ -2882,7 +3922,11 @@
       "hizb": 33,
       "quarter": 131,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 262,
@@ -2893,7 +3937,11 @@
       "hizb": 33,
       "quarter": 131,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 263,
@@ -2904,7 +3952,11 @@
       "hizb": 33,
       "quarter": 132,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 264,
@@ -2915,7 +3967,11 @@
       "hizb": 33,
       "quarter": 132,
       "juz": 17,
-      "naqza": 11
+      "naqza": 11,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 265,
@@ -2926,7 +3982,11 @@
       "hizb": 34,
       "quarter": 133,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 266,
@@ -2937,7 +3997,11 @@
       "hizb": 34,
       "quarter": 133,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 267,
@@ -2948,7 +4012,11 @@
       "hizb": 34,
       "quarter": 134,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 268,
@@ -2959,7 +4027,11 @@
       "hizb": 34,
       "quarter": 134,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 269,
@@ -2970,7 +4042,11 @@
       "hizb": 34,
       "quarter": 135,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 270,
@@ -2981,7 +4057,11 @@
       "hizb": 34,
       "quarter": 135,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 271,
@@ -2992,7 +4072,11 @@
       "hizb": 34,
       "quarter": 136,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 272,
@@ -3003,7 +4087,11 @@
       "hizb": 34,
       "quarter": 136,
       "juz": 17,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 273,
@@ -3014,7 +4102,11 @@
       "hizb": 35,
       "quarter": 137,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 274,
@@ -3025,7 +4117,11 @@
       "hizb": 35,
       "quarter": 137,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 275,
@@ -3036,7 +4132,11 @@
       "hizb": 35,
       "quarter": 138,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 276,
@@ -3047,7 +4147,11 @@
       "hizb": 35,
       "quarter": 138,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 277,
@@ -3058,7 +4162,11 @@
       "hizb": 35,
       "quarter": 139,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 278,
@@ -3069,7 +4177,11 @@
       "hizb": 35,
       "quarter": 139,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 279,
@@ -3080,7 +4192,11 @@
       "hizb": 35,
       "quarter": 140,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 280,
@@ -3091,7 +4207,11 @@
       "hizb": 35,
       "quarter": 140,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 7,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "قال ألم أقل لك"
     },
     {
       "id": 281,
@@ -3102,7 +4222,11 @@
       "hizb": 36,
       "quarter": 141,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 282,
@@ -3113,7 +4237,11 @@
       "hizb": 36,
       "quarter": 141,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 283,
@@ -3124,7 +4252,11 @@
       "hizb": 36,
       "quarter": 142,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 284,
@@ -3135,7 +4267,11 @@
       "hizb": 36,
       "quarter": 142,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 285,
@@ -3146,7 +4282,11 @@
       "hizb": 36,
       "quarter": 143,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 286,
@@ -3157,7 +4297,11 @@
       "hizb": 36,
       "quarter": 143,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 287,
@@ -3168,7 +4312,11 @@
       "hizb": 36,
       "quarter": 144,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 288,
@@ -3179,7 +4327,11 @@
       "hizb": 36,
       "quarter": 144,
       "juz": 18,
-      "naqza": 12
+      "naqza": 12,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 289,
@@ -3190,7 +4342,11 @@
       "hizb": 37,
       "quarter": 145,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 290,
@@ -3201,7 +4357,11 @@
       "hizb": 37,
       "quarter": 145,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 291,
@@ -3212,7 +4372,11 @@
       "hizb": 37,
       "quarter": 146,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 292,
@@ -3223,7 +4387,11 @@
       "hizb": 37,
       "quarter": 146,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 293,
@@ -3234,7 +4402,11 @@
       "hizb": 37,
       "quarter": 147,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 294,
@@ -3245,7 +4417,11 @@
       "hizb": 37,
       "quarter": 147,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 295,
@@ -3256,7 +4432,11 @@
       "hizb": 37,
       "quarter": 148,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 296,
@@ -3267,7 +4447,11 @@
       "hizb": 37,
       "quarter": 148,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 297,
@@ -3278,7 +4462,11 @@
       "hizb": 38,
       "quarter": 149,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 298,
@@ -3289,7 +4477,11 @@
       "hizb": 38,
       "quarter": 149,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 299,
@@ -3300,7 +4492,11 @@
       "hizb": 38,
       "quarter": 150,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 300,
@@ -3311,7 +4507,11 @@
       "hizb": 38,
       "quarter": 150,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 301,
@@ -3322,7 +4522,11 @@
       "hizb": 38,
       "quarter": 151,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 302,
@@ -3333,7 +4537,11 @@
       "hizb": 38,
       "quarter": 151,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 303,
@@ -3344,7 +4552,11 @@
       "hizb": 38,
       "quarter": 152,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 304,
@@ -3355,7 +4567,11 @@
       "hizb": 38,
       "quarter": 152,
       "juz": 19,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 305,
@@ -3366,7 +4582,11 @@
       "hizb": 39,
       "quarter": 153,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 306,
@@ -3377,7 +4597,11 @@
       "hizb": 39,
       "quarter": 153,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 307,
@@ -3388,7 +4612,11 @@
       "hizb": 39,
       "quarter": 154,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 308,
@@ -3399,7 +4627,11 @@
       "hizb": 39,
       "quarter": 154,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 309,
@@ -3410,7 +4642,11 @@
       "hizb": 39,
       "quarter": 155,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 310,
@@ -3421,7 +4657,11 @@
       "hizb": 39,
       "quarter": 155,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 311,
@@ -3432,7 +4672,11 @@
       "hizb": 39,
       "quarter": 156,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 312,
@@ -3443,7 +4687,11 @@
       "hizb": 39,
       "quarter": 156,
       "juz": 20,
-      "naqza": 13
+      "naqza": 13,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 313,
@@ -3454,7 +4702,11 @@
       "hizb": 40,
       "quarter": 157,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 314,
@@ -3465,7 +4717,11 @@
       "hizb": 40,
       "quarter": 157,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 315,
@@ -3476,7 +4732,11 @@
       "hizb": 40,
       "quarter": 158,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 316,
@@ -3487,7 +4747,11 @@
       "hizb": 40,
       "quarter": 158,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 317,
@@ -3498,7 +4762,11 @@
       "hizb": 40,
       "quarter": 159,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 318,
@@ -3509,7 +4777,11 @@
       "hizb": 40,
       "quarter": 159,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 319,
@@ -3520,7 +4792,11 @@
       "hizb": 40,
       "quarter": 160,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 320,
@@ -3531,7 +4807,11 @@
       "hizb": 40,
       "quarter": 160,
       "juz": 20,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 8,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يأيها الذين ءامنوا لا تتبعوا"
     },
     {
       "id": 321,
@@ -3542,7 +4822,11 @@
       "hizb": 41,
       "quarter": 161,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 322,
@@ -3553,7 +4837,11 @@
       "hizb": 41,
       "quarter": 161,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 323,
@@ -3564,7 +4852,11 @@
       "hizb": 41,
       "quarter": 162,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 324,
@@ -3575,7 +4867,11 @@
       "hizb": 41,
       "quarter": 162,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 325,
@@ -3586,7 +4882,11 @@
       "hizb": 41,
       "quarter": 163,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 326,
@@ -3597,7 +4897,11 @@
       "hizb": 41,
       "quarter": 163,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 327,
@@ -3608,7 +4912,11 @@
       "hizb": 41,
       "quarter": 164,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 328,
@@ -3619,7 +4927,11 @@
       "hizb": 41,
       "quarter": 164,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 329,
@@ -3630,7 +4942,11 @@
       "hizb": 42,
       "quarter": 165,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 330,
@@ -3641,7 +4957,11 @@
       "hizb": 42,
       "quarter": 165,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 331,
@@ -3652,7 +4972,11 @@
       "hizb": 42,
       "quarter": 166,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 332,
@@ -3663,7 +4987,11 @@
       "hizb": 42,
       "quarter": 166,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 333,
@@ -3674,7 +5002,11 @@
       "hizb": 42,
       "quarter": 167,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 334,
@@ -3685,7 +5017,11 @@
       "hizb": 42,
       "quarter": 167,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 335,
@@ -3696,7 +5032,11 @@
       "hizb": 42,
       "quarter": 168,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 336,
@@ -3707,7 +5047,11 @@
       "hizb": 42,
       "quarter": 168,
       "juz": 21,
-      "naqza": 14
+      "naqza": 14,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 337,
@@ -3718,7 +5062,11 @@
       "hizb": 43,
       "quarter": 169,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 338,
@@ -3729,7 +5077,11 @@
       "hizb": 43,
       "quarter": 169,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 339,
@@ -3740,7 +5092,11 @@
       "hizb": 43,
       "quarter": 170,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 340,
@@ -3751,7 +5107,11 @@
       "hizb": 43,
       "quarter": 170,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 341,
@@ -3762,7 +5122,11 @@
       "hizb": 43,
       "quarter": 171,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 342,
@@ -3773,7 +5137,11 @@
       "hizb": 43,
       "quarter": 171,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 343,
@@ -3784,7 +5152,11 @@
       "hizb": 43,
       "quarter": 172,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 344,
@@ -3795,7 +5167,11 @@
       "hizb": 43,
       "quarter": 172,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 345,
@@ -3806,7 +5182,11 @@
       "hizb": 44,
       "quarter": 173,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 346,
@@ -3817,7 +5197,11 @@
       "hizb": 44,
       "quarter": 173,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 347,
@@ -3828,7 +5212,11 @@
       "hizb": 44,
       "quarter": 174,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 348,
@@ -3839,7 +5227,11 @@
       "hizb": 44,
       "quarter": 174,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 349,
@@ -3850,7 +5242,11 @@
       "hizb": 44,
       "quarter": 175,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 350,
@@ -3861,7 +5257,11 @@
       "hizb": 44,
       "quarter": 175,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 351,
@@ -3872,7 +5272,11 @@
       "hizb": 44,
       "quarter": 176,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 352,
@@ -3883,7 +5287,11 @@
       "hizb": 44,
       "quarter": 176,
       "juz": 22,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 353,
@@ -3894,7 +5302,11 @@
       "hizb": 45,
       "quarter": 177,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 354,
@@ -3905,7 +5317,11 @@
       "hizb": 45,
       "quarter": 177,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 355,
@@ -3916,7 +5332,11 @@
       "hizb": 45,
       "quarter": 178,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 356,
@@ -3927,7 +5347,11 @@
       "hizb": 45,
       "quarter": 178,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 357,
@@ -3938,7 +5362,11 @@
       "hizb": 45,
       "quarter": 179,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 358,
@@ -3949,7 +5377,11 @@
       "hizb": 45,
       "quarter": 179,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 359,
@@ -3960,7 +5392,11 @@
       "hizb": 45,
       "quarter": 180,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 360,
@@ -3971,7 +5407,11 @@
       "hizb": 45,
       "quarter": 180,
       "juz": 23,
-      "naqza": 15
+      "naqza": 15,
+      "fiveHizbGroup": 9,
+      "quranQuarter": 3,
+      "quranHalf": 2,
+      "fiveHizbLabel": "ولا تجادلوا أهل الكتاب"
     },
     {
       "id": 361,
@@ -3982,7 +5422,11 @@
       "hizb": 46,
       "quarter": 181,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 362,
@@ -3993,7 +5437,11 @@
       "hizb": 46,
       "quarter": 181,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 363,
@@ -4004,7 +5452,11 @@
       "hizb": 46,
       "quarter": 182,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 364,
@@ -4015,7 +5467,11 @@
       "hizb": 46,
       "quarter": 182,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 365,
@@ -4026,7 +5482,11 @@
       "hizb": 46,
       "quarter": 183,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 366,
@@ -4037,7 +5497,11 @@
       "hizb": 46,
       "quarter": 183,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 367,
@@ -4048,7 +5512,11 @@
       "hizb": 46,
       "quarter": 184,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 368,
@@ -4059,7 +5527,11 @@
       "hizb": 46,
       "quarter": 184,
       "juz": 23,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 369,
@@ -4070,7 +5542,11 @@
       "hizb": 47,
       "quarter": 185,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 370,
@@ -4081,7 +5557,11 @@
       "hizb": 47,
       "quarter": 185,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 371,
@@ -4092,7 +5572,11 @@
       "hizb": 47,
       "quarter": 186,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 372,
@@ -4103,7 +5587,11 @@
       "hizb": 47,
       "quarter": 186,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 373,
@@ -4114,7 +5602,11 @@
       "hizb": 47,
       "quarter": 187,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 374,
@@ -4125,7 +5617,11 @@
       "hizb": 47,
       "quarter": 187,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 375,
@@ -4136,7 +5632,11 @@
       "hizb": 47,
       "quarter": 188,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 376,
@@ -4147,7 +5647,11 @@
       "hizb": 47,
       "quarter": 188,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 377,
@@ -4158,7 +5662,11 @@
       "hizb": 48,
       "quarter": 189,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 378,
@@ -4169,7 +5677,11 @@
       "hizb": 48,
       "quarter": 189,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 379,
@@ -4180,7 +5692,11 @@
       "hizb": 48,
       "quarter": 190,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 380,
@@ -4191,7 +5707,11 @@
       "hizb": 48,
       "quarter": 190,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 381,
@@ -4202,7 +5722,11 @@
       "hizb": 48,
       "quarter": 191,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 382,
@@ -4213,7 +5737,11 @@
       "hizb": 48,
       "quarter": 191,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 383,
@@ -4224,7 +5752,11 @@
       "hizb": 48,
       "quarter": 192,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 384,
@@ -4235,7 +5767,11 @@
       "hizb": 48,
       "quarter": 192,
       "juz": 24,
-      "naqza": 16
+      "naqza": 16,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 385,
@@ -4246,7 +5782,11 @@
       "hizb": 49,
       "quarter": 193,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 386,
@@ -4257,7 +5797,11 @@
       "hizb": 49,
       "quarter": 193,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 387,
@@ -4268,7 +5812,11 @@
       "hizb": 49,
       "quarter": 194,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 388,
@@ -4279,7 +5827,11 @@
       "hizb": 49,
       "quarter": 194,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 389,
@@ -4290,7 +5842,11 @@
       "hizb": 49,
       "quarter": 195,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 390,
@@ -4301,7 +5857,11 @@
       "hizb": 49,
       "quarter": 195,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 391,
@@ -4312,7 +5872,11 @@
       "hizb": 49,
       "quarter": 196,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 392,
@@ -4323,7 +5887,11 @@
       "hizb": 49,
       "quarter": 196,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 393,
@@ -4334,7 +5902,11 @@
       "hizb": 50,
       "quarter": 197,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 394,
@@ -4345,7 +5917,11 @@
       "hizb": 50,
       "quarter": 197,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 395,
@@ -4356,7 +5932,11 @@
       "hizb": 50,
       "quarter": 198,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 396,
@@ -4367,7 +5947,11 @@
       "hizb": 50,
       "quarter": 198,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 397,
@@ -4378,7 +5962,11 @@
       "hizb": 50,
       "quarter": 199,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 398,
@@ -4389,7 +5977,11 @@
       "hizb": 50,
       "quarter": 199,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 399,
@@ -4400,7 +5992,11 @@
       "hizb": 50,
       "quarter": 200,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 400,
@@ -4411,7 +6007,11 @@
       "hizb": 50,
       "quarter": 200,
       "juz": 25,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 10,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "فنبذناه بالعراء وهو سقيم"
     },
     {
       "id": 401,
@@ -4422,7 +6022,11 @@
       "hizb": 51,
       "quarter": 201,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 402,
@@ -4433,7 +6037,11 @@
       "hizb": 51,
       "quarter": 201,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 403,
@@ -4444,7 +6052,11 @@
       "hizb": 51,
       "quarter": 202,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 404,
@@ -4455,7 +6067,11 @@
       "hizb": 51,
       "quarter": 202,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 405,
@@ -4466,7 +6082,11 @@
       "hizb": 51,
       "quarter": 203,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 406,
@@ -4477,7 +6097,11 @@
       "hizb": 51,
       "quarter": 203,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 407,
@@ -4488,7 +6112,11 @@
       "hizb": 51,
       "quarter": 204,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 408,
@@ -4499,7 +6127,11 @@
       "hizb": 51,
       "quarter": 204,
       "juz": 26,
-      "naqza": 17
+      "naqza": 17,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 409,
@@ -4510,7 +6142,11 @@
       "hizb": 52,
       "quarter": 205,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 410,
@@ -4521,7 +6157,11 @@
       "hizb": 52,
       "quarter": 205,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 411,
@@ -4532,7 +6172,11 @@
       "hizb": 52,
       "quarter": 206,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 412,
@@ -4543,7 +6187,11 @@
       "hizb": 52,
       "quarter": 206,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 413,
@@ -4554,7 +6202,11 @@
       "hizb": 52,
       "quarter": 207,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 414,
@@ -4565,7 +6217,11 @@
       "hizb": 52,
       "quarter": 207,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 415,
@@ -4576,7 +6232,11 @@
       "hizb": 52,
       "quarter": 208,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 416,
@@ -4587,7 +6247,11 @@
       "hizb": 52,
       "quarter": 208,
       "juz": 26,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 417,
@@ -4598,7 +6262,11 @@
       "hizb": 53,
       "quarter": 209,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 418,
@@ -4609,7 +6277,11 @@
       "hizb": 53,
       "quarter": 209,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 419,
@@ -4620,7 +6292,11 @@
       "hizb": 53,
       "quarter": 210,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 420,
@@ -4631,7 +6307,11 @@
       "hizb": 53,
       "quarter": 210,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 421,
@@ -4642,7 +6322,11 @@
       "hizb": 53,
       "quarter": 211,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 422,
@@ -4653,7 +6337,11 @@
       "hizb": 53,
       "quarter": 211,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 423,
@@ -4664,7 +6352,11 @@
       "hizb": 53,
       "quarter": 212,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 424,
@@ -4675,7 +6367,11 @@
       "hizb": 53,
       "quarter": 212,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 425,
@@ -4686,7 +6382,11 @@
       "hizb": 54,
       "quarter": 213,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 426,
@@ -4697,7 +6397,11 @@
       "hizb": 54,
       "quarter": 213,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 427,
@@ -4708,7 +6412,11 @@
       "hizb": 54,
       "quarter": 214,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 428,
@@ -4719,7 +6427,11 @@
       "hizb": 54,
       "quarter": 214,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 429,
@@ -4730,7 +6442,11 @@
       "hizb": 54,
       "quarter": 215,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 430,
@@ -4741,7 +6457,11 @@
       "hizb": 54,
       "quarter": 215,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 431,
@@ -4752,7 +6472,11 @@
       "hizb": 54,
       "quarter": 216,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 432,
@@ -4763,7 +6487,11 @@
       "hizb": 54,
       "quarter": 216,
       "juz": 27,
-      "naqza": 18
+      "naqza": 18,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 433,
@@ -4774,7 +6502,11 @@
       "hizb": 55,
       "quarter": 217,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 434,
@@ -4785,7 +6517,11 @@
       "hizb": 55,
       "quarter": 217,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 435,
@@ -4796,7 +6532,11 @@
       "hizb": 55,
       "quarter": 218,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 436,
@@ -4807,7 +6547,11 @@
       "hizb": 55,
       "quarter": 218,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 437,
@@ -4818,7 +6562,11 @@
       "hizb": 55,
       "quarter": 219,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 438,
@@ -4829,7 +6577,11 @@
       "hizb": 55,
       "quarter": 219,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 439,
@@ -4840,7 +6592,11 @@
       "hizb": 55,
       "quarter": 220,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 440,
@@ -4851,7 +6607,11 @@
       "hizb": 55,
       "quarter": 220,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 11,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "حم تنزيل الكتاب من الله العزيز"
     },
     {
       "id": 441,
@@ -4862,7 +6622,11 @@
       "hizb": 56,
       "quarter": 221,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 442,
@@ -4873,7 +6637,11 @@
       "hizb": 56,
       "quarter": 221,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 443,
@@ -4884,7 +6652,11 @@
       "hizb": 56,
       "quarter": 222,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 444,
@@ -4895,7 +6667,11 @@
       "hizb": 56,
       "quarter": 222,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 445,
@@ -4906,7 +6682,11 @@
       "hizb": 56,
       "quarter": 223,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 446,
@@ -4917,7 +6697,11 @@
       "hizb": 56,
       "quarter": 223,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 447,
@@ -4928,7 +6712,11 @@
       "hizb": 56,
       "quarter": 224,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 448,
@@ -4939,7 +6727,11 @@
       "hizb": 56,
       "quarter": 224,
       "juz": 28,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 449,
@@ -4950,7 +6742,11 @@
       "hizb": 57,
       "quarter": 225,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 450,
@@ -4961,7 +6757,11 @@
       "hizb": 57,
       "quarter": 225,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 451,
@@ -4972,7 +6772,11 @@
       "hizb": 57,
       "quarter": 226,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 452,
@@ -4983,7 +6787,11 @@
       "hizb": 57,
       "quarter": 226,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 453,
@@ -4994,7 +6802,11 @@
       "hizb": 57,
       "quarter": 227,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 454,
@@ -5005,7 +6817,11 @@
       "hizb": 57,
       "quarter": 227,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 455,
@@ -5016,7 +6832,11 @@
       "hizb": 57,
       "quarter": 228,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 456,
@@ -5027,7 +6847,11 @@
       "hizb": 57,
       "quarter": 228,
       "juz": 29,
-      "naqza": 19
+      "naqza": 19,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 457,
@@ -5038,7 +6862,11 @@
       "hizb": 58,
       "quarter": 229,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 458,
@@ -5049,7 +6877,11 @@
       "hizb": 58,
       "quarter": 229,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 459,
@@ -5060,7 +6892,11 @@
       "hizb": 58,
       "quarter": 230,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 460,
@@ -5071,7 +6907,11 @@
       "hizb": 58,
       "quarter": 230,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 461,
@@ -5082,7 +6922,11 @@
       "hizb": 58,
       "quarter": 231,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 462,
@@ -5093,7 +6937,11 @@
       "hizb": 58,
       "quarter": 231,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 463,
@@ -5104,7 +6952,11 @@
       "hizb": 58,
       "quarter": 232,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 464,
@@ -5115,7 +6967,11 @@
       "hizb": 58,
       "quarter": 232,
       "juz": 29,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 465,
@@ -5126,7 +6982,11 @@
       "hizb": 59,
       "quarter": 233,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 466,
@@ -5137,7 +6997,11 @@
       "hizb": 59,
       "quarter": 233,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 467,
@@ -5148,7 +7012,11 @@
       "hizb": 59,
       "quarter": 234,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 468,
@@ -5159,7 +7027,11 @@
       "hizb": 59,
       "quarter": 234,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 469,
@@ -5170,7 +7042,11 @@
       "hizb": 59,
       "quarter": 235,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 470,
@@ -5181,7 +7057,11 @@
       "hizb": 59,
       "quarter": 235,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 471,
@@ -5192,7 +7072,11 @@
       "hizb": 59,
       "quarter": 236,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 472,
@@ -5203,7 +7087,11 @@
       "hizb": 59,
       "quarter": 236,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 473,
@@ -5214,7 +7102,11 @@
       "hizb": 60,
       "quarter": 237,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 474,
@@ -5225,7 +7117,11 @@
       "hizb": 60,
       "quarter": 237,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 475,
@@ -5236,7 +7132,11 @@
       "hizb": 60,
       "quarter": 238,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 476,
@@ -5247,7 +7147,11 @@
       "hizb": 60,
       "quarter": 238,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 477,
@@ -5258,7 +7162,11 @@
       "hizb": 60,
       "quarter": 239,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 478,
@@ -5269,7 +7177,11 @@
       "hizb": 60,
       "quarter": 239,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 479,
@@ -5280,7 +7192,11 @@
       "hizb": 60,
       "quarter": 240,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     },
     {
       "id": 480,
@@ -5291,7 +7207,11 @@
       "hizb": 60,
       "quarter": 240,
       "juz": 30,
-      "naqza": 20
+      "naqza": 20,
+      "fiveHizbGroup": 12,
+      "quranQuarter": 4,
+      "quranHalf": 2,
+      "fiveHizbLabel": "يسبح لله ما في السماوات"
     }
   ]
 }
