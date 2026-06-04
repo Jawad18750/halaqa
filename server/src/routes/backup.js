@@ -45,7 +45,7 @@ router.get('/export', async (req, res) => {
     const user = userQ.rows[0] || null
 
     const studentsQ = await pool.query(
-      `select id, number, name, current_naqza, photo_url, date_of_birth, qr_token, created_at, updated_at
+      `select id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, qr_token, created_at, updated_at
        from students where user_id=$1 order by number asc`,
       [req.user.id]
     )
@@ -200,19 +200,20 @@ router.post('/import', async (req, res) => {
       const dob = s.date_of_birth || null
       const qrToken = s.qr_token || crypto.randomUUID().replace(/-/g, '')
       const result = await client.query(
-        `insert into students(id, user_id, number, name, current_naqza, photo_url, date_of_birth, qr_token, created_at, updated_at)
-         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        `insert into students(id, user_id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, qr_token, created_at, updated_at)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          on conflict (id) do update set
            number=excluded.number,
            name=excluded.name,
            current_naqza=excluded.current_naqza,
+           memorization_thumun_id=excluded.memorization_thumun_id,
            photo_url=excluded.photo_url,
            date_of_birth=excluded.date_of_birth,
            qr_token=coalesce(students.qr_token, excluded.qr_token),
            updated_at=excluded.updated_at
          where students.user_id = excluded.user_id
          returning xmax = 0 as inserted`,
-        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, photoUrl, dob, qrToken, created, updated]
+        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, s.memorization_thumun_id ?? null, photoUrl, dob, qrToken, created, updated]
       )
       if (!result.rowCount) {
         stats.students.skipped++
@@ -235,13 +236,13 @@ router.post('/import', async (req, res) => {
         `insert into sessions(
            id, student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
            selected_five_hizb, selected_quran_quarter, selected_quran_half,
-           thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score,
+           thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score, test_try_number,
            attempt_at, created_at, updated_at
          ) values (
            $1,$2,$3,$4,$5,$6,$7,
            $8,$9,$10,
-           $11,$12,$13,$14,$15,$16,$17,$18,$19,
-           $20,$21,$22
+           $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+           $21,$22,$23
          )
          on conflict (id) do update set
            week_start_date=excluded.week_start_date,
@@ -261,15 +262,16 @@ router.post('/import', async (req, res) => {
            taradud_count=excluded.taradud_count,
            passed=excluded.passed,
            score=excluded.score,
+           test_try_number=excluded.test_try_number,
            attempt_at=excluded.attempt_at,
            updated_at=excluded.updated_at
          where exists (
            select 1 from students st
-           where st.id = sessions.student_id and st.user_id = $23
+           where st.id = sessions.student_id and st.user_id = $24
          )
          and exists (
            select 1 from students st
-           where st.id = excluded.student_id and st.user_id = $23
+           where st.id = excluded.student_id and st.user_id = $24
          )
          returning xmax = 0 as inserted`,
         [
@@ -292,6 +294,7 @@ router.post('/import', async (req, res) => {
           sess.taradud_count ?? 0,
           sess.passed ?? false,
           sess.score ?? 0,
+          sess.test_try_number ?? 1,
           sess.attempt_at || created,
           created,
           updated,

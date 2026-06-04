@@ -130,6 +130,18 @@ export function formatLocaleDateTime(iso) {
   }
 }
 
+export function formatMemorizationFromThumun(thumunId, thumuns) {
+  const id = Number(thumunId)
+  if (!id) return ''
+  const t = (thumuns || []).find(x => Number(x.id) === id)
+  if (!t) return `ثمن ${id}`
+  const surah = t.surah || ''
+  const name = t.name || ''
+  if (surah && name) return `سورة ${surah} — ثمن ${id} (${name})`
+  if (surah) return `سورة ${surah} — ثمن ${id}`
+  return name ? `ثمن ${id} — ${name}` : `ثمن ${id}`
+}
+
 export function formatThumunId(id, thumuns) {
   const t = (thumuns || []).find(x => x.id === Number(id))
   if (!t) return String(id ?? '—')

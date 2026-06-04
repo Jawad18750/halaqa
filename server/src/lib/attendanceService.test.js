@@ -89,6 +89,7 @@ test('attendance report shows partial absence separately from today missing', ()
 test('weekly guardian message lists each study day present or absent', () => {
   const text = buildWeeklyAttendanceGuardianMessage({
     studentName: 'سيف الدين',
+    student: { memorization_thumun_id: 1 },
     summary: { from: '2026-05-30', to: '2026-06-05', presentCount: 0, absentCount: 5, studyDayCount: 5 },
     statuses: [
       { date: '2026-05-30', status: 'absent' },
@@ -102,6 +103,7 @@ test('weekly guardian message lists each study day present or absent', () => {
     sheikhName: 'أحمد فتحي',
     masjidName: 'مسجد الشبش',
   })
+  assert.match(text, /مستوى الحفظ/)
   assert.match(text, /📅 التفصيل:/)
   assert.match(text, /❌.*— غائب/)
   assert.match(text, /⏸.*— عطلة/)

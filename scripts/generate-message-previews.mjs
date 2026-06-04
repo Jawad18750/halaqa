@@ -6,6 +6,7 @@
 import { buildInviteMessageForChannel, inviteChannelToast } from '../quran-tester-app/src/lib/guardianInvite.js'
 import { appendSignatureFooter, buildHalaqaSignature } from '../quran-tester-app/src/lib/messageContext.js'
 import { buildSessionResultMessage } from '../server/src/lib/sessionMessage.js'
+import { buildWeeklyAttendanceGuardianMessage } from '../server/src/lib/attendanceService.js'
 
 const ctx = {
   sheikhName: 'عبدالرحمن الغرياني',
@@ -82,15 +83,40 @@ section(1, 'Telegram/copy guardian invitation', buildInviteMessageForChannel('te
 section(2, 'WhatsApp guardian invitation', buildInviteMessageForChannel('whatsapp', inviteParams))
 section(3, 'SMS guardian invitation', buildInviteMessageForChannel('sms', inviteParams))
 
-section(4, 'Successful automatic test result', buildSessionResultMessage({
+const sampleStudent = { memorization_thumun_id: 142 }
+const sampleSessionPass = {
+  passed: true,
+  score: 85,
+  mode: 'naqza',
+  thumun_id: 1,
+  naqza: 1,
+  test_try_number: 2,
+  attempt_at: '2026-05-31T15:30:00.000Z',
+}
+
+section(4, 'Successful automatic test result (memorization + qalam)', buildSessionResultMessage({
   studentName: 'محمد أحمد',
-  session: { passed: true, score: 85, mode: 'naqza', thumun_id: 1, naqza: 1, attempt_at: '2026-05-31T15:30:00.000Z' },
+  student: sampleStudent,
+  session: sampleSessionPass,
   ...ctx,
 }))
 
 section(5, 'Needs-review automatic test result', buildSessionResultMessage({
   studentName: 'محمد أحمد',
-  session: { passed: false, score: 45, mode: 'juz', thumun_id: 2, attempt_at: '2026-05-31T15:30:00.000Z' },
+  student: sampleStudent,
+  session: { passed: false, score: 45, mode: 'juz', thumun_id: 2, test_try_number: 1, attempt_at: '2026-05-31T15:30:00.000Z' },
+  ...ctx,
+}))
+
+section('4b', 'Weekly guardian attendance (with memorization, no qalam)', buildWeeklyAttendanceGuardianMessage({
+  studentName: 'محمد أحمد',
+  student: sampleStudent,
+  summary: { from: '2026-05-30', to: '2026-06-05', presentCount: 3, absentCount: 2, studyDayCount: 5 },
+  statuses: [
+    { date: '2026-05-30', status: 'present' },
+    { date: '2026-05-31', status: 'absent' },
+    { date: '2026-06-01', status: 'present' },
+  ],
   ...ctx,
 }))
 

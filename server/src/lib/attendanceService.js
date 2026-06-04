@@ -1,4 +1,6 @@
 import { pool } from './db.js'
+import { loadThumunData } from './thumunData.js'
+import { formatMemorizationLines } from './memorizationContext.js'
 import {
   getCalendarSettings,
   getCalendarStatus,
@@ -65,7 +67,7 @@ export async function buildAttendanceOverview(userId, { from, to } = {}) {
 
   const [studentsQ, recordsQ] = await Promise.all([
     pool.query(
-      `select id, number, name
+      `select id, number, name, memorization_thumun_id
        from students where user_id=$1 order by number asc`,
       [userId]
     ),
@@ -103,6 +105,7 @@ export async function buildAttendanceOverview(userId, { from, to } = {}) {
       id: student.id,
       number: student.number,
       name: student.name,
+      memorization_thumun_id: student.memorization_thumun_id,
       presentCount,
       absentCount,
       studyDayCount: countedStudyDays.length,
@@ -189,6 +192,7 @@ export function formatWeeklyAttendanceDayDetails(statuses = []) {
 
 export function buildWeeklyAttendanceGuardianMessage({
   studentName,
+  student,
   summary,
   statuses = [],
   sheikhName,
@@ -198,9 +202,17 @@ export function buildWeeklyAttendanceGuardianMessage({
     .filter(Boolean)
     .join('\n')
   const dayLines = formatWeeklyAttendanceDayDetails(statuses)
+  let thumuns = []
+  try {
+    thumuns = loadThumunData().list || []
+  } catch {
+    thumuns = []
+  }
+  const memorizationLines = formatMemorizationLines(student || {}, thumuns)
   const blocks = [
     '📋 ملخص حضور الأسبوع',
     `الطالب: ${studentName}`,
+    ...memorizationLines,
     `من ${summary.from} إلى ${summary.to}`,
     formatWeeklyAttendanceLine(summary),
     '',

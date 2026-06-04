@@ -12,6 +12,7 @@ import {
   emptyFilterHint,
   resultLabel,
   gradeLabel,
+  formatMemorizationFromThumun,
 } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import StatTile from './ui/StatTile.jsx'
@@ -78,6 +79,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [showManualPick, setShowManualPick] = useState(false)
   const [manualQuery, setManualQuery] = useState('')
   const [draftRestored, setDraftRestored] = useState(false)
+  const [testTryNumber, setTestTryNumber] = useState(1)
   const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
@@ -227,6 +229,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         taradudCount: taradud,
         passed,
         score,
+        testTryNumber,
       })
       const updated = res?.student ?? await refreshStudent()
       if (updated) onStudentUpdated?.(updated)
@@ -282,6 +285,11 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
             </select>
           </label>
           <p className="test-student-bar__hint meta">عند النجاح تتقدّم النقزة الحالية تلقائياً (+1) — في كل الأوضاع</p>
+          {student.memorization_thumun_id != null && (
+            <p className="test-student-bar__mem meta">
+              مستوى الحفظ: {formatMemorizationFromThumun(student.memorization_thumun_id, thumuns)}
+            </p>
+          )}
         </div>
       </div>
 
@@ -419,6 +427,32 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
       )}
 
       <SectionCard title="3. تسجيل الأداء">
+        <label className="field test-qalam-field">
+          <span className="field__label">القلم (محاولة الاختبار)</span>
+          <p className="field__hint meta">رقم المحاولة لهذا الاختبار الأسبوعي — لا يُربط بمستوى الحفظ</p>
+          <div className="test-qalam-stepper cluster">
+            <button
+              type="button"
+              className="btn"
+              aria-label="تقليل"
+              disabled={testTryNumber <= 1 || saving}
+              onClick={() => setTestTryNumber(n => Math.max(1, n - 1))}
+            >
+              −
+            </button>
+            <span className="test-qalam-stepper__value">{testTryNumber}</span>
+            <button
+              type="button"
+              className="btn"
+              aria-label="زيادة"
+              disabled={testTryNumber >= 9 || saving}
+              onClick={() => setTestTryNumber(n => Math.min(9, n + 1))}
+            >
+              +
+            </button>
+          </div>
+        </label>
+
         <div className="counter-row">
           <div className="counter-block counter-block--touch">
             <div className="info-label">الفتحة</div>

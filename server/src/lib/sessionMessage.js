@@ -1,5 +1,6 @@
 import { loadThumunData } from './thumunData.js'
 import { buildHalaqaSignature, formatArabicDateTime, joinMessageBlocks } from './messageContext.js'
+import { formatMemorizationLines, formatQalamLine } from './memorizationContext.js'
 
 const AUTO_DISCLAIMER = 'هذه رسالة تلقائية لمتابعة مستوى الطالب، ولا يلزم الرد عليها.'
 
@@ -47,33 +48,41 @@ function buildTestDetails(session, thumuns) {
   if (mode && thumn && naqza) {
     if (thumn === naqza) {
       return [
-        '📖 تفاصيل الاختبار:',
+        '📖 تفاصيل اختبار الحلقة:',
         `نوع الاختبار: ${mode}`,
+        `الثمن: ${thumn}`,
         `النقزة: ${naqza}`,
       ].join('\n')
     }
     return [
-      '📖 تفاصيل الاختبار:',
+      '📖 تفاصيل اختبار الحلقة:',
       `نوع الاختبار: ${mode}`,
-      `الموضع: ${thumn}`,
+      `الثمن: ${thumn}`,
       `النقزة: ${naqza}`,
     ].join('\n')
   }
   if (mode && thumn) {
     return [
-      '📖 تفاصيل الاختبار:',
+      '📖 تفاصيل اختبار الحلقة:',
       `نوع الاختبار: ${mode}`,
-      `الموضع: ${thumn}`,
+      `الثمن: ${thumn}`,
     ].join('\n')
   }
   const location = thumn || naqza || mode
   if (location) {
-    return `📖 موضع الاختبار: ${location}`
+    return `📖 تفاصيل اختبار الحلقة: ${location}`
   }
   return ''
 }
 
-export function buildSessionResultMessage({ studentName, session, sheikhName, masjidName, attendanceLine }) {
+export function buildSessionResultMessage({
+  studentName,
+  student,
+  session,
+  sheikhName,
+  masjidName,
+  attendanceLine,
+}) {
   let thumuns = []
   try {
     thumuns = loadThumunData().list || []
@@ -81,6 +90,7 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
     thumuns = []
   }
 
+  const studentRow = student || {}
   const passed = Boolean(session.passed)
   const score = Number(session.score || 0)
   const grade = gradeLabel(score)
@@ -88,10 +98,23 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
   const date = formatArabicDateTime(session.attempt_at || session.created_at)
   const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
 
-  const resultLine = passed ? 'النتيجة: (ناجح)' : 'النتيجة: (لم ينجح)'
-  const scoreLine = passed
-    ? `الدرجة: ${score} — ${grade}`
-    : `الدرجة: ${score}`
+  const memorizationLines = formatMemorizationLines(studentRow, thumuns)
+  const qalamLine = formatQalamLine(session)
+
+  const resultStatus = passed ? 'ناجح' : 'لم ينجح'
+  const headerLines = [
+    `الطالب: ${studentName}`,
+    ...memorizationLines,
+  ]
+  if (qalamLine) headerLines.push(qalamLine)
+
+  const resultBlock = [
+    'نتيجة الحلقة:',
+    `التاريخ: ${date}`,
+    `النتيجة: ${resultStatus}`,
+    `الدرجة: ${score}`,
+    `ملاحظات: ${grade}`,
+  ]
 
   const closing = passed
     ? `🤲 بارك الله في ${studentName}، وزاده إتقانًا وثباتًا.`
@@ -99,14 +122,10 @@ export function buildSessionResultMessage({ studentName, session, sheikhName, ma
 
   return joinMessageBlocks([
     '📋 نتيجة اختبار القرآن الكريم',
-    [
-      `الطالب: ${studentName}`,
-      resultLine,
-      scoreLine,
-    ],
+    headerLines,
+    resultBlock.join('\n'),
     testDetails,
     attendanceLine || '',
-    `التاريخ: ${date}`,
     AUTO_DISCLAIMER,
     halaqaFooter,
     closing,

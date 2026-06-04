@@ -27,9 +27,11 @@ const upload = multer({
   }
 })
 
+const STUDENT_COLUMNS = 'id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, created_at, updated_at'
+
 router.get('/', async (req, res) => {
   const { rows } = await pool.query(
-    'select id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at from students where user_id=$1 order by number asc',
+    `select ${STUDENT_COLUMNS} from students where user_id=$1 order by number asc`,
     [req.user.id]
   )
   res.json({ students: rows })
@@ -43,7 +45,7 @@ router.post('/', async (req, res) => {
     const { rows } = await pool.query(
       `insert into students(user_id, number, name, qr_token)
        values($1, $2, $3, $4)
-       returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+       returning ${STUDENT_COLUMNS}`,
       [req.user.id, number, name, qrToken]
     )
     res.status(201).json({ student: rows[0] })
@@ -55,7 +57,7 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params
-  const { number, name, current_naqza, date_of_birth, photo_url } = req.body || {}
+  const { number, name, current_naqza, memorization_thumun_id, date_of_birth, photo_url } = req.body || {}
   try {
     console.log('[students.patch]', id, req.body)
     const fields = []
@@ -64,12 +66,16 @@ router.patch('/:id', async (req, res) => {
     if (number !== undefined) { fields.push(`number=$${idx++}`); vals.push(number) }
     if (name !== undefined) { fields.push(`name=$${idx++}`); vals.push(name) }
     if (current_naqza !== undefined) { fields.push(`current_naqza=$${idx++}`); vals.push(current_naqza) }
+    if (memorization_thumun_id !== undefined) {
+      fields.push(`memorization_thumun_id=$${idx++}`)
+      vals.push(memorization_thumun_id === '' || memorization_thumun_id == null ? null : Number(memorization_thumun_id))
+    }
     if (date_of_birth !== undefined) { fields.push(`date_of_birth=$${idx++}`); vals.push(date_of_birth || null) }
     if (photo_url !== undefined) { fields.push(`photo_url=$${idx++}`); vals.push(photo_url || null) }
     if (!fields.length) return res.status(400).json({ error: 'no fields to update' })
     vals.push(req.user.id); vals.push(id)
     const { rows } = await pool.query(
-      `update students set ${fields.join(', ')}, updated_at=now() where user_id=$${idx++} and id=$${idx++} returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+      `update students set ${fields.join(', ')}, updated_at=now() where user_id=$${idx++} and id=$${idx++} returning ${STUDENT_COLUMNS}`,
       vals
     )
     if (!rows.length) return res.status(404).json({ error: 'not found' })
@@ -116,7 +122,7 @@ router.post('/:id/photo', upload.single('photo'), async (req, res) => {
     const photoUrl = `${baseUrl}/avatar-256.jpg?v=${Date.now()}`
     const { rows } = await pool.query(
       `update students set photo_url=$1, updated_at=now() where id=$2 and user_id=$3
-       returning id, number, name, current_naqza, photo_url, date_of_birth, created_at, updated_at`,
+       returning ${STUDENT_COLUMNS}`,
       [photoUrl, id, req.user.id]
     )
     return res.json({

@@ -16,6 +16,8 @@ import GuardianInvitePanel from './ui/GuardianInvitePanel.jsx'
 import GuardianInviteModal from './ui/GuardianInviteModal.jsx'
 import AvatarCropper from './AvatarCropper.jsx'
 import Toast from './ui/Toast.jsx'
+import MemorizationFields from './ui/MemorizationFields.jsx'
+import { formatMemorizationFromThumun } from '../lib/labels.js'
 
 const ADD_STUDENT_STEPS = [
   { id: 1, label: 'بيانات' },
@@ -78,6 +80,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
   const [name, setName] = useState('')
   const [dobAdd, setDobAdd] = useState('')
   const [addNaqza, setAddNaqza] = useState(20)
+  const [memorizationThumunId, setMemorizationThumunId] = useState(null)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
   const [pendingFile, setPendingFile] = useState(null)
@@ -216,6 +219,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
         if (dateOnly) updates.date_of_birth = dateOnly
       }
       if (Number(addNaqza) !== 20) updates.current_naqza = Number(addNaqza)
+      if (memorizationThumunId != null) updates.memorization_thumun_id = Number(memorizationThumunId)
       if (Object.keys(updates).length) {
         await students.update(newStudent.id, updates)
         Object.assign(newStudent, updates)
@@ -351,13 +355,20 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
                   <input className="input" type="date" value={dobAdd} onChange={e => { setDobAdd(e.target.value); markDirty() }} />
                 </label>
                 <label className="field">
-                  <span className="field__label">النقزة الحالية</span>
+                  <span className="field__label">النقزة الحالية (للاختبار)</span>
                   <select className="input" value={addNaqza} onChange={e => { setAddNaqza(Number(e.target.value)); markDirty() }}>
                     {naqzaLabels.map((label, i) => (
                       <option key={i + 1} value={i + 1}>{i + 1} — {label}</option>
                     ))}
                   </select>
                 </label>
+
+                <MemorizationFields
+                  thumuns={thumuns}
+                  value={memorizationThumunId}
+                  onChange={v => { setMemorizationThumunId(v); markDirty() }}
+                  idPrefix="add-student-mem"
+                />
 
                 <div className="add-student-photo">
                   <button type="button" className="add-student-photo__tap" onClick={() => document.getElementById('add-student-photo-input')?.click()}>
@@ -409,6 +420,9 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
                   naqzaLabels={naqzaLabels}
                 />
                 {dobAdd && <p className="meta">تاريخ الميلاد: {dobAdd}</p>}
+                {memorizationThumunId != null && (
+                  <p className="meta">مستوى الحفظ: {formatMemorizationFromThumun(memorizationThumunId, thumuns)}</p>
+                )}
                 <h4 className="add-student-step__sub">أولياء الأمور ({reviewGuardians.length})</h4>
                 {reviewGuardians.length === 0 ? (
                   <div className="add-student-review-empty">

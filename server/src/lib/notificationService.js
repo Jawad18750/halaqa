@@ -146,6 +146,7 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
         status: 'skipped_no_recipient',
         messagePreview: buildSessionResultMessage({
           studentName,
+          student: studentRow,
           session: sessionRow,
           sheikhName: settings?.sheikh_name,
           masjidName: settings?.masjid_name,
@@ -158,6 +159,7 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
     const settings = await getUserSettings(userId)
     const text = buildSessionResultMessage({
       studentName,
+      student: studentRow,
       session: sessionRow,
       sheikhName: settings?.sheikh_name,
       masjidName: settings?.masjid_name,
@@ -217,7 +219,8 @@ export async function sendWeeklyAttendanceNotifications({ userId, from, to } = {
   const stats = { sent: 0, failed: 0, noLink: 0, optOut: 0, skipped: 0, eligible: 0 }
 
   const { rows } = await pool.query(
-    `select gs.student_id, gs.guardian_id, gt.telegram_chat_id, gt.opt_out, st.name as student_name
+    `select gs.student_id, gs.guardian_id, gt.telegram_chat_id, gt.opt_out,
+            st.name as student_name, st.memorization_thumun_id
      from guardian_students gs
      join guardians g on g.id = gs.guardian_id and g.user_id = $1
      join students st on st.id = gs.student_id and st.user_id = $1
@@ -244,6 +247,7 @@ export async function sendWeeklyAttendanceNotifications({ userId, from, to } = {
     }
     const text = buildWeeklyAttendanceGuardianMessage({
       studentName: row.student_name,
+      student: { memorization_thumun_id: row.memorization_thumun_id },
       summary,
       statuses: student.statuses,
       sheikhName: settings?.sheikh_name,

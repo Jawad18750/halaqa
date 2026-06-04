@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { attendance, notifications } from '../api'
-import { formatRangeLabel, formatLatn } from '../lib/labels.js'
+import { formatRangeLabel, formatLatn, formatMemorizationFromThumun } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import DateRangePanel from './ui/DateRangePanel.jsx'
 import StatTile from './ui/StatTile.jsx'
@@ -173,7 +173,12 @@ function AttendanceListToolbar({
   )
 }
 
-function AttendanceMobileList({ students, today, emptyTitle, emptyMessage }) {
+function memorizationLabel(student, thumuns) {
+  if (!student?.memorization_thumun_id) return '—'
+  return formatMemorizationFromThumun(student.memorization_thumun_id, thumuns) || `ثمن ${student.memorization_thumun_id}`
+}
+
+function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumuns }) {
   if (!students.length) {
     return (
       <EmptyState
@@ -195,6 +200,9 @@ function AttendanceMobileList({ students, today, emptyTitle, emptyMessage }) {
               {student.presentCount}/{student.studyDayCount}
             </span>
           </header>
+          {student.memorization_thumun_id != null && (
+            <p className="meta attendance-mobile-card__mem">{memorizationLabel(student, thumuns)}</p>
+          )}
           <ul className="attendance-mobile-card__days">
             {student.statuses
               .filter(status => status.status !== 'closed')
@@ -220,7 +228,7 @@ function AttendanceMobileList({ students, today, emptyTitle, emptyMessage }) {
   )
 }
 
-function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage }) {
+function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage, thumuns }) {
   if (!students.length) {
     return (
       <EmptyState
@@ -253,6 +261,7 @@ function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage }
                 </th>
               )
             })}
+            <th scope="col">مستوى الحفظ</th>
             <th scope="col">الحضور</th>
           </tr>
         </thead>
@@ -275,6 +284,9 @@ function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage }
                   </td>
                 )
               })}
+              <td className="attendance-grid__mem meta">
+                {memorizationLabel(student, thumuns)}
+              </td>
               <td className="attendance-grid__summary">
                 <span className="attendance-grid__ratio">{student.presentCount}/{student.studyDayCount}</span>
               </td>
@@ -286,7 +298,7 @@ function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage }
   )
 }
 
-export default function AttendanceOverview({ onBack }) {
+export default function AttendanceOverview({ onBack, thumuns = [] }) {
   const initialFrom = weekStartSaturday()
   const [from, setFrom] = useState(initialFrom)
   const [to, setTo] = useState(addDays(initialFrom, 6))
@@ -492,6 +504,7 @@ export default function AttendanceOverview({ onBack }) {
                 today={data?.today}
                 emptyTitle={gridEmptyTitle}
                 emptyMessage={gridEmptyMessage}
+                thumuns={thumuns}
               />
             </div>
             <AttendanceGridTable
@@ -500,6 +513,7 @@ export default function AttendanceOverview({ onBack }) {
               today={data?.today}
               emptyTitle={gridEmptyTitle}
               emptyMessage={gridEmptyMessage}
+              thumuns={thumuns}
             />
           </>
         )}

@@ -9,7 +9,9 @@ import {
   formatLocaleDateTime,
   formatAttemptDate,
   buildNaqzaLabels,
+  formatMemorizationFromThumun,
 } from '../lib/labels.js'
+import MemorizationFields from './ui/MemorizationFields.jsx'
 import PageHeader from './ui/PageHeader.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 import EmptyState from './ui/EmptyState.jsx'
@@ -44,6 +46,12 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   const [dob, setDob] = useState(toDateOnly(student?.date_of_birth))
   useEffect(() => { setDob(toDateOnly(student?.date_of_birth)) }, [student?.date_of_birth])
 
+  const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
+  const [memSaving, setMemSaving] = useState(false)
+  useEffect(() => {
+    setMemorizationThumunId(student?.memorization_thumun_id ?? null)
+  }, [student?.id, student?.memorization_thumun_id])
+
   const [photoUrl, setPhotoUrl] = useState(student?.photo_url || '')
   useEffect(() => {
     try {
@@ -56,6 +64,8 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   const naqzaLabels = buildNaqzaLabels(thumuns)
   const currentNaqzaLabel = formatNaqza(student?.current_naqza, thumuns, naqzaLabels)
   const stats = useMemo(() => computeStudentStats(list), [list])
+  const memValue = v => (v == null || v === '' ? null : Number(v))
+  const memDirty = memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
 
   async function load() {
     setLoading(true); setError('')
@@ -65,6 +75,22 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
     } catch (e) { setError(e.message) } finally { setLoading(false) }
   }
   useEffect(() => { load() }, [student?.id])
+
+  async function saveMemorization() {
+    setMemSaving(true)
+    setError('')
+    try {
+      const { student: s } = await students.update(student.id, {
+        memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
+      })
+      onStudentUpdated?.({ ...student, ...s })
+      showToast('تم حفظ مستوى الحفظ')
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setMemSaving(false)
+    }
+  }
 
   async function saveDob() {
     try {
@@ -202,6 +228,30 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
       )}
 
       <div className="profile-sections">
+        <SectionCard title="مستوى الحفظ (التسميع)" className="profile-sections__memorization">
+          <MemorizationFields
+            thumuns={thumuns}
+            value={memorizationThumunId}
+            onChange={setMemorizationThumunId}
+            disabled={memSaving}
+            idPrefix="profile-mem"
+          />
+          {memorizationThumunId != null && (
+            <p className="meta" style={{ marginTop: 8 }}>
+              {formatMemorizationFromThumun(memorizationThumunId, thumuns)}
+            </p>
+          )}
+          <button
+            type="button"
+            className="btn btn--primary"
+            style={{ marginTop: 12 }}
+            disabled={memSaving || !memDirty}
+            onClick={saveMemorization}
+          >
+            {memSaving ? 'جاري الحفظ…' : 'حفظ مستوى الحفظ'}
+          </button>
+        </SectionCard>
+
         <SectionCard title="أولياء الأمور" className="profile-sections__guardians">
           <GuardianSection student={student} onToast={showToast} />
         </SectionCard>

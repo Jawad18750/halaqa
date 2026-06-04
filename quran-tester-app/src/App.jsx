@@ -249,7 +249,7 @@ export default function App() {
           <Attendance onBack={goDashboard} onPrint={() => navigate('qrcodes')} />
         )}
         {view === 'attendanceLog' && (
-          <AttendanceOverview onBack={goDashboard} />
+          <AttendanceOverview onBack={goDashboard} thumuns={thumuns} />
         )}
         {view === 'qrcodes' && (
           <QRPrint user={user} onBack={goDashboard} />
