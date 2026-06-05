@@ -42,15 +42,19 @@ export default function MemorizationFields({
 
   const [surahFilter, setSurahFilter] = useState('')
 
-  const results = useMemo(() => {
-    if (!pickerOpen) return []
+  const { results, totalHits, surahOnly } = useMemo(() => {
+    if (!pickerOpen) return { results: [], totalHits: 0, surahOnly: false }
     const q = normalizeQuery(query)
-    if (!q && !surahFilter) return []
+    if (!q && !surahFilter) return { results: [], totalHits: 0, surahOnly: false }
+
+    const onlySurah = Boolean(surahFilter && !q)
     const hits = thumuns.filter(t => {
-      if (surahFilter && !q) return t.surah === surahFilter
+      if (onlySurah) return t.surah === surahFilter
       return matchesThumun(t, q, surahFilter || null)
     })
-    return hits.slice(0, RESULT_LIMIT)
+    const sorted = onlySurah ? [...hits].sort((a, b) => a.id - b.id) : hits
+    const capped = onlySurah ? sorted : sorted.slice(0, RESULT_LIMIT)
+    return { results: capped, totalHits: hits.length, surahOnly: onlySurah }
   }, [thumuns, query, surahFilter, pickerOpen])
 
   const resultHint = useMemo(() => {
@@ -58,13 +62,10 @@ export default function MemorizationFields({
     const q = normalizeQuery(query)
     if (!q && !surahFilter) return 'ابحث برقم الثمن أو اسم السورة، أو اختر سورة من القائمة'
     if (!results.length) return 'لا نتائج — جرّب رقمًا أو كلمة أخرى'
-    const total = thumuns.filter(t => {
-      if (surahFilter && !q) return t.surah === surahFilter
-      return matchesThumun(t, q, surahFilter || null)
-    }).length
-    if (total > RESULT_LIMIT) return `عرض ${RESULT_LIMIT} من ${total} — دقّق البحث`
-    return `${total} نتيجة`
-  }, [pickerOpen, query, surahFilter, results.length, thumuns])
+    if (surahOnly) return `${totalHits} ثمن في ${surahFilter}`
+    if (totalHits > RESULT_LIMIT) return `عرض ${RESULT_LIMIT} من ${totalHits} — دقّق البحث`
+    return `${totalHits} نتيجة`
+  }, [pickerOpen, query, surahFilter, results.length, totalHits, surahOnly])
 
   useEffect(() => {
     if (pickerOpen) {

@@ -3717,7 +3717,7 @@ select.input { appearance: none; }
   padding: 0;
   display: grid;
   gap: 6px;
-  max-height: min(50vh, 360px);
+  max-height: min(55vh, 420px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
