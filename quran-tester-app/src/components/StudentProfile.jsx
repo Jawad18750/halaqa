@@ -9,7 +9,6 @@ import {
   formatLocaleDateTime,
   formatAttemptDate,
   buildNaqzaLabels,
-  formatMemorizationFromThumun,
 } from '../lib/labels.js'
 import MemorizationFields from './ui/MemorizationFields.jsx'
 import PageHeader from './ui/PageHeader.jsx'
@@ -235,12 +234,8 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
             onChange={setMemorizationThumunId}
             disabled={memSaving}
             idPrefix="profile-mem"
+            embedded
           />
-          {memorizationThumunId != null && (
-            <p className="meta" style={{ marginTop: 8 }}>
-              {formatMemorizationFromThumun(memorizationThumunId, thumuns)}
-            </p>
-          )}
           <button
             type="button"
             className="btn btn--primary"

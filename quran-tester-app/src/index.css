@@ -3561,6 +3561,231 @@ select.input { appearance: none; }
   margin-top: var(--space-2);
 }
 
+/* Memorization level picker (profile / add student) */
+.memorization-fields {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.memorization-fields__hint {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.memorization-fields__summary {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-elevated, var(--surface));
+}
+
+.memorization-fields__summary--empty {
+  text-align: center;
+  padding: var(--space-4) var(--space-3);
+}
+
+.memorization-fields__summary--set {
+  gap: var(--space-2);
+}
+
+.memorization-fields__summary-main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.memorization-fields__badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent);
+  font-weight: var(--font-semibold, 600);
+  font-variant-numeric: tabular-nums;
+}
+
+.memorization-fields__summary-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.memorization-fields__surah {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-semibold, 600);
+  color: var(--text);
+}
+
+.memorization-fields__verse {
+  font-size: var(--text-sm, 0.875rem);
+  line-height: 1.5;
+  color: var(--text-muted, var(--muted));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.memorization-fields__summary-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.memorization-fields__empty-label {
+  margin: 0;
+  color: var(--text-muted, var(--muted));
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.memorization-fields__picker {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.memorization-fields__picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.memorization-fields__picker-title {
+  font-weight: var(--font-semibold, 600);
+}
+
+.memorization-fields__picker-close {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+}
+
+.memorization-fields__filters {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.memorization-fields__search-wrap {
+  position: relative;
+  display: block;
+}
+
+.memorization-fields__search-icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted, var(--muted));
+  pointer-events: none;
+  font-size: 0.85rem;
+}
+
+.memorization-fields__search {
+  width: 100%;
+  padding-inline-start: 2.25rem;
+}
+
+.memorization-fields__surah-filter {
+  width: 100%;
+}
+
+.memorization-fields__result-hint {
+  margin: 0;
+  text-align: center;
+}
+
+.memorization-fields__result-hint--idle {
+  padding: var(--space-2) 0;
+}
+
+.memorization-fields__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  max-height: min(50vh, 360px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.memorization-fields__result {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: start;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-elevated, var(--surface));
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.memorization-fields__result:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+.memorization-fields__result--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.memorization-fields__result-id {
+  flex-shrink: 0;
+  font-weight: var(--font-semibold, 600);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.25rem;
+}
+
+.memorization-fields__result-body {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.memorization-fields__result-surah {
+  font-size: 0.78rem;
+  font-weight: var(--font-semibold, 600);
+  color: var(--text-muted, var(--muted));
+}
+
+.memorization-fields__result-name {
+  font-size: var(--text-sm, 0.875rem);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.memorization-fields__result-check {
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.memorization-fields__current-ref {
+  margin: 0;
+  text-align: center;
+}
+
 .test-manual-pick {
   display: grid;
   gap: var(--space-2);
