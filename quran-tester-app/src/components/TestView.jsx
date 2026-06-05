@@ -12,12 +12,13 @@ import {
   emptyFilterHint,
   resultLabel,
   gradeLabel,
-  formatMemorizationFromThumun,
 } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import StatTile from './ui/StatTile.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 import Badge from './ui/Badge.jsx'
+import MemorizationFields from './ui/MemorizationFields.jsx'
+import Toast from './ui/Toast.jsx'
 import TestResultModal from './ui/TestResultModal.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import { pickNextThumun, resetPickDeck, consumeFromPickDeck } from '../lib/thumunPick.js'
@@ -81,6 +82,9 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [draftRestored, setDraftRestored] = useState(false)
   const [testTryNumber, setTestTryNumber] = useState(1)
   const [teacherNotes, setTeacherNotes] = useState('')
+  const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
+  const [memSaving, setMemSaving] = useState(false)
+  const [memToast, setMemToast] = useState('')
   const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
@@ -88,6 +92,13 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   useEffect(() => {
     setTestNaqza(Number(student.current_naqza) || 1)
   }, [student.id, student.current_naqza])
+
+  useEffect(() => {
+    setMemorizationThumunId(student?.memorization_thumun_id ?? null)
+  }, [student?.id, student?.memorization_thumun_id])
+
+  const memValue = v => (v == null || v === '' ? null : Number(v))
+  const memDirty = memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
 
   const filtered = useMemo(() => {
     if (mode === 'naqza') return filterThumuns(thumuns, { mode, naqza: testNaqza })
@@ -187,6 +198,22 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     }
     return null
   }, [student.id, onStudentUpdated])
+
+  async function saveMemorization() {
+    setMemSaving(true)
+    setError('')
+    try {
+      const { student: updated } = await students.update(student.id, {
+        memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
+      })
+      onStudentUpdated?.(updated)
+      setMemToast('تم حفظ مستوى الحفظ')
+    } catch (e) {
+      setError(e?.message || 'تعذر حفظ مستوى الحفظ')
+    } finally {
+      setMemSaving(false)
+    }
+  }
 
   async function handleNaqzaChange(nextRaw) {
     const next = Number(nextRaw)
@@ -288,13 +315,30 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
             </select>
           </label>
           <p className="test-student-bar__hint meta">عند النجاح تتقدّم النقزة الحالية تلقائياً (+1) — في كل الأوضاع</p>
-          {student.memorization_thumun_id != null && (
-            <p className="test-student-bar__mem meta">
-              مستوى الحفظ: {formatMemorizationFromThumun(student.memorization_thumun_id, thumuns)}
-            </p>
-          )}
         </div>
       </div>
+
+      {memToast && <Toast message={memToast} onDone={() => setMemToast('')} />}
+
+      <SectionCard title="مستوى الحفظ (التسميع)" className="test-memorization-section">
+        <MemorizationFields
+          thumuns={thumuns}
+          value={memorizationThumunId}
+          onChange={setMemorizationThumunId}
+          disabled={memSaving || saving}
+          idPrefix="test-mem"
+          embedded
+        />
+        <button
+          type="button"
+          className="btn btn--primary"
+          style={{ marginTop: 12 }}
+          disabled={memSaving || saving || !memDirty}
+          onClick={saveMemorization}
+        >
+          {memSaving ? 'جاري الحفظ…' : 'حفظ مستوى الحفظ'}
+        </button>
+      </SectionCard>
 
       <SectionCard title="1. اختيار الوضع">
         <div className="mode-chips" role="tablist" aria-label="وضع الاختبار">
