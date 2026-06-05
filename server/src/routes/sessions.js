@@ -43,9 +43,10 @@ async function applyNaqzaProgression(studentId, userId) {
 router.post('/', async (req, res) => {
   try {
     console.log('[sessions] incoming body', req.body)
-    const { studentId, mode, selectedNaqza, selectedJuz, thumunId, selectedFiveHizb, selectedQuranQuarter, selectedQuranHalf, testTryNumber } = req.body || {}
+    const { studentId, mode, selectedNaqza, selectedJuz, thumunId, selectedFiveHizb, selectedQuranQuarter, selectedQuranHalf, testTryNumber, teacherNotes } = req.body || {}
     let { fathaPrompts, taradudCount } = req.body || {}
     const testTry = Math.max(1, Math.min(9, Number(testTryNumber ?? 1) || 1))
+    const notesTrimmed = String(teacherNotes ?? '').trim().slice(0, 500) || null
     if (!studentId || !mode || !thumunId) {
       return res.status(400).json({ error: 'missing required fields' })
     }
@@ -110,17 +111,17 @@ router.post('/', async (req, res) => {
           `insert into sessions(
             student_id, week_start_date, attempt_day, mode, selected_naqza, selected_juz,
             selected_five_hizb, selected_quran_quarter, selected_quran_half,
-            thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score, test_try_number
+            thumun_id, surah_number, hizb, juz, naqza, fatha_prompts, taradud_count, passed, score, test_try_number, teacher_notes
           ) values (
             $1,$2,$3,$4,$5,$6,
             $7,$8,$9,
-            $10,$11,$12,$13,$14,$15,$16,$17,$18,$19
+            $10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20
           ) returning *`,
           [
             studentId, weekStart, attemptDay, mode, naqzaSnapshot, selectedJuz ?? null,
             Number(selectedFiveHizb) || null, Number(selectedQuranQuarter) || null, Number(selectedQuranHalf) || null,
             t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
-            fathaPrompts, taradudCount, passed, computedScore, testTry
+            fathaPrompts, taradudCount, passed, computedScore, testTry, notesTrimmed
           ]
         ),
         15000,

@@ -91,6 +91,7 @@ const sampleSessionPass = {
   thumun_id: 1,
   naqza: 1,
   test_try_number: 2,
+  teacher_notes: 'يُنصح بمراجعة آخر صفحتين قبل الاختبار القادم',
   attempt_at: '2026-05-31T15:30:00.000Z',
 }
 

@@ -4,15 +4,6 @@ import { formatMemorizationLines, formatQalamLine } from './memorizationContext.
 
 const AUTO_DISCLAIMER = 'هذه رسالة تلقائية لمتابعة مستوى الطالب، ولا يلزم الرد عليها.'
 
-function gradeLabel(score) {
-  const s = Number(score || 0)
-  if (s >= 90) return 'ممتاز'
-  if (s >= 80) return 'جيد جدًا'
-  if (s >= 70) return 'جيد'
-  if (s >= 60) return 'مقبول'
-  return 'يحتاج إلى متابعة'
-}
-
 function modeLabel(mode) {
   switch (mode) {
     case 'naqza': return 'نقزة'
@@ -92,7 +83,7 @@ export function buildSessionResultMessage({
   const studentRow = student || {}
   const passed = Boolean(session.passed)
   const score = Number(session.score || 0)
-  const grade = gradeLabel(score)
+  const teacherNotes = String(session.teacher_notes || '').trim()
   const testDetails = buildTestDetails(session, thumuns)
   const date = formatArabicDateTime(session.attempt_at || session.created_at)
   const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
@@ -112,7 +103,7 @@ export function buildSessionResultMessage({
     `التاريخ: ${date}`,
     `النتيجة: ${resultStatus}`,
     `الدرجة: ${score}`,
-    `ملاحظات: ${grade}`,
+    ...(teacherNotes ? [`ملاحظات الشيخ: ${teacherNotes}`] : []),
   ]
 
   const closing = passed

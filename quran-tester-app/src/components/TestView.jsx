@@ -80,6 +80,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [manualQuery, setManualQuery] = useState('')
   const [draftRestored, setDraftRestored] = useState(false)
   const [testTryNumber, setTestTryNumber] = useState(1)
+  const [teacherNotes, setTeacherNotes] = useState('')
   const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
@@ -208,6 +209,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     setFatha(0)
     setTaradud(0)
     setCurrent(null)
+    setTeacherNotes('')
   }, [])
 
   async function finalize() {
@@ -230,6 +232,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         passed,
         score,
         testTryNumber,
+        teacherNotes: teacherNotes.trim() || null,
       })
       const updated = res?.student ?? await refreshStudent()
       if (updated) onStudentUpdated?.(updated)
@@ -472,6 +475,20 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
             </div>
           </div>
         </div>
+
+        <label className="field" style={{ marginTop: 12 }}>
+          <span className="field__label">ملاحظات للولي (اختياري)</span>
+          <p className="field__hint meta">تظهر في رسالة Telegram فقط عند كتابتها — ليست التقدير الآلي</p>
+          <textarea
+            className="input test-teacher-notes"
+            rows={2}
+            maxLength={500}
+            placeholder="مثال: يحتاج مراجعة سورة البقرة قبل الاختبار القادم"
+            value={teacherNotes}
+            disabled={saving}
+            onChange={e => setTeacherNotes(e.target.value)}
+          />
+        </label>
 
         <div className="score-preview desktop-only">
           <div className="meta">معاينة الدرجة</div>
