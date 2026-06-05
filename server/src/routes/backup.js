@@ -45,7 +45,7 @@ router.get('/export', async (req, res) => {
     const user = userQ.rows[0] || null
 
     const studentsQ = await pool.query(
-      `select id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, qr_token, created_at, updated_at
+      `select id, number, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count, photo_url, date_of_birth, qr_token, created_at, updated_at
        from students where user_id=$1 order by number asc`,
       [req.user.id]
     )
@@ -200,20 +200,22 @@ router.post('/import', async (req, res) => {
       const dob = s.date_of_birth || null
       const qrToken = s.qr_token || crypto.randomUUID().replace(/-/g, '')
       const result = await client.query(
-        `insert into students(id, user_id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, qr_token, created_at, updated_at)
-         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+        `insert into students(id, user_id, number, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count, photo_url, date_of_birth, qr_token, created_at, updated_at)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
          on conflict (id) do update set
            number=excluded.number,
            name=excluded.name,
            current_naqza=excluded.current_naqza,
            memorization_thumun_id=excluded.memorization_thumun_id,
+           memorization_surah=excluded.memorization_surah,
+           qalam_count=excluded.qalam_count,
            photo_url=excluded.photo_url,
            date_of_birth=excluded.date_of_birth,
            qr_token=coalesce(students.qr_token, excluded.qr_token),
            updated_at=excluded.updated_at
          where students.user_id = excluded.user_id
          returning xmax = 0 as inserted`,
-        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, s.memorization_thumun_id ?? null, photoUrl, dob, qrToken, created, updated]
+        [s.id, req.user.id, s.number, s.name, s.current_naqza ?? 1, s.memorization_thumun_id ?? null, s.memorization_surah ?? null, s.qalam_count ?? 1, photoUrl, dob, qrToken, created, updated]
       )
       if (!result.rowCount) {
         stats.students.skipped++

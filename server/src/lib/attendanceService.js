@@ -67,7 +67,7 @@ export async function buildAttendanceOverview(userId, { from, to } = {}) {
 
   const [studentsQ, recordsQ] = await Promise.all([
     pool.query(
-      `select id, number, name, memorization_thumun_id
+      `select id, number, name, memorization_thumun_id, memorization_surah
        from students where user_id=$1 order by number asc`,
       [userId]
     ),
@@ -106,6 +106,7 @@ export async function buildAttendanceOverview(userId, { from, to } = {}) {
       number: student.number,
       name: student.name,
       memorization_thumun_id: student.memorization_thumun_id,
+      memorization_surah: student.memorization_surah,
       presentCount,
       absentCount,
       studyDayCount: countedStudyDays.length,

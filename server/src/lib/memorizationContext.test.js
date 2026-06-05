@@ -4,6 +4,7 @@ import {
   formatMemorizationLines,
   formatMemorizationThumun,
   formatQalamLine,
+  formatQalamOrdinal,
 } from './memorizationContext.js'
 
 const thumuns = [
@@ -27,7 +28,18 @@ test('formatMemorizationLines returns مستوى الحفظ line', () => {
   assert.match(lines[0], /مستوى الحفظ الحالي/)
 })
 
-test('formatQalamLine uses Arabic ordinals for small numbers', () => {
-  assert.match(formatQalamLine({ test_try_number: 1 }), /الأولى/)
-  assert.match(formatQalamLine({ test_try_number: 2 }), /الثانية/)
+test('formatMemorizationLines supports surah-only position', () => {
+  const lines = formatMemorizationLines({ memorization_surah: 'الفاتحة' }, thumuns)
+  assert.equal(lines.length, 1)
+  assert.match(lines[0], /سورة الفاتحة/)
+})
+
+test('formatQalamLine uses student qalam_count (full Quran completions)', () => {
+  assert.equal(formatQalamLine({ qalam_count: 1 }), 'القلم: الأول')
+  assert.equal(formatQalamLine({ qalam_count: 2 }), 'القلم: الثاني')
+  assert.equal(formatQalamLine({}), 'القلم: الأول')
+})
+
+test('formatQalamOrdinal maps ordinals', () => {
+  assert.equal(formatQalamOrdinal(3), 'الثالث')
 })

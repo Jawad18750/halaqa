@@ -209,7 +209,7 @@ export async function sendWeeklyAttendanceNotifications({ userId, from, to } = {
 
   const { rows } = await pool.query(
     `select gs.student_id, gs.guardian_id, gt.telegram_chat_id, gt.opt_out,
-            st.name as student_name, st.memorization_thumun_id
+            st.name as student_name, st.memorization_thumun_id, st.memorization_surah
      from guardian_students gs
      join guardians g on g.id = gs.guardian_id and g.user_id = $1
      join students st on st.id = gs.student_id and st.user_id = $1
@@ -236,7 +236,7 @@ export async function sendWeeklyAttendanceNotifications({ userId, from, to } = {
     }
     const text = buildWeeklyAttendanceGuardianMessage({
       studentName: row.student_name,
-      student: { memorization_thumun_id: row.memorization_thumun_id },
+      student: { memorization_thumun_id: row.memorization_thumun_id, memorization_surah: row.memorization_surah },
       summary,
       statuses: student.statuses,
       sheikhName: settings?.sheikh_name,

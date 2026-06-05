@@ -42,7 +42,7 @@ async function main() {
     return
   }
 
-  console.log(`[attendance-weekly] sending range ${from} → ${to}`)
+  console.log(`[attendance-weekly] ${new Date().toISOString()} previous halaqa week ${from} → ${to}`)
   for (const user of users) {
     const result = await sendWeeklyAttendanceNotifications({ userId: user.id, from, to })
     console.log(`[attendance-weekly] ${user.username}:`, result)

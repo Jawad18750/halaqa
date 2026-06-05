@@ -89,7 +89,7 @@ export function buildSessionResultMessage({
   const halaqaFooter = buildHalaqaSignature({ sheikhName, masjidName, style: 'footer' })
 
   const memorizationLines = formatMemorizationLines(studentRow, thumuns)
-  const qalamLine = formatQalamLine(session)
+  const qalamLine = formatQalamLine(studentRow)
 
   const resultStatus = passed ? 'ناجح' : 'لم ينجح'
   const headerLines = [
@@ -103,7 +103,7 @@ export function buildSessionResultMessage({
     `التاريخ: ${date}`,
     `النتيجة: ${resultStatus}`,
     `الدرجة: ${score}`,
-    ...(teacherNotes ? [`ملاحظات الشيخ: ${teacherNotes}`] : []),
+    ...(teacherNotes ? [`ملاحظات للولي الأمر: ${teacherNotes}`] : []),
   ]
 
   const closing = passed

@@ -54,7 +54,7 @@
 
 ## Weekly Attendance Telegram
 - Weekly parent attendance summaries are sent by script, not by the API process itself.
-- Intended schedule: Saturday evening Tripoli time, summarizing the previous halaqa week.
+- Cron (installed): Saturday 20:00 Africa/Tripoli — summarizes the **previous** halaqa week (Sat→Fri), not the week in progress.
 - Manual run:
   ```
   cd /home/deploy/halaqa_src_current/server

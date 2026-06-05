@@ -27,7 +27,7 @@ const upload = multer({
   }
 })
 
-const STUDENT_COLUMNS = 'id, number, name, current_naqza, memorization_thumun_id, photo_url, date_of_birth, created_at, updated_at'
+const STUDENT_COLUMNS = 'id, number, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count, photo_url, date_of_birth, created_at, updated_at'
 
 router.get('/', async (req, res) => {
   const { rows } = await pool.query(
@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params
-  const { number, name, current_naqza, memorization_thumun_id, date_of_birth, photo_url } = req.body || {}
+  const { number, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count, date_of_birth, photo_url } = req.body || {}
   try {
     console.log('[students.patch]', id, req.body)
     const fields = []
@@ -69,6 +69,15 @@ router.patch('/:id', async (req, res) => {
     if (memorization_thumun_id !== undefined) {
       fields.push(`memorization_thumun_id=$${idx++}`)
       vals.push(memorization_thumun_id === '' || memorization_thumun_id == null ? null : Number(memorization_thumun_id))
+    }
+    if (memorization_surah !== undefined) {
+      fields.push(`memorization_surah=$${idx++}`)
+      vals.push(memorization_surah === '' || memorization_surah == null ? null : String(memorization_surah).trim())
+    }
+    if (qalam_count !== undefined) {
+      const q = Number(qalam_count)
+      fields.push(`qalam_count=$${idx++}`)
+      vals.push(Number.isFinite(q) && q >= 1 ? Math.min(20, Math.floor(q)) : 1)
     }
     if (date_of_birth !== undefined) { fields.push(`date_of_birth=$${idx++}`); vals.push(date_of_birth || null) }
     if (photo_url !== undefined) { fields.push(`photo_url=$${idx++}`); vals.push(photo_url || null) }

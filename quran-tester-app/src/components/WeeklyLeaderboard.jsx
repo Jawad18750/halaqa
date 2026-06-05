@@ -310,7 +310,7 @@ export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
         open={showMessageSheet}
         guardians={messageTargets}
         initialMessage={messageDraft}
-        title="إرسال تقرير لولي الأمر"
+        title="تقرير اختبارات الأسبوع لولي الأمر"
         reportOptions={reportItem ? (
           <label className="leaderboard-report-option">
             <input

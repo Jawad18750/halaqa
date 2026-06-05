@@ -142,6 +142,35 @@ export function formatMemorizationFromThumun(thumunId, thumuns) {
   return name ? `ثمن ${id} — ${name}` : `ثمن ${id}`
 }
 
+const QALAM_ORDINALS = {
+  1: 'الأول',
+  2: 'الثاني',
+  3: 'الثالث',
+  4: 'الرابع',
+  5: 'الخامس',
+  6: 'السادس',
+  7: 'السابع',
+  8: 'الثامن',
+  9: 'التاسع',
+  10: 'العاشر',
+}
+
+export function formatQalamLabel(count) {
+  const n = Number(count ?? 1)
+  if (!Number.isFinite(n) || n < 1) return 'القلم الأول'
+  const ordinal = QALAM_ORDINALS[n] || String(n)
+  return `القلم ${ordinal}`
+}
+
+export function formatMemorizationPosition(student, thumuns) {
+  if (!student) return ''
+  if (student.memorization_thumun_id != null && student.memorization_thumun_id !== '') {
+    return formatMemorizationFromThumun(student.memorization_thumun_id, thumuns)
+  }
+  if (student.memorization_surah) return `سورة ${student.memorization_surah}`
+  return ''
+}
+
 export function formatThumunId(id, thumuns) {
   const t = (thumuns || []).find(x => x.id === Number(id))
   if (!t) return String(id ?? '—')

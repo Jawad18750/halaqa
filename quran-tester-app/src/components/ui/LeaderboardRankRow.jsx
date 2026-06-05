@@ -46,8 +46,8 @@ export default function LeaderboardRankRow({
         <button
           type="button"
           className="btn btn--ghost btn--icon leaderboard-row__notify"
-          title="إرسال لولي الأمر"
-          aria-label={`إرسال نتيجة ${item.student_name} لولي الأمر`}
+          title="تقرير اختبارات لولي الأمر"
+          aria-label={`إرسال تقرير اختبارات ${item.student_name} لولي الأمر`}
           disabled={notifying === item.id}
           onClick={e => { e.stopPropagation(); onNotifyParent(item) }}
         >

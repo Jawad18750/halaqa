@@ -32,6 +32,36 @@ const MODES = [
   { id: 'full', label: 'كامل' },
 ]
 
+function PerformanceStepper({ value, min, max, onDec, onInc, disabled, compact = false, labelledBy }) {
+  return (
+    <div
+      className={`test-performance__stepper${compact ? ' test-performance__stepper--compact' : ''}`}
+      role="group"
+      aria-labelledby={labelledBy}
+    >
+      <button
+        type="button"
+        className="test-performance__stepper-btn"
+        aria-label="تقليل"
+        disabled={disabled || value <= min}
+        onClick={onDec}
+      >
+        −
+      </button>
+      <span className="test-performance__stepper-value" aria-live="polite">{value}</span>
+      <button
+        type="button"
+        className="test-performance__stepper-btn"
+        aria-label="زيادة"
+        disabled={disabled || value >= max}
+        onClick={onInc}
+      >
+        +
+      </button>
+    </div>
+  )
+}
+
 function testDraftKey(studentId) {
   return `halaqa.testDraft.${studentId}`
 }
@@ -80,9 +110,9 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [showManualPick, setShowManualPick] = useState(false)
   const [manualQuery, setManualQuery] = useState('')
   const [draftRestored, setDraftRestored] = useState(false)
-  const [testTryNumber, setTestTryNumber] = useState(1)
   const [teacherNotes, setTeacherNotes] = useState('')
   const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
+  const [memorizationSurah, setMemorizationSurah] = useState(student?.memorization_surah ?? null)
   const [memSaving, setMemSaving] = useState(false)
   const [memToast, setMemToast] = useState('')
   const pickDeckRef = useRef([])
@@ -95,10 +125,19 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
 
   useEffect(() => {
     setMemorizationThumunId(student?.memorization_thumun_id ?? null)
-  }, [student?.id, student?.memorization_thumun_id])
+    setMemorizationSurah(student?.memorization_surah ?? null)
+  }, [student?.id, student?.memorization_thumun_id, student?.memorization_surah])
 
   const memValue = v => (v == null || v === '' ? null : Number(v))
-  const memDirty = memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
+  const memSurahValue = v => (v == null || v === '' ? null : String(v))
+  const memDirty =
+    memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
+    || memSurahValue(memorizationSurah) !== memSurahValue(student?.memorization_surah)
+
+  function onMemorizationChange(patch) {
+    if (patch.memorization_thumun_id !== undefined) setMemorizationThumunId(patch.memorization_thumun_id)
+    if (patch.memorization_surah !== undefined) setMemorizationSurah(patch.memorization_surah)
+  }
 
   const filtered = useMemo(() => {
     if (mode === 'naqza') return filterThumuns(thumuns, { mode, naqza: testNaqza })
@@ -205,6 +244,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
     try {
       const { student: updated } = await students.update(student.id, {
         memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
+        memorization_surah: memorizationSurah || null,
       })
       onStudentUpdated?.(updated)
       setMemToast('تم حفظ مستوى الحفظ')
@@ -258,7 +298,6 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         taradudCount: taradud,
         passed,
         score,
-        testTryNumber,
         teacherNotes: teacherNotes.trim() || null,
       })
       const updated = res?.student ?? await refreshStudent()
@@ -473,92 +512,94 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         </SectionCard>
       )}
 
-      <SectionCard title="3. تسجيل الأداء">
-        <label className="field test-qalam-field">
-          <span className="field__label">القلم (محاولة الاختبار)</span>
-          <p className="field__hint meta">رقم المحاولة لهذا الاختبار الأسبوعي — لا يُربط بمستوى الحفظ</p>
-          <div className="test-qalam-stepper cluster">
-            <button
-              type="button"
-              className="btn"
-              aria-label="تقليل"
-              disabled={testTryNumber <= 1 || saving}
-              onClick={() => setTestTryNumber(n => Math.max(1, n - 1))}
-            >
-              −
-            </button>
-            <span className="test-qalam-stepper__value">{testTryNumber}</span>
-            <button
-              type="button"
-              className="btn"
-              aria-label="زيادة"
-              disabled={testTryNumber >= 9 || saving}
-              onClick={() => setTestTryNumber(n => Math.min(9, n + 1))}
-            >
-              +
-            </button>
+      <SectionCard title="3. تسجيل الأداء" className="test-performance-card">
+        <div className="test-performance">
+          <div
+            className={`test-performance__score ${preview.passed ? 'test-performance__score--pass' : 'test-performance__score--fail'}`}
+            aria-live="polite"
+          >
+            <div className="test-performance__score-main">
+              <span className="test-performance__score-num">{preview.score}</span>
+              <div className="test-performance__score-meta">
+                <Badge variant={preview.passed ? 'pass' : 'fail'}>{resultLabel(preview.passed)}</Badge>
+                <span className="test-performance__grade">{gradeLabel(preview.score)}</span>
+              </div>
+            </div>
+            <p className="test-performance__score-hint meta">معاينة مباشرة — تتغيّر مع العدادات</p>
           </div>
-        </label>
 
-        <div className="counter-row">
-          <div className="counter-block counter-block--touch">
-            <div className="info-label">الفتحة</div>
-            <div className="counter-block__value">{fatha}</div>
-            <p className="hint">4+ = فشل</p>
-            <div className="counter-block__actions">
-              <button type="button" className="btn" aria-label="تقليل" onClick={() => setFatha(Math.max(0, fatha - 1))}>−</button>
-              <button type="button" className="btn" aria-label="زيادة" onClick={() => setFatha(Math.min(10, fatha + 1))}>+</button>
+          <div className="test-performance__metrics">
+            <div className="test-performance__metric">
+              <div className="test-performance__metric-head">
+                <span className="test-performance__metric-label" id="test-metric-fatha">الفتحة</span>
+                <span className={`test-performance__metric-hint ${fatha >= 4 ? 'test-performance__metric-hint--warn' : ''}`}>
+                  {fatha >= 4 ? 'فشل' : '4+ = فشل'}
+                </span>
+              </div>
+              <PerformanceStepper
+                value={fatha}
+                min={0}
+                max={10}
+                disabled={saving}
+                labelledBy="test-metric-fatha"
+                onDec={() => setFatha(Math.max(0, fatha - 1))}
+                onInc={() => setFatha(Math.min(10, fatha + 1))}
+              />
+            </div>
+
+            <div className="test-performance__metric">
+              <div className="test-performance__metric-head">
+                <span className="test-performance__metric-label" id="test-metric-taradud">التردد</span>
+                <span className="test-performance__metric-hint">تأثير على الدرجة</span>
+              </div>
+              <PerformanceStepper
+                value={taradud}
+                min={0}
+                max={99}
+                disabled={saving}
+                labelledBy="test-metric-taradud"
+                onDec={() => setTaradud(Math.max(0, taradud - 1))}
+                onInc={() => setTaradud(taradud + 1)}
+              />
             </div>
           </div>
-          <div className="counter-block counter-block--touch">
-            <div className="info-label">التردد</div>
-            <div className="counter-block__value">{taradud}</div>
-            <div className="counter-block__actions">
-              <button type="button" className="btn" aria-label="تقليل" onClick={() => setTaradud(Math.max(0, taradud - 1))}>−</button>
-              <button type="button" className="btn" aria-label="زيادة" onClick={() => setTaradud(taradud + 1)}>+</button>
+
+          <details className="test-performance__notes" open={Boolean(teacherNotes)}>
+            <summary className="test-performance__notes-summary">
+              <span className="test-performance__notes-summary-text">
+                ملاحظات للولي الأمر
+                <span className="test-performance__notes-badge">اختياري</span>
+              </span>
+            </summary>
+            <p className="test-performance__notes-hint meta">تظهر في رسالة Telegram لولي الأمر فقط عند كتابتها</p>
+            <textarea
+              className="input test-performance__notes-input"
+              rows={3}
+              maxLength={500}
+              placeholder="مثال: يحتاج مراجعة سورة البقرة قبل الاختبار القادم"
+              value={teacherNotes}
+              disabled={saving}
+              onChange={e => setTeacherNotes(e.target.value)}
+            />
+          </details>
+
+          {draftRestored && (
+            <div className="alert alert--info test-performance__alert">
+              <i className="fa-solid fa-rotate-left" aria-hidden /> تم استرجاع مسودة الاختبار السابقة — يمكنك إعادة الحفظ مباشرة.
             </div>
-          </div>
+          )}
+
+          {error && (
+            <div className="alert alert--error test-save-error test-performance__alert">
+              <p>{error}</p>
+              {current && (
+                <button type="button" className="btn btn--primary btn--sm" disabled={saving} onClick={finalize}>
+                  {saving ? 'جاري الحفظ…' : 'إعادة المحاولة'}
+                </button>
+              )}
+            </div>
+          )}
         </div>
-
-        <label className="field" style={{ marginTop: 12 }}>
-          <span className="field__label">ملاحظات للولي (اختياري)</span>
-          <p className="field__hint meta">تظهر في رسالة Telegram فقط عند كتابتها — ليست التقدير الآلي</p>
-          <textarea
-            className="input test-teacher-notes"
-            rows={2}
-            maxLength={500}
-            placeholder="مثال: يحتاج مراجعة سورة البقرة قبل الاختبار القادم"
-            value={teacherNotes}
-            disabled={saving}
-            onChange={e => setTeacherNotes(e.target.value)}
-          />
-        </label>
-
-        <div className="score-preview desktop-only">
-          <div className="meta">معاينة الدرجة</div>
-          <div className="score-preview__value">{preview.score}</div>
-          <div className="cluster" style={{ justifyContent: 'center' }}>
-            <Badge variant={preview.passed ? 'pass' : 'fail'}>{resultLabel(preview.passed)}</Badge>
-            <span className="meta">{gradeLabel(preview.score)}</span>
-          </div>
-        </div>
-
-        {draftRestored && (
-          <div className="alert alert--info" style={{ marginTop: 12 }}>
-            <i className="fa-solid fa-rotate-left" /> تم استرجاع مسودة الاختبار السابقة — يمكنك إعادة الحفظ مباشرة.
-          </div>
-        )}
-
-        {error && (
-          <div className="alert alert--error test-save-error" style={{ marginTop: 12 }}>
-            <p>{error}</p>
-            {current && (
-              <button type="button" className="btn btn--primary btn--sm" disabled={saving} onClick={finalize}>
-                {saving ? 'جاري الحفظ…' : 'إعادة المحاولة'}
-              </button>
-            )}
-          </div>
-        )}
       </SectionCard>
 
       <div className="test-sticky-bar test-sticky-bar--enhanced">

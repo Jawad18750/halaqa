@@ -11,6 +11,7 @@ import {
   buildNaqzaLabels,
 } from '../lib/labels.js'
 import MemorizationFields from './ui/MemorizationFields.jsx'
+import QalamField from './ui/QalamField.jsx'
 import PageHeader from './ui/PageHeader.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 import EmptyState from './ui/EmptyState.jsx'
@@ -46,10 +47,15 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   useEffect(() => { setDob(toDateOnly(student?.date_of_birth)) }, [student?.date_of_birth])
 
   const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
+  const [memorizationSurah, setMemorizationSurah] = useState(student?.memorization_surah ?? null)
   const [memSaving, setMemSaving] = useState(false)
+  const [qalamCount, setQalamCount] = useState(Number(student?.qalam_count) || 1)
+  const [qalamSaving, setQalamSaving] = useState(false)
   useEffect(() => {
     setMemorizationThumunId(student?.memorization_thumun_id ?? null)
-  }, [student?.id, student?.memorization_thumun_id])
+    setMemorizationSurah(student?.memorization_surah ?? null)
+    setQalamCount(Number(student?.qalam_count) || 1)
+  }, [student?.id, student?.memorization_thumun_id, student?.memorization_surah, student?.qalam_count])
 
   const [photoUrl, setPhotoUrl] = useState(student?.photo_url || '')
   useEffect(() => {
@@ -64,7 +70,15 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   const currentNaqzaLabel = formatNaqza(student?.current_naqza, thumuns, naqzaLabels)
   const stats = useMemo(() => computeStudentStats(list), [list])
   const memValue = v => (v == null || v === '' ? null : Number(v))
-  const memDirty = memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
+  const memSurahValue = v => (v == null || v === '' ? null : String(v))
+  const memDirty =
+    memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
+    || memSurahValue(memorizationSurah) !== memSurahValue(student?.memorization_surah)
+
+  function onMemorizationChange(patch) {
+    if (patch.memorization_thumun_id !== undefined) setMemorizationThumunId(patch.memorization_thumun_id)
+    if (patch.memorization_surah !== undefined) setMemorizationSurah(patch.memorization_surah)
+  }
 
   async function load() {
     setLoading(true); setError('')
@@ -75,12 +89,15 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   }
   useEffect(() => { load() }, [student?.id])
 
+  const qalamDirty = Number(qalamCount) !== Number(student?.qalam_count || 1)
+
   async function saveMemorization() {
     setMemSaving(true)
     setError('')
     try {
       const { student: s } = await students.update(student.id, {
         memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
+        memorization_surah: memorizationSurah || null,
       })
       onStudentUpdated?.({ ...student, ...s })
       showToast('تم حفظ مستوى الحفظ')
@@ -88,6 +105,20 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
       setError(e.message)
     } finally {
       setMemSaving(false)
+    }
+  }
+
+  async function saveQalam() {
+    setQalamSaving(true)
+    setError('')
+    try {
+      const { student: s } = await students.update(student.id, { qalam_count: Number(qalamCount) || 1 })
+      onStudentUpdated?.({ ...student, ...s })
+      showToast('تم حفظ القلم')
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setQalamSaving(false)
     }
   }
 
@@ -230,8 +261,9 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
         <SectionCard title="مستوى الحفظ (التسميع)" className="profile-sections__memorization">
           <MemorizationFields
             thumuns={thumuns}
-            value={memorizationThumunId}
-            onChange={setMemorizationThumunId}
+            thumunId={memorizationThumunId}
+            surah={memorizationSurah}
+            onChange={onMemorizationChange}
             disabled={memSaving}
             idPrefix="profile-mem"
             embedded
@@ -245,6 +277,14 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
           >
             {memSaving ? 'جاري الحفظ…' : 'حفظ مستوى الحفظ'}
           </button>
+          <QalamField
+            value={qalamCount}
+            onChange={setQalamCount}
+            disabled={qalamSaving}
+            saving={qalamSaving}
+            dirty={qalamDirty}
+            onSave={saveQalam}
+          />
         </SectionCard>
 
         <SectionCard title="أولياء الأمور" className="profile-sections__guardians">

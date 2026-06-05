@@ -83,19 +83,18 @@ section(1, 'Telegram/copy guardian invitation', buildInviteMessageForChannel('te
 section(2, 'WhatsApp guardian invitation', buildInviteMessageForChannel('whatsapp', inviteParams))
 section(3, 'SMS guardian invitation', buildInviteMessageForChannel('sms', inviteParams))
 
-const sampleStudent = { memorization_thumun_id: 142 }
+const sampleStudent = { memorization_thumun_id: 142, qalam_count: 2 }
 const sampleSessionPass = {
   passed: true,
   score: 85,
   mode: 'naqza',
   thumun_id: 1,
   naqza: 1,
-  test_try_number: 2,
-  teacher_notes: 'يُنصح بمراجعة آخر صفحتين قبل الاختبار القادم',
+  teacher_notes: 'يحتاج مراجعة سورة البقرة قبل الاختبار القادم',
   attempt_at: '2026-05-31T15:30:00.000Z',
 }
 
-section(4, 'Successful automatic test result (memorization + qalam)', buildSessionResultMessage({
+section(4, 'Successful automatic test result (memorization + qalam + guardian notes)', buildSessionResultMessage({
   studentName: 'محمد أحمد',
   student: sampleStudent,
   session: sampleSessionPass,
@@ -105,7 +104,7 @@ section(4, 'Successful automatic test result (memorization + qalam)', buildSessi
 section(5, 'Needs-review automatic test result', buildSessionResultMessage({
   studentName: 'محمد أحمد',
   student: sampleStudent,
-  session: { passed: false, score: 45, mode: 'juz', thumun_id: 2, test_try_number: 1, attempt_at: '2026-05-31T15:30:00.000Z' },
+  session: { passed: false, score: 45, mode: 'juz', thumun_id: 2, attempt_at: '2026-05-31T15:30:00.000Z' },
   ...ctx,
 }))
 

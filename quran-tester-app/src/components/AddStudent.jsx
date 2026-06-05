@@ -81,6 +81,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
   const [dobAdd, setDobAdd] = useState('')
   const [addNaqza, setAddNaqza] = useState(20)
   const [memorizationThumunId, setMemorizationThumunId] = useState(null)
+  const [memorizationSurah, setMemorizationSurah] = useState(null)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
   const [pendingFile, setPendingFile] = useState(null)
@@ -219,7 +220,13 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
         if (dateOnly) updates.date_of_birth = dateOnly
       }
       if (Number(addNaqza) !== 20) updates.current_naqza = Number(addNaqza)
-      if (memorizationThumunId != null) updates.memorization_thumun_id = Number(memorizationThumunId)
+      if (memorizationThumunId != null) {
+        updates.memorization_thumun_id = Number(memorizationThumunId)
+        updates.memorization_surah = null
+      } else if (memorizationSurah) {
+        updates.memorization_surah = memorizationSurah
+        updates.memorization_thumun_id = null
+      }
       if (Object.keys(updates).length) {
         await students.update(newStudent.id, updates)
         Object.assign(newStudent, updates)
@@ -367,8 +374,13 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
 
                 <MemorizationFields
                   thumuns={thumuns}
-                  value={memorizationThumunId}
-                  onChange={v => { setMemorizationThumunId(v); markDirty() }}
+                  thumunId={memorizationThumunId}
+                  surah={memorizationSurah}
+                  onChange={patch => {
+                    if (patch.memorization_thumun_id !== undefined) setMemorizationThumunId(patch.memorization_thumun_id)
+                    if (patch.memorization_surah !== undefined) setMemorizationSurah(patch.memorization_surah)
+                    markDirty()
+                  }}
                   idPrefix="add-student-mem"
                 />
 
@@ -422,8 +434,13 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
                   naqzaLabels={naqzaLabels}
                 />
                 {dobAdd && <p className="meta">تاريخ الميلاد: {dobAdd}</p>}
-                {memorizationThumunId != null && (
-                  <p className="meta">مستوى الحفظ: {formatMemorizationFromThumun(memorizationThumunId, thumuns)}</p>
+                {(memorizationThumunId != null || memorizationSurah) && (
+                  <p className="meta">
+                    مستوى الحفظ:{' '}
+                    {memorizationThumunId != null
+                      ? formatMemorizationFromThumun(memorizationThumunId, thumuns)
+                      : `سورة ${memorizationSurah}`}
+                  </p>
                 )}
                 <h4 className="add-student-step__sub">أولياء الأمور ({reviewGuardians.length})</h4>
                 {reviewGuardians.length === 0 ? (

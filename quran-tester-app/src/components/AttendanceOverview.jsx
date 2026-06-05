@@ -174,8 +174,16 @@ function AttendanceListToolbar({
 }
 
 function memorizationLabel(student, thumuns) {
-  if (!student?.memorization_thumun_id) return '—'
-  return formatMemorizationFromThumun(student.memorization_thumun_id, thumuns) || `ثمن ${student.memorization_thumun_id}`
+  if (student?.memorization_thumun_id != null && student.memorization_thumun_id !== '') {
+    return formatMemorizationFromThumun(student.memorization_thumun_id, thumuns) || `ثمن ${student.memorization_thumun_id}`
+  }
+  if (student?.memorization_surah) return `سورة ${student.memorization_surah}`
+  return '—'
+}
+
+function hasMemorization(student) {
+  return (student?.memorization_thumun_id != null && student.memorization_thumun_id !== '')
+    || Boolean(student?.memorization_surah)
 }
 
 function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumuns }) {
@@ -200,7 +208,7 @@ function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumu
               {student.presentCount}/{student.studyDayCount}
             </span>
           </header>
-          {student.memorization_thumun_id != null && (
+          {hasMemorization(student) && (
             <p className="meta attendance-mobile-card__mem">{memorizationLabel(student, thumuns)}</p>
           )}
           <ul className="attendance-mobile-card__days">
@@ -432,13 +440,14 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
               className="btn btn--ghost btn--sm"
               onClick={sendWeekly}
               disabled={sendingWeekly || loading || !data}
+              title="إرسال ملخص حضور الفترة المعروضة يدوياً"
             >
               <i className="fa-brands fa-telegram" aria-hidden />
-              لأولياء الأمور
+              ملخص حضور (يدوي)
             </button>
           </>
         )}
-        footer="يُرسل الملخص لكل ولي مرتبط ومربوط بـ Telegram (ما لم يوقف الإشعارات من البوت)."
+        footer="يُرسل تلقائياً مساء كل سبت (أسبوع الحلقة المنصرم). الزر أعلاه يعيد الإرسال للفترة المعروضة حالياً."
       />
 
       <div className="attendance-overview-stats">
