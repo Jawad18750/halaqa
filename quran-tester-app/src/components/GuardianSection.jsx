@@ -117,7 +117,7 @@ export default function GuardianSection({ student, onToast }) {
             relationship: row.relationship.trim() || null,
             is_primary: row.isPrimary && !primarySet,
             notify_on_result: row.notifyOnResult,
-            notify_weekly_attendance: row.notifyWeeklyAttendance,
+            notify_weekly_attendance: true,
           })
           linked.push(guardian || availableExistingGuardians.find(g => g.id === row.guardianId))
           if (reused) reusedAny = true
@@ -135,7 +135,7 @@ export default function GuardianSection({ student, onToast }) {
           relationship: row.relationship.trim() || null,
           is_primary: row.isPrimary && !primarySet,
           notify_on_result: row.notifyOnResult,
-          notify_weekly_attendance: row.notifyWeeklyAttendance,
+          notify_weekly_attendance: true,
         })
         linked.push(guardian)
         if (reused) reusedAny = true
@@ -176,15 +176,6 @@ export default function GuardianSection({ student, onToast }) {
     }
   }
 
-  async function toggleWeeklyAttendance(row) {
-    try {
-      await guardians.updateLink(row.link_id, { notify_weekly_attendance: !row.notify_weekly_attendance })
-      await loadStudentGuardians()
-    } catch (e) {
-      setError(e.message)
-    }
-  }
-
   return (
     <div className="guardian-section">
       <p className="meta guardian-section__hint">
@@ -211,7 +202,6 @@ export default function GuardianSection({ student, onToast }) {
                 student={student}
                 onTogglePrimary={togglePrimary}
                 onToggleNotify={toggleNotify}
-                onToggleWeeklyAttendance={toggleWeeklyAttendance}
                 onRefresh={loadStudentGuardians}
                 onToast={onToast}
                 onSendMessage={isTelegramActive(row) ? g => { setMessageTargets([g]); setShowMessageSheet(true) } : undefined}

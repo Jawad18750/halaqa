@@ -238,6 +238,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
             relationship: row.relationship.trim() || null,
             is_primary: row.isPrimary && !primarySet,
             notify_on_result: row.notifyOnResult,
+            notify_weekly_attendance: true,
           })
           linkedGuardians.push(guardian || existingGuardians.find(g => g.id === row.guardianId))
           if (row.isPrimary) primarySet = true
@@ -250,6 +251,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
           relationship: row.relationship.trim() || null,
           is_primary: row.isPrimary && !primarySet,
           notify_on_result: row.notifyOnResult,
+          notify_weekly_attendance: true,
         })
         linkedGuardians.push(guardian)
         if (row.isPrimary) primarySet = true

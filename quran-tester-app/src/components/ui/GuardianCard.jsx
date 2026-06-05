@@ -51,7 +51,6 @@ export default function GuardianCard({
   onCopyPhone,
   onTogglePrimary,
   onToggleNotify,
-  onToggleWeeklyAttendance,
   onRemoveLink,
   onOpenStudent,
   onToast,
@@ -83,7 +82,6 @@ export default function GuardianCard({
   const profileStatusLine = [
     tg.label,
     row.notify_on_result ? 'نتائج' : '',
-    row.notify_weekly_attendance ? 'حضور' : '',
   ]
     .filter(Boolean)
     .join(' · ')
@@ -318,17 +316,6 @@ export default function GuardianCard({
                 title="إشعار بالنتائج"
               >
                 <i className="fa-solid fa-bell" aria-hidden />
-              </button>
-            )}
-            {onToggleWeeklyAttendance && (
-              <button
-                type="button"
-                className={`guardian-profile-toggle ${row.notify_weekly_attendance ? 'guardian-profile-toggle--on' : ''}`}
-                onClick={() => onToggleWeeklyAttendance(row)}
-                aria-pressed={row.notify_weekly_attendance}
-                title="ملخص حضور أسبوعي"
-              >
-                <i className="fa-solid fa-calendar-check" aria-hidden />
               </button>
             )}
           </div>

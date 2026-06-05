@@ -358,7 +358,7 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
         setToast(
           eligible
             ? 'لم يُرسل شيء — تحقق من ربط Telegram'
-            : 'لم يُرسل شيء — فعّل «ملخص حضور أسبوعي» لولي الأمر من ملف الطالب'
+            : 'لم يُرسل شيء — تحقق من ربط Telegram لأولياء الأمور'
         )
       } else {
         setToast(`تم إرسال ${sent} ملخص لأولياء الأمور`)
@@ -438,7 +438,7 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
             </button>
           </>
         )}
-        footer="ملخص أولياء الأمور يُرسل فقط عند تفعيل «ملخص حضور أسبوعي» في ملف الطالب."
+        footer="يُرسل الملخص لكل ولي مرتبط ومربوط بـ Telegram (ما لم يوقف الإشعارات من البوت)."
       />
 
       <div className="attendance-overview-stats">

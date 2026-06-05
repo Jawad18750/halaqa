@@ -263,7 +263,7 @@ export async function linkGuardianToStudent(userId, studentId, input) {
     const isFirst = !existingPrimary.rows.length
     const isPrimary = input.is_primary === true || isFirst
     const notifyOnResult = input.notify_on_result === true || isPrimary
-    const notifyWeeklyAttendance = input.notify_weekly_attendance === true
+    const notifyWeeklyAttendance = true
 
     if (isPrimary) {
       await clearPrimaryForStudent(client, studentId)
@@ -332,10 +332,8 @@ export async function updateGuardianLink(userId, linkId, { relationship, is_prim
       fields.push(`notify_on_result=$${idx++}`)
       vals.push(!!notify_on_result)
     }
-    if (notify_weekly_attendance !== undefined) {
-      fields.push(`notify_weekly_attendance=$${idx++}`)
-      vals.push(!!notify_weekly_attendance)
-    }
+    // Weekly attendance summaries are always on; ignore client attempts to disable.
+    void notify_weekly_attendance
     if (!fields.length) throw Object.assign(new Error('لا توجد حقول للتحديث'), { status: 400 })
 
     vals.push(linkId)

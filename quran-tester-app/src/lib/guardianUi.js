@@ -199,7 +199,7 @@ export function emptyGuardianRow(overrides = {}) {
     relationship: '',
     isPrimary: true,
     notifyOnResult: true,
-    notifyWeeklyAttendance: false,
+    notifyWeeklyAttendance: true,
     ...overrides,
   }
 }
