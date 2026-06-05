@@ -81,7 +81,6 @@ export function buildSessionResultMessage({
   session,
   sheikhName,
   masjidName,
-  attendanceLine,
 }) {
   let thumuns = []
   try {
@@ -125,7 +124,6 @@ export function buildSessionResultMessage({
     headerLines,
     resultBlock.join('\n'),
     testDetails,
-    attendanceLine || '',
     AUTO_DISCLAIMER,
     halaqaFooter,
     closing,

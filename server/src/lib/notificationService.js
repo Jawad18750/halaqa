@@ -3,8 +3,6 @@ import { sendMessage, shouldRetry, isTelegramConfigured } from './telegramBot.js
 import { buildSessionResultMessage } from './sessionMessage.js'
 import { getUserSettings } from './userSettings.js'
 import {
-  formatWeeklyAttendanceLine,
-  getStudentWeeklyAttendanceSummary,
   buildAttendanceOverview,
   buildAttendanceOverviewReportMessage,
   buildWeeklyAttendanceGuardianMessage,
@@ -120,13 +118,6 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
   try {
     const studentId = sessionRow.student_id
     const studentName = studentRow?.name || 'الطالب'
-    const attendanceSummary = await getStudentWeeklyAttendanceSummary(
-      userId,
-      studentId,
-      new Date(sessionRow.attempt_at || sessionRow.created_at || Date.now())
-    ).catch(() => null)
-    const attendanceLine = attendanceSummary ? formatWeeklyAttendanceLine(attendanceSummary) : ''
-
     const { rows: recipients } = await pool.query(
       `select distinct g.id as guardian_id, gt.telegram_chat_id, gt.opt_out
        from guardian_students gs
@@ -150,7 +141,6 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
           session: sessionRow,
           sheikhName: settings?.sheikh_name,
           masjidName: settings?.masjid_name,
-          attendanceLine,
         }),
       })
       return
@@ -163,7 +153,6 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
       session: sessionRow,
       sheikhName: settings?.sheikh_name,
       masjidName: settings?.masjid_name,
-      attendanceLine,
     })
 
     for (const r of recipients) {
