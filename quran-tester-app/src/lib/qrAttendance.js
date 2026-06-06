@@ -21,7 +21,7 @@ export const QR_FORMATS = [
     layouts: [
       { id: 'g5x4', cols: 5, rows: 4, label: 'كثيف',   subtitle: '٢٠ ملصق / صفحة', qrPx: 400, scanEase: 2 },
       { id: 'g4x3', cols: 4, rows: 3, label: 'قياسي',  subtitle: '١٢ ملصق / صفحة', qrPx: 480, scanEase: 3 },
-      { id: 'g3x2', cols: 3, rows: 2, label: 'مريح',   subtitle: '٦ ملصقات / صفحة', qrPx: 560, scanEase: 4 },
+      { id: 'g3x3', cols: 3, rows: 3, label: 'مريح',   subtitle: '٩ ملصقات / صفحة', qrPx: 520, scanEase: 4 },
       { id: 'g2x2', cols: 2, rows: 2, label: 'واسع',   subtitle: '٤ ملصقات / صفحة', qrPx: 640, scanEase: 5 },
     ],
   },
@@ -32,8 +32,8 @@ export const QR_FORMATS = [
     icon: 'fa-solid fa-expand',
     tip: 'الأفضل للمسح السريع: اطبع بحجم 100% (بدون تصغير) والصق بعيدًا عن حافة الدفتر.',
     layouts: [
-      { id: 'l2x3', cols: 2, rows: 3, label: 'قياسي',    subtitle: '٦ ملصقات / صفحة', qrPx: 640, scanEase: 5 },
-      { id: 'l1x2', cols: 1, rows: 2, label: 'كبير جدًا', subtitle: '٢ ملصق / صفحة',   qrPx: 800, scanEase: 5 },
+      { id: 'l3x3', cols: 3, rows: 3, label: 'قياسي',    subtitle: '٩ ملصقات / صفحة', qrPx: 600, scanEase: 5 },
+      { id: 'l2x2', cols: 2, rows: 2, label: 'كبير جدًا', subtitle: '٤ ملصقات / صفحة', qrPx: 720, scanEase: 5 },
     ],
   },
   {

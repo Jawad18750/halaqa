@@ -160,7 +160,7 @@ export default function QRPrint({ user, onBack }) {
   }
 
   const layoutCodes = codes[layout.id] || {}
-  const isCompact = perPage >= 12
+  const isCompact = perPage >= 9
 
   const codesReady = useMemo(() => {
     if (!visibleStudents.length) return false
@@ -342,10 +342,6 @@ export default function QRPrint({ user, onBack }) {
                   user={user}
                   compact={isCompact}
                 />
-              ))}
-              {/* Empty placeholder cells so the grid shape is visible on partial last pages */}
-              {Array.from({ length: Math.max(0, perPage - previewStudents.length) }).map((_, i) => (
-                <div key={`empty-${i}`} className="qr-sticker qr-sticker--empty" aria-hidden />
               ))}
             </div>
             <p className="meta qr-print-preview-note">
