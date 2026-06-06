@@ -5,11 +5,27 @@ export const QR_PRINT_SPECS = {
   single: { width: 800, margin: 4, errorCorrectionLevel: 'Q' },
 }
 
+/** Who to include when printing. */
+export const QR_STUDENT_SCOPES = [
+  { id: 'all', label: 'كل الطلاب', icon: 'fa-solid fa-users' },
+  { id: 'selected', label: 'طلاب محددون', icon: 'fa-solid fa-user-check' },
+  { id: 'one', label: 'طالب واحد', icon: 'fa-solid fa-user' },
+]
+
+/** Sticker physical size (custom / sparse pages). */
+export const QR_STICKER_SIZES = [
+  { id: 'sm', label: 'صغير',     subtitle: '~٣٥ مم', qrPx: 400, maxMm: 35, scanEase: 3 },
+  { id: 'md', label: 'متوسط',    subtitle: '~٥٠ مم', qrPx: 520, maxMm: 50, scanEase: 4 },
+  { id: 'lg', label: 'كبير',     subtitle: '~٧٠ مم', qrPx: 640, maxMm: 70, scanEase: 5 },
+  { id: 'xl', label: 'كبير جدًا', subtitle: '~٩٠ مم', qrPx: 800, maxMm: 90, scanEase: 5 },
+]
+
 /**
  * Print format catalogue.
  * Each format has one or more grid layouts the teacher can pick.
  *
  * scanEase: 1 (hardest) – 5 (easiest) for on-screen guidance only.
+ * hasSizePicker: teacher picks sticker mm size (custom sparse pages).
  */
 export const QR_FORMATS = [
   {
@@ -37,18 +53,23 @@ export const QR_FORMATS = [
     ],
   },
   {
-    id: 'single',
-    label: 'طالب واحد',
-    description: 'ملصق واحد لطالب محدد',
-    icon: 'fa-solid fa-user',
-    tip: 'مفيد عند إعادة طباعة ملصق مفقود أو لطالب جديد.',
+    id: 'custom',
+    label: 'طباعة مخصصة',
+    description: 'طلاب محددون — اختر حجم الملصق وتوزيع الصفحة',
+    icon: 'fa-solid fa-sliders',
+    hasSizePicker: true,
+    defaultScope: 'selected',
+    tip: 'لإعادة طباعة ملصق مفقود: اختر «طالب واحد»، حجم الملصق، و«ملصق واحد / صفحة».',
     layouts: [
-      { id: 's1x1', cols: 1, rows: 1, label: 'فردي', subtitle: 'ملصق واحد في الصفحة', qrPx: 800, scanEase: 5 },
+      { id: 'c1x1', cols: 1, rows: 1, label: 'واحد / صفحة', subtitle: 'ملصق في منتصف الورقة', qrPx: 520, scanEase: 5 },
+      { id: 'c2x2', cols: 2, rows: 2, label: '٢×٢',         subtitle: '٤ ملصقات / صفحة',      qrPx: 520, scanEase: 5 },
+      { id: 'c3x3', cols: 3, rows: 3, label: '٣×٣',         subtitle: '٩ ملصقات / صفحة',      qrPx: 520, scanEase: 4 },
     ],
   },
 ]
 
 export function getQrFormat(id) {
+  if (id === 'single') return getQrFormat('custom')
   return QR_FORMATS.find(f => f.id === id) ?? QR_FORMATS[0]
 }
 
@@ -57,11 +78,31 @@ export function getQrLayout(formatId, layoutId) {
   return format.layouts.find(l => l.id === layoutId) ?? format.layouts[0]
 }
 
-export function getQrSpecForLayout(layout) {
+export function getQrStickerSize(sizeId) {
+  return QR_STICKER_SIZES.find(s => s.id === sizeId) ?? QR_STICKER_SIZES[1]
+}
+
+export function getQrCacheKey(layout, size, format) {
+  if (format?.hasSizePicker && size) return `${layout.id}-${size.id}`
+  return layout.id
+}
+
+export function getQrSpecForLayout(layout, size, format) {
+  const qrPx = format?.hasSizePicker && size ? size.qrPx : layout.qrPx
   return {
-    width: layout.qrPx,
+    width: qrPx,
     margin: 4,
     errorCorrectionLevel: 'Q',
+  }
+}
+
+/** CSS variables for sheet/sticker max width from chosen mm size. */
+export function getQrSheetSizeVars(size) {
+  if (!size) return {}
+  const pct = Math.round((size.maxMm / 210) * 1000) / 10
+  return {
+    '--qr-sticker-max-mm': `${size.maxMm}mm`,
+    '--qr-sticker-max-pct': `${pct}%`,
   }
 }
 
