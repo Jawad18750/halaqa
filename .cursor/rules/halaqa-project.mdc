@@ -1,0 +1,70 @@
+---
+description: Halaqa app — VPS paths, deploy workflow, stack, and conventions (always read first)
+alwaysApply: true
+---
+
+# Halaqa (حلقة) — Project Context
+
+Arabic-first, mobile-first Quran halaqa teacher app. Live: https://halaqa.abdeljawad.com · API: https://api.halaqa.abdeljawad.com · Repo: `github.com:Jawad18750/halaqa.git` (main).
+
+## Stack
+
+React 18 + Vite 7 frontend (`quran-tester-app/`), Node/Express + PostgreSQL backend (`server/`), JWT auth, PM2 `halaqa-api` on port 4000, Telegram notifications.
+
+## VPS paths
+
+| Path | Purpose |
+|------|---------|
+| `/home/deploy/halaqa_git/` | **Edit & commit here** |
+| `/home/deploy/halaqa_src_current/` | Production source (rsync from git before build) |
+| `/home/halaqa.abdeljawad.com/public_html/` | Live frontend (`rsync dist/` here) |
+| `/home/deploy/halaqa_current` | Symlink → `dist/` |
+
+Health: `curl http://localhost:4000/health`
+
+## Deploy (frontend)
+
+```bash
+SRC=/home/deploy/halaqa_git
+DST=/home/deploy/halaqa_src_current
+BUILD_TAG=$(date -u +%Y-%m-%dT%H-%MZ)
+rsync -a --exclude node_modules --exclude dist "$SRC/quran-tester-app/" "$DST/quran-tester-app/"
+cd "$DST/quran-tester-app"
+VITE_API_URL=https://api.halaqa.abdeljawad.com VITE_BUILD_TAG="$BUILD_TAG" npm run build
+ln -sfn "$DST/quran-tester-app/dist" /home/deploy/halaqa_current
+rsync -a --delete "$DST/quran-tester-app/dist/" /home/halaqa.abdeljawad.com/public_html/
+```
+
+Always set `VITE_BUILD_TAG` — `appVersion.js` forces one reload on change.
+
+Backend (when needed): rsync `server/`, `npm install --omit=dev`, `npm run migrate`, `pm2 restart halaqa-api --update-env`.
+
+## App structure
+
+SPA in `App.jsx` (view state, no router for main nav). Key views: `dashboard`, `students`, `test`, `attendance`, `qrcodes` (QRPrint), `guardians`, `broadcast`, `messageLog`, `backup`, `settings`.
+
+## Critical files
+
+- `src/lib/attendanceScanner.js` — QR scan (BarcodeDetector + jsQR + ZXing on cropped frames)
+- `src/lib/qrAttendance.js` — QR token parse, `QR_FORMATS`, `QR_STICKER_SIZES`, student scopes
+- `src/components/QRPrint.jsx` — print UX (grid / large / custom with size picker)
+- `src/lib/labels.js` — Arabic labels; export helpers like `formatQalamOrdinal()`
+- `server/src/lib/notificationService.js` — Telegram + message log
+- `server/src/db/migrations/` — run `npm run migrate` after schema changes
+
+## Conventions
+
+- RTL Arabic UI; Western digits: `toLocaleString('ar-EG-u-nu-latn')`
+- Mobile-first (Samsung A50-class Android Chrome)
+- Minimize diff scope; match existing patterns
+- Commit/push only when asked; never commit `.env` or secrets
+- Don't reference unexported constants (e.g. use `formatQalamOrdinal`, not raw `QALAM_ORDINALS`)
+- Node 20.18.2 on VPS — Vite warns but builds succeed
+
+## QR notes
+
+- Student `qr_token` = 32-char hex; external Android apps scan small stickers fine
+- In-app scanner must use `startAttendanceScanner()` from `attendanceScanner.js`
+- Print stickers are content-sized (border hugs QR + label); custom mode picks size (35–90mm)
+
+For full reference (features, migrations, cron), read `.cursor/skills/halaqa/reference.md`.
