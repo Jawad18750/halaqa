@@ -14,14 +14,6 @@ import {
 import { appendSignatureFooter, hasHalaqaSettings } from '../lib/messageContext.js'
 import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 
-const STATUS_LABELS = {
-  sent: 'تم الإرسال',
-  failed: 'فشل',
-  no_telegram_link: 'غير مربوط',
-  opt_out: 'غير مشترك',
-  skipped_no_recipient: 'لا مستلم',
-}
-
 const TARGETS = [
   { id: 'all', label: 'الكل', icon: 'fa-solid fa-users' },
   { id: 'student', label: 'طالب', icon: 'fa-solid fa-user-graduate' },
@@ -29,7 +21,7 @@ const TARGETS = [
   { id: 'guardians', label: 'أولياء محددون', icon: 'fa-solid fa-user-group' },
 ]
 
-export default function Broadcast({ onBack }) {
+export default function Broadcast({ onBack, onOpenMessageLog }) {
   const { sheikhName, masjidName } = useMessageSettings()
   const [message, setMessage] = useState('')
   const [appendSignature, setAppendSignature] = useState(true)
@@ -184,7 +176,6 @@ export default function Broadcast({ onBack }) {
       } else {
         setToast(`تم الإرسال إلى ${sent} من أولياء الأمور`)
       }
-      setMessage('')
       if (targetType === 'guardians') setTargetIds(new Set())
       await loadLog()
     } catch (e) {
@@ -529,33 +520,28 @@ export default function Broadcast({ onBack }) {
         </section>
       )}
 
-      <section className="broadcast-panel">
-        <h2 className="broadcast-panel__title">سجل الإرسال</h2>
-        {logLoading ? (
-          <div className="loading">جاري التحميل…</div>
-        ) : logEntries.length === 0 ? (
-          <p className="meta">لا سجلات بعد.</p>
-        ) : (
-          <div className="broadcast-log">
-            {logEntries.map(entry => (
-              <article key={entry.id} className="broadcast-log__item">
-                <div className="broadcast-log__meta">
-                  <span className={`broadcast-log__status broadcast-log__status--${entry.status}`}>
-                    {STATUS_LABELS[entry.status] || entry.status}
-                  </span>
-                  <time className="meta">
-                    {entry.created_at ? new Date(entry.created_at).toLocaleString('ar-EG-u-nu-latn') : '—'}
-                  </time>
-                </div>
-                <p className="broadcast-log__recipients">
-                  {entry.guardian_name || '—'}
-                  {entry.student_name ? ` · ${entry.student_name}` : ''}
-                </p>
-                <p className="broadcast-log__preview">{entry.message_preview || '—'}</p>
-              </article>
-            ))}
-          </div>
+      <section className="broadcast-panel broadcast-panel--log-cta">
+        <h2 className="broadcast-panel__title">سجل الرسائل</h2>
+        <p className="meta">
+          اطلع على كل ما أُرسل لأولياء الأمور — نتائج الاختبارات، الحضور الأسبوعي، والرسائل اليدوية.
+        </p>
+        {result?.broadcastId && onOpenMessageLog && (
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            style={{ marginBottom: 8 }}
+            onClick={() => onOpenMessageLog({ broadcastId: result.broadcastId, type: 'broadcast' })}
+          >
+            <i className="fa-brands fa-telegram" /> عرض رسالة هذا الإرسال
+          </button>
         )}
+        <button
+          type="button"
+          className="btn btn--ghost"
+          onClick={() => onOpenMessageLog?.()}
+        >
+          <i className="fa-solid fa-envelope-open-text" /> عرض سجل الرسائل الكامل
+        </button>
       </section>
     </div>
   )

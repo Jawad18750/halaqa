@@ -26,6 +26,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
   const [guardianList, setGuardianList] = useState([])
   const [attendanceWeek, setAttendanceWeek] = useState(null)
   const [telegramLinkActivity, setTelegramLinkActivity] = useState([])
+  const [recentSentMessages, setRecentSentMessages] = useState([])
+  const [messageLogAttention, setMessageLogAttention] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAllNotTested, setShowAllNotTested] = useState(false)
@@ -36,12 +38,14 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
     setLoading(true)
     setError('')
     try {
-      const [w, studentsRes, overview, guardiansRes, activityRes] = await Promise.all([
+      const [w, studentsRes, overview, guardiansRes, activityRes, sentRes, statsRes] = await Promise.all([
         sessions.weekly(),
         students.list(),
         sessions.overview().catch(() => ({ sessions: [] })),
         guardians.list().catch(() => ({ guardians: [] })),
         notifications.log(20).catch(() => ({ entries: [] })),
+        notifications.log({ limit: 5, status: 'sent' }).catch(() => ({ entries: [] })),
+        notifications.logStats().catch(() => ({ stats: null })),
       ])
       const weekStart = w?.weekStartDate
       let attendanceRes = null
@@ -60,6 +64,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       setTelegramLinkActivity(
         (activityRes?.entries || []).filter(e => e.status === 'telegram_linked').slice(0, 3)
       )
+      setRecentSentMessages(sentRes?.entries || [])
+      setMessageLogAttention(statsRes?.stats?.needs_attention || 0)
       setOverviewSessions(Array.isArray(overview?.sessions) ? overview.sessions : [])
       const testedIds = new Set(w?.sessions?.map(x => x.student_id))
       setRemaining(Math.max(0, (s?.length || 0) - testedIds.size))
@@ -70,6 +76,8 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       setGuardianList([])
       setAttendanceWeek(null)
       setTelegramLinkActivity([])
+      setRecentSentMessages([])
+      setMessageLogAttention(0)
       setRemaining(0)
       setError(e?.message || 'تعذر تحميل البيانات')
     } finally {
@@ -254,6 +262,18 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       onClick: () => onNavigate?.('attendanceLog'),
     },
     {
+      id: 'message-log',
+      label: 'سجل الرسائل',
+      hint: messageLogAttention > 0
+        ? `${messageLogAttention.toLocaleString('ar-EG-u-nu-latn')} تحتاج انتباه`
+        : 'ما أُرسل لأولياء الأمور',
+      icon: 'fa-solid fa-envelope-open-text',
+      tone: messageLogAttention > 0 ? 'warn' : 'telegram-soft',
+      badge: messageLogAttention || null,
+      featured: messageLogAttention > 0,
+      onClick: () => onNavigate?.('messageLog', messageLogAttention > 0 ? { status: 'failed' } : null),
+    },
+    {
       id: 'weekly',
       label: 'نظرة زمنية',
       hint: 'جلسات وجداول',
@@ -269,7 +289,7 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       tone: 'gold',
       onClick: () => onNavigate?.('leaderboard'),
     },
-  ], [list.length, guardianMetrics.needsInvite, guardianMetrics.linked, attendanceWeekRate, onNavigate, onAddStudent])
+  ], [list.length, guardianMetrics.needsInvite, guardianMetrics.linked, attendanceWeekRate, messageLogAttention, onNavigate, onAddStudent])
 
   const announcements = useMemo(() => {
     const items = []
@@ -634,6 +654,30 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {recentSentMessages.length > 0 && (
+              <div className="dash-guardians__activity">
+                <p className="dash-guardians__activity-title">آخر الرسائل المرسلة</p>
+                <ul className="dash-guardians__activity-list">
+                  {recentSentMessages.map(entry => (
+                    <li key={entry.id} className="dash-guardians__activity-item">
+                      <i className="fa-solid fa-paper-plane" aria-hidden />
+                      <span>
+                        {entry.student_name ? `${entry.student_name} · ` : ''}
+                        {entry.message_preview || entry.message_body || '—'}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm dash-guardians__action"
+                  onClick={() => onNavigate?.('messageLog')}
+                >
+                  سجل الرسائل الكامل
+                </button>
               </div>
             )}
 

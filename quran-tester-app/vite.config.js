@@ -13,7 +13,18 @@ export default defineConfig(({ mode }) => {
     (mode === 'production' ? formatBuildTag() : 'dev')
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      {
+        name: 'inject-app-version-meta',
+        transformIndexHtml(html) {
+          return html.replace(
+            '<meta charset="UTF-8" />',
+            `<meta charset="UTF-8" />\n    <meta name="app-version" content="${buildTag}" />`
+          )
+        },
+      },
+    ],
     define: {
       'import.meta.env.VITE_BUILD_TAG': JSON.stringify(buildTag),
     },

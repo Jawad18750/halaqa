@@ -18,6 +18,7 @@ const NAV_GROUPS = [
     items: [
       { view: 'weekly', icon: 'fa-calendar-week', label: 'نظرة زمنية' },
       { view: 'attendanceLog', icon: 'fa-clipboard-list', label: 'سجل الحضور' },
+      { view: 'messageLog', icon: 'fa-envelope-open-text', label: 'سجل الرسائل' },
       { view: 'leaderboard', icon: 'fa-trophy', label: 'لوحة الصدارة' },
     ],
   },

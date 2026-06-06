@@ -196,12 +196,34 @@ export const notifications = {
       body: JSON.stringify({ message, targetType: 'guardians', targetIds: guardianIds }),
     })
   },
-  async log(limit = 50, studentId) {
+  async log(limitOrOptions = 50, studentId) {
+    const opts = typeof limitOrOptions === 'object' && limitOrOptions !== null
+      ? limitOrOptions
+      : { limit: limitOrOptions, studentId }
     const params = new URLSearchParams()
-    if (limit) params.set('limit', String(limit))
-    if (studentId) params.set('studentId', studentId)
+    if (opts.limit) params.set('limit', String(opts.limit))
+    if (opts.offset) params.set('offset', String(opts.offset))
+    if (opts.studentId) params.set('studentId', opts.studentId)
+    if (opts.guardianId) params.set('guardianId', opts.guardianId)
+    if (opts.sessionId) params.set('sessionId', opts.sessionId)
+    if (opts.broadcastId) params.set('broadcastId', opts.broadcastId)
+    if (opts.type) params.set('type', opts.type)
+    if (opts.status) params.set('status', opts.status)
+    if (opts.from) params.set('from', opts.from)
+    if (opts.to) params.set('to', opts.to)
+    if (opts.search) params.set('search', opts.search)
     const qs = params.toString() ? `?${params.toString()}` : ''
     return await request(`/notifications/log${qs}`)
+  },
+  async logStats(from, to) {
+    const params = new URLSearchParams()
+    if (from) params.set('from', from)
+    if (to) params.set('to', to)
+    const qs = params.toString() ? `?${params.toString()}` : ''
+    return await request(`/notifications/log/stats${qs}`)
+  },
+  async logEntry(id) {
+    return await request(`/notifications/log/${id}`)
   },
   async sendWeeklyAttendance(from, to) {
     return await request('/notifications/attendance-weekly', {

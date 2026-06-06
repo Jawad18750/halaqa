@@ -20,8 +20,18 @@ import StudentHubHeader, { computeStudentStats } from './ui/StudentHubHeader.jsx
 import GuardianSection from './GuardianSection.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import Toast from './ui/Toast.jsx'
+import StudentMessageLogSection from './ui/StudentMessageLogSection.jsx'
 
-export default function StudentProfile({ student, thumuns = [], onBack, onTest, onHistory, onStudentUpdated }) {
+export default function StudentProfile({
+  student,
+  thumuns = [],
+  onBack,
+  onTest,
+  onHistory,
+  onStudentUpdated,
+  onOpenMessageLog,
+  onNavigate,
+}) {
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -89,8 +99,6 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
   }
   useEffect(() => { load() }, [student?.id])
 
-  const qalamDirty = Number(qalamCount) !== Number(student?.qalam_count || 1)
-
   async function saveMemorization() {
     setMemSaving(true)
     setError('')
@@ -105,20 +113,6 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
       setError(e.message)
     } finally {
       setMemSaving(false)
-    }
-  }
-
-  async function saveQalam() {
-    setQalamSaving(true)
-    setError('')
-    try {
-      const { student: s } = await students.update(student.id, { qalam_count: Number(qalamCount) || 1 })
-      onStudentUpdated?.({ ...student, ...s })
-      showToast('تم حفظ القلم')
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setQalamSaving(false)
     }
   }
 
@@ -261,9 +255,8 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
         <SectionCard title="مستوى الحفظ (التسميع)" className="profile-sections__memorization">
           <MemorizationFields
             thumuns={thumuns}
-            thumunId={memorizationThumunId}
-            surah={memorizationSurah}
-            onChange={onMemorizationChange}
+            value={memorizationThumunId}
+            onChange={setMemorizationThumunId}
             disabled={memSaving}
             idPrefix="profile-mem"
             embedded
@@ -277,14 +270,6 @@ export default function StudentProfile({ student, thumuns = [], onBack, onTest, 
           >
             {memSaving ? 'جاري الحفظ…' : 'حفظ مستوى الحفظ'}
           </button>
-          <QalamField
-            value={qalamCount}
-            onChange={setQalamCount}
-            disabled={qalamSaving}
-            saving={qalamSaving}
-            dirty={qalamDirty}
-            onSave={saveQalam}
-          />
         </SectionCard>
 
         <SectionCard title="أولياء الأمور" className="profile-sections__guardians">

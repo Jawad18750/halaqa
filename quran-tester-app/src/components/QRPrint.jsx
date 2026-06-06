@@ -1,19 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
 import { attendance } from '../api'
+import { QR_PRINT_SPECS } from '../lib/qrAttendance.js'
 import PageHeader from './ui/PageHeader.jsx'
 
 const PRINT_MODES = [
-  { id: 'grid', label: 'A4 شبكة' },
-  { id: 'large', label: 'ملصقات كبيرة' },
-  { id: 'single', label: 'طالب واحد' },
+  { id: 'large', label: 'ملصقات كبيرة', hint: 'الأفضل للمسح' },
+  { id: 'grid', label: 'A4 شبكة', hint: 'اقتصادي' },
+  { id: 'single', label: 'طالب واحد', hint: 'لصق فردي' },
 ]
+
+async function renderQrDataUrl(token, mode) {
+  const spec = QR_PRINT_SPECS[mode] || QR_PRINT_SPECS.large
+  return QRCode.toDataURL(token, {
+    ...spec,
+    color: { dark: '#000000', light: '#ffffff' },
+  })
+}
 
 export default function QRPrint({ user, onBack }) {
   const [studentsList, setStudentsList] = useState([])
-  const [mode, setMode] = useState('grid')
+  const [mode, setMode] = useState('large')
   const [selectedId, setSelectedId] = useState('')
-  const [codes, setCodes] = useState({})
+  const [codes, setCodes] = useState({ grid: {}, large: {}, single: {} })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -28,13 +37,16 @@ export default function QRPrint({ user, onBack }) {
         const rows = data.students || []
         setStudentsList(rows)
         setSelectedId(rows[0]?.id || '')
-        const nextCodes = {}
+        const nextCodes = { grid: {}, large: {}, single: {} }
         for (const student of rows) {
-          nextCodes[student.id] = await QRCode.toDataURL(student.qr_token, {
-            margin: 1,
-            width: 320,
-            errorCorrectionLevel: 'M',
-          })
+          const [grid, large, single] = await Promise.all([
+            renderQrDataUrl(student.qr_token, 'grid'),
+            renderQrDataUrl(student.qr_token, 'large'),
+            renderQrDataUrl(student.qr_token, 'single'),
+          ])
+          nextCodes.grid[student.id] = grid
+          nextCodes.large[student.id] = large
+          nextCodes.single[student.id] = single
         }
         if (!cancelled) setCodes(nextCodes)
       } catch (e) {
@@ -52,7 +64,13 @@ export default function QRPrint({ user, onBack }) {
     return studentsList
   }, [mode, selectedId, studentsList])
 
-  const printClass = mode === 'large' ? 'qr-sheet qr-sheet--large' : mode === 'single' ? 'qr-sheet qr-sheet--single' : 'qr-sheet'
+  const printClass = mode === 'large'
+    ? 'qr-sheet qr-sheet--large'
+    : mode === 'single'
+      ? 'qr-sheet qr-sheet--single'
+      : 'qr-sheet'
+
+  const activeMode = PRINT_MODES.find(m => m.id === mode)
 
   return (
     <div className="qr-print-page">
@@ -69,6 +87,12 @@ export default function QRPrint({ user, onBack }) {
 
       {error && <div className="alert alert--error">{error}</div>}
 
+      <p className="meta qr-print-tip">
+        <i className="fa-solid fa-circle-info" aria-hidden />
+        {' '}
+        للمسح السريع على الهاتف: اختر <strong>ملصقات كبيرة</strong>، اطبع بحجم 100% (بدون تصغير)، والصق الرمز بعيدًا عن الحافة.
+      </p>
+
       <section className="qr-print-controls">
         <div className="attendance-tabs" role="tablist" aria-label="تنسيق الطباعة">
           {PRINT_MODES.map(item => (
@@ -79,6 +103,7 @@ export default function QRPrint({ user, onBack }) {
               onClick={() => setMode(item.id)}
             >
               {item.label}
+              <span className="attendance-tab__hint">{item.hint}</span>
             </button>
           ))}
         </div>
@@ -89,6 +114,11 @@ export default function QRPrint({ user, onBack }) {
             ))}
           </select>
         )}
+        {activeMode && (
+          <p className="meta qr-print-mode-note">
+            الوضع الحالي: {activeMode.label} — {activeMode.hint}
+          </p>
+        )}
       </section>
 
       {loading ? (
@@ -97,7 +127,7 @@ export default function QRPrint({ user, onBack }) {
         <section className={printClass} aria-label="معاينة الطباعة">
           {visibleStudents.map(student => (
             <article key={student.id} className="qr-sticker">
-              <img src={codes[student.id]} alt="" className="qr-sticker__code" />
+              <img src={codes[mode]?.[student.id]} alt="" className="qr-sticker__code" />
               <div className="qr-sticker__text">
                 <strong>{student.name}</strong>
                 <span>رقم {student.number}</span>

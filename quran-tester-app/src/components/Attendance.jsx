@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BrowserMultiFormatReader } from '@zxing/browser'
+import { BrowserQRCodeReader } from '@zxing/browser'
 import { attendance } from '../api'
+import { parseQrAttendanceToken } from '../lib/qrAttendance.js'
+import { decodeQrFromImageFile, startAttendanceScanner } from '../lib/attendanceScanner.js'
 import PageHeader from './ui/PageHeader.jsx'
 import Toast from './ui/Toast.jsx'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
 
 const MODES = [
   { id: 'scan', label: 'مسح' },
@@ -52,8 +55,12 @@ export default function Attendance({ onBack, onPrint }) {
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
   const [cameraError, setCameraError] = useState('')
+  const [torchOn, setTorchOn] = useState(false)
+  const [torchAvailable, setTorchAvailable] = useState(false)
   const videoRef = useRef(null)
-  const controlsRef = useRef(null)
+  const streamRef = useRef(null)
+  const scannerRef = useRef(null)
+  const fileInputRef = useRef(null)
   const lastScanRef = useRef({ text: '', at: 0 })
   const studentByTokenRef = useRef(new Map())
   const presentIdsRef = useRef(new Set())
@@ -83,7 +90,12 @@ export default function Attendance({ onBack, onPrint }) {
 
   const studentByToken = useMemo(() => {
     const map = new Map()
-    for (const student of studentsList) map.set(student.qr_token, student)
+    for (const student of studentsList) {
+      if (!student.qr_token) continue
+      const token = String(student.qr_token).trim().toLowerCase()
+      map.set(token, student)
+      map.set(student.qr_token, student)
+    }
     return map
   }, [studentsList])
 
@@ -144,8 +156,9 @@ export default function Attendance({ onBack, onPrint }) {
   }, [pending, date]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function addScan(qrToken, source = 'qr') {
-    const token = String(qrToken || '').trim()
+    const token = parseQrAttendanceToken(qrToken)
     const student = studentByTokenRef.current.get(token)
+      || studentByTokenRef.current.get(String(qrToken || '').trim())
     if (!student) {
       setToast('رمز غير معروف')
       return
@@ -169,50 +182,83 @@ export default function Attendance({ onBack, onPrint }) {
   }
 
   function handleQrText(text) {
-    const value = String(text || '').trim()
+    const value = parseQrAttendanceToken(text)
+    if (!value) return
     const now = Date.now()
-    if (lastScanRef.current.text === value && now - lastScanRef.current.at < 1800) return
+    if (lastScanRef.current.text === value && now - lastScanRef.current.at < 1200) return
     lastScanRef.current = { text: value, at: now }
     addScan(value, 'qr')
   }
 
+  async function toggleTorch() {
+    const track = streamRef.current?.getVideoTracks?.()?.[0]
+    if (!track || !BrowserQRCodeReader.mediaStreamIsTorchCompatibleTrack(track)) return
+    const next = !torchOn
+    try {
+      await BrowserQRCodeReader.mediaStreamSetTorch(track, next)
+      setTorchOn(next)
+    } catch {
+      setToast('تعذر تشغيل الفلاش')
+    }
+  }
+
+  async function decodeFromPhoto(file) {
+    if (!file) return
+    try {
+      const text = await decodeQrFromImageFile(file)
+      if (text) handleQrText(text)
+      else setToast('لم يُعثر على رمز QR في الصورة')
+    } catch {
+      setToast('لم يُعثر على رمز QR في الصورة')
+    }
+  }
+
   useEffect(() => {
     if (mode !== 'scan' || loading) {
-      controlsRef.current?.stop?.()
-      controlsRef.current = null
+      scannerRef.current?.stop?.()
+      scannerRef.current = null
+      streamRef.current = null
+      setTorchOn(false)
+      setTorchAvailable(false)
       return undefined
     }
 
     let cancelled = false
-    let reader = null
 
     async function startCamera() {
       setCameraError('')
-      // Wait for <video> to mount after loading screen (mode-only deps missed first paint).
+      setTorchOn(false)
+      setTorchAvailable(false)
       await new Promise(resolve => requestAnimationFrame(resolve))
       if (cancelled) return
       const video = videoRef.current
       if (!video) return
 
-      reader = new BrowserMultiFormatReader()
-      try {
-        await reader.decodeFromVideoDevice(undefined, video, (result, _err, controls) => {
-          if (controls && !controlsRef.current) controlsRef.current = controls
-          if (cancelled || !result) return
-          handleQrText(result.getText())
-        })
-      } catch (e) {
-        if (!cancelled) setCameraError(e?.message || 'تعذر فتح الكاميرا')
-      }
+      scannerRef.current?.stop?.()
+      scannerRef.current = startAttendanceScanner({
+        video,
+        onDetect: handleQrText,
+        onStreamReady: (stream) => {
+          if (cancelled) return
+          streamRef.current = stream
+          const track = stream.getVideoTracks()[0]
+          setTorchAvailable(Boolean(
+            track && BrowserQRCodeReader.mediaStreamIsTorchCompatibleTrack(track)
+          ))
+        },
+        onError: (e) => {
+          if (!cancelled) setCameraError(e?.message || 'تعذر فتح الكاميرا')
+        },
+      })
     }
 
     startCamera()
 
     return () => {
       cancelled = true
-      controlsRef.current?.stop?.()
-      controlsRef.current = null
-      reader = null
+      scannerRef.current?.stop?.()
+      scannerRef.current = null
+      streamRef.current = null
     }
   }, [mode, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -221,13 +267,51 @@ export default function Attendance({ onBack, onPrint }) {
       setPending(prev => prev.filter(item => item.id !== record.pendingId))
       return
     }
+    const ok = await confirmDialog(
+      'إزالة الحضور',
+      `إزالة تسجيل حضور ${record.name || 'الطالب'}؟`,
+      { confirmLabel: 'إزالة', cancelLabel: 'إلغاء' }
+    )
+    if (!ok) return
     try {
       await attendance.remove(record.id)
       setRecords(prev => prev.filter(row => row.id !== record.id))
-      setToast('تم التراجع')
+      setToast('تم إزالة الحضور')
     } catch (e) {
-      setToast(e.message || 'تعذر التراجع')
+      setToast(e.message || 'تعذر إزالة الحضور')
     }
+  }
+
+  async function removeStudentPresence(student) {
+    const pendingItem = pending.find(item => item.studentId === student.id)
+    if (pendingItem) {
+      setPending(prev => prev.filter(item => item.id !== pendingItem.id))
+      setToast('تم إزالة الحضور')
+      return
+    }
+    const record = records.find(row => row.student_id === student.id)
+    if (!record) return
+    const ok = await confirmDialog(
+      'إزالة الحضور',
+      `إزالة تسجيل حضور ${student.name}؟`,
+      { confirmLabel: 'إزالة', cancelLabel: 'إلغاء' }
+    )
+    if (!ok) return
+    try {
+      await attendance.remove(record.id)
+      setRecords(prev => prev.filter(row => row.id !== record.id))
+      setToast('تم إزالة الحضور')
+    } catch (e) {
+      setToast(e.message || 'تعذر إزالة الحضور')
+    }
+  }
+
+  async function toggleManualStudent(student) {
+    if (presentIds.has(student.id)) {
+      await removeStudentPresence(student)
+      return
+    }
+    addScan(student.qr_token, 'manual')
   }
 
   async function undoLast() {
@@ -319,9 +403,49 @@ export default function Attendance({ onBack, onPrint }) {
 
       {mode === 'scan' && (
         <section className="attendance-scan">
+          <p className="meta attendance-scan-hint">
+            قرّب رمز الطالب حتى يملأ المربع — ثبّت الهاتف لحظة وسيُسجَّل تلقائيًا.
+          </p>
           <div className="attendance-camera">
-            <video ref={videoRef} className="attendance-camera__video" muted playsInline />
-            <div className="attendance-camera__frame" aria-hidden />
+            <video ref={videoRef} className="attendance-camera__video" muted playsInline autoPlay />
+            <div className="attendance-camera__frame" aria-hidden>
+              <span className="attendance-camera__frame-corners" />
+              <span className="attendance-camera__frame-scan" />
+            </div>
+            <div className="attendance-camera__tools">
+              {torchAvailable && (
+                <button
+                  type="button"
+                  className={`btn btn--sm ${torchOn ? 'btn--primary' : 'btn--ghost'} attendance-camera__torch`}
+                  onClick={toggleTorch}
+                  aria-pressed={torchOn}
+                  aria-label={torchOn ? 'إطفاء الفلاش' : 'تشغيل الفلاش'}
+                >
+                  <i className={`fa-solid ${torchOn ? 'fa-lightbulb' : 'fa-bolt'}`} aria-hidden />
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm attendance-camera__photo"
+                onClick={() => fileInputRef.current?.click()}
+                aria-label="مسح من صورة"
+              >
+                <i className="fa-solid fa-image" aria-hidden />
+                <span>صورة</span>
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="attendance-camera__file"
+              onChange={e => {
+                const file = e.target.files?.[0]
+                if (file) decodeFromPhoto(file)
+                e.target.value = ''
+              }}
+            />
             {cameraError && (
               <div className="attendance-camera__fallback">
                 <i className="fa-solid fa-camera-rotate" aria-hidden />
@@ -362,11 +486,11 @@ export default function Attendance({ onBack, onPrint }) {
                   key={student.id}
                   type="button"
                   className={`attendance-student ${present ? 'attendance-student--present' : ''}`}
-                  onClick={() => !present && addScan(student.qr_token, 'manual')}
+                  onClick={() => toggleManualStudent(student)}
                 >
                   <span className="attendance-row__num">{student.number}</span>
                   <strong>{student.name}</strong>
-                  <span className="attendance-student__state">{present ? 'حاضر' : 'تسجيل'}</span>
+                  <span className="attendance-student__state">{present ? 'إزالة' : 'تسجيل'}</span>
                 </button>
               )
             })}
@@ -380,13 +504,14 @@ export default function Attendance({ onBack, onPrint }) {
             <h2>الحاضرون</h2>
             <span className="meta">{presentRows.length.toLocaleString('ar-EG-u-nu-latn')}</span>
           </div>
+          <p className="meta attendance-review-hint">اضغط ✕ لإزالة حضور مسجّل بالخطأ (محفوظ أو بانتظار الحفظ).</p>
           <div className="attendance-list">
             {presentRows.map(row => (
               <div key={row.id || row.pendingId} className="attendance-row">
                 <span className="attendance-row__num">{row.number}</span>
                 <strong>{row.name}</strong>
                 <span className="meta">{row.pendingId ? 'بانتظار الحفظ' : row.source === 'manual' ? 'يدوي' : 'QR'}</span>
-                <button type="button" className="btn btn--ghost btn--icon" onClick={() => removeRecord(row)} aria-label="تراجع">
+                <button type="button" className="btn btn--ghost btn--icon" onClick={() => removeRecord(row)} aria-label="إزالة الحضور">
                   <i className="fa-solid fa-xmark" />
                 </button>
               </div>

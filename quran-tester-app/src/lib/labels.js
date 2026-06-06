@@ -20,6 +20,8 @@ export const VIEW_TITLES = {
   backup: 'النسخ الاحتياطي',
   guardians: 'أولياء الأمور',
   broadcast: 'رسائل Telegram',
+  messageLog: 'سجل الرسائل',
+  attendanceLog: 'سجل الحضور',
   addStudent: 'إضافة طالب',
   reset: 'إعادة تعيين كلمة المرور',
 }
@@ -155,11 +157,14 @@ const QALAM_ORDINALS = {
   10: 'العاشر',
 }
 
-export function formatQalamLabel(count) {
+export function formatQalamOrdinal(count) {
   const n = Number(count ?? 1)
-  if (!Number.isFinite(n) || n < 1) return 'القلم الأول'
-  const ordinal = QALAM_ORDINALS[n] || String(n)
-  return `القلم ${ordinal}`
+  if (!Number.isFinite(n) || n < 1) return 'الأول'
+  return QALAM_ORDINALS[n] || String(n)
+}
+
+export function formatQalamLabel(count) {
+  return `القلم ${formatQalamOrdinal(count)}`
 }
 
 export function formatMemorizationPosition(student, thumuns) {

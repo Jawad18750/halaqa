@@ -120,7 +120,7 @@ router.post('/', async (req, res) => {
             studentId, weekStart, attemptDay, mode, naqzaSnapshot, selectedJuz ?? null,
             Number(selectedFiveHizb) || null, Number(selectedQuranQuarter) || null, Number(selectedQuranHalf) || null,
             t.id, t.surahNumber ?? null, t.hizb ?? null, t.juz ?? null, t.naqza ?? null,
-            fathaPrompts, taradudCount, passed, computedScore, 1, notesTrimmed
+            fathaPrompts, taradudCount, passed, computedScore, testTry, notesTrimmed
           ]
         ),
         15000,
@@ -156,7 +156,7 @@ router.post('/', async (req, res) => {
 
     const sessionRow = rows[0]
     const studentForNotify = updatedStudent || (await pool.query(
-      'select id, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count from students where id=$1 and user_id=$2',
+      'select id, name, current_naqza, memorization_thumun_id, memorization_surah from students where id=$1 and user_id=$2',
       [studentId, req.user.id]
     )).rows[0]
 

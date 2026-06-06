@@ -12,6 +12,7 @@ import {
   emptyFilterHint,
   resultLabel,
   gradeLabel,
+  formatQalamOrdinal,
 } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import StatTile from './ui/StatTile.jsx'
@@ -92,7 +93,17 @@ function clearTestDraft(studentId) {
   try { sessionStorage.removeItem(testDraftKey(studentId)) } catch {}
 }
 
-export default function TestView({ student, thumuns, onGoProfile, onTestAgain, onGoList, onHistory, onBack, onStudentUpdated }) {
+export default function TestView({
+  student,
+  thumuns,
+  onGoProfile,
+  onTestAgain,
+  onGoList,
+  onHistory,
+  onBack,
+  onStudentUpdated,
+  onViewMessage,
+}) {
   const initialDraft = useMemo(() => readTestDraft(student.id), [student.id])
   const [mode, setMode] = useState(() => initialDraft?.mode || 'naqza')
   const [testNaqza, setTestNaqza] = useState(() => initialDraft?.testNaqza ?? (Number(student.current_naqza) || 1))
@@ -110,6 +121,7 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
   const [showManualPick, setShowManualPick] = useState(false)
   const [manualQuery, setManualQuery] = useState('')
   const [draftRestored, setDraftRestored] = useState(false)
+  const [testTryNumber, setTestTryNumber] = useState(1)
   const [teacherNotes, setTeacherNotes] = useState('')
   const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
   const [memorizationSurah, setMemorizationSurah] = useState(student?.memorization_surah ?? null)
@@ -298,12 +310,14 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
         taradudCount: taradud,
         passed,
         score,
+        testTryNumber,
         teacherNotes: teacherNotes.trim() || null,
       })
       const updated = res?.student ?? await refreshStudent()
       if (updated) onStudentUpdated?.(updated)
       setResultModal({
         score,
+        sessionId: res?.session?.id || null,
         passed,
         naqzaAfter: passed ? (updated?.current_naqza ?? null) : student.current_naqza,
       })
@@ -562,6 +576,25 @@ export default function TestView({ student, thumuns, onGoProfile, onTestAgain, o
                 onInc={() => setTaradud(taradud + 1)}
               />
             </div>
+          </div>
+
+          <div className="test-performance__qalam">
+            <div className="test-performance__qalam-copy">
+              <span className="test-performance__qalam-label" id="test-metric-qalam">القلم</span>
+              <span className="test-performance__qalam-sub meta">
+                المحاولة {formatQalamOrdinal(testTryNumber)}
+              </span>
+            </div>
+            <PerformanceStepper
+              value={testTryNumber}
+              min={1}
+              max={9}
+              compact
+              disabled={saving}
+              labelledBy="test-metric-qalam"
+              onDec={() => setTestTryNumber(n => Math.max(1, n - 1))}
+              onInc={() => setTestTryNumber(n => Math.min(9, n + 1))}
+            />
           </div>
 
           <details className="test-performance__notes" open={Boolean(teacherNotes)}>

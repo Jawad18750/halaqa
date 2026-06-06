@@ -12,6 +12,7 @@
   "dependencies": {
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
+    "jsqr": "^1.4.0",
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

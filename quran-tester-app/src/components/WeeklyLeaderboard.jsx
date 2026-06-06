@@ -22,7 +22,7 @@ import GuardianMessageSheet from './ui/GuardianMessageSheet.jsx'
 import LeaderboardPodium from './ui/LeaderboardPodium.jsx'
 import LeaderboardRankRow from './ui/LeaderboardRankRow.jsx'
 
-export default function WeeklyLeaderboard({ onBack, onOpenStudent }) {
+export default function WeeklyLeaderboard({ onBack, onOpenStudent, onOpenMessageLog }) {
   const { sheikhName, masjidName } = useMessageSettings()
   const [rows, setRows] = useState([])
   const [studentList, setStudentList] = useState([])

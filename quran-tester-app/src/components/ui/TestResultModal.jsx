@@ -13,6 +13,7 @@ export default function TestResultModal({
   onProfile,
   onTestAgain,
   onList,
+  onViewMessage,
   onClose,
 }) {
   const { render, active } = useMotionMount(open)
@@ -53,6 +54,11 @@ export default function TestResultModal({
           <button type="button" className="btn" onClick={onTestAgain}>
             <i className="fa-solid fa-play" /> اختبار آخر
           </button>
+          {onViewMessage && (
+            <button type="button" className="btn btn--ghost" onClick={onViewMessage}>
+              <i className="fa-brands fa-telegram" /> عرض الرسالة
+            </button>
+          )}
           <button type="button" className="btn btn--ghost" onClick={onList}>
             <i className="fa-solid fa-users" /> قائمة الطلاب
           </button>

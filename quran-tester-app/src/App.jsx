@@ -18,6 +18,8 @@ import Settings from './components/Settings'
 import Attendance from './components/Attendance'
 import QRPrint from './components/QRPrint'
 import AttendanceOverview from './components/AttendanceOverview'
+import MessageLog from './components/MessageLog'
+import { students as studentsApi } from './api'
 import AppShell from './components/layout/AppShell'
 import { MessageSettingsProvider } from './lib/MessageSettingsContext.jsx'
 import { auth, getToken } from './api'
@@ -31,7 +33,7 @@ try {
   // Ignore storage access failures during early app boot.
 }
 
-const WIDE_VIEWS = new Set(['dashboard', 'leaderboard', 'weekly', 'attendance', 'attendanceLog', 'qrcodes'])
+const WIDE_VIEWS = new Set(['dashboard', 'leaderboard', 'weekly', 'attendance', 'attendanceLog', 'messageLog', 'qrcodes'])
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -42,6 +44,7 @@ export default function App() {
   const [thumuns, setThumuns] = useState([])
   const [loading, setLoading] = useState(true)
   const [studentsListFocus, setStudentsListFocus] = useState(null)
+  const [messageLogFocus, setMessageLogFocus] = useState(null)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [fontScale, setFontScale] = useState(() => Number(localStorage.getItem('fontScale') || 1))
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem('contrast') === '1')
@@ -85,8 +88,23 @@ export default function App() {
       .finally(() => setLoading(false))
   }, [])
 
-  function navigate(v) {
+  function navigate(v, focus) {
+    if (v === 'messageLog') {
+      setMessageLogFocus(focus || null)
+    } else if (v !== 'messageLog') {
+      setMessageLogFocus(null)
+    }
     setView(v)
+  }
+
+  function openStudentById(studentId) {
+    if (!studentId) return
+    studentsApi.list()
+      .then(({ students: rows }) => {
+        const match = (rows || []).find(s => s.id === studentId)
+        if (match) openStudent(match, 'students')
+      })
+      .catch(() => {})
   }
 
   function goDashboard() {
@@ -209,6 +227,8 @@ export default function App() {
             onTest={() => setView('test')}
             onHistory={() => setView('studentHistory')}
             onStudentUpdated={setSelectedStudent}
+            onOpenMessageLog={(focus) => navigate('messageLog', { ...focus, studentId: selectedStudent.id })}
+            onNavigate={navigate}
           />
         )}
         {view === 'test' && selectedStudent && (
@@ -221,6 +241,7 @@ export default function App() {
             onHistory={() => setView('studentHistory')}
             onBack={goStudentProfile}
             onStudentUpdated={setSelectedStudent}
+            onViewMessage={(focus) => navigate('messageLog', focus)}
           />
         )}
         {view === 'studentHistory' && selectedStudent && (
@@ -234,7 +255,11 @@ export default function App() {
         )}
         {view === 'weekly' && <WeeklyOverview onBack={goDashboard} />}
         {view === 'leaderboard' && (
-          <WeeklyLeaderboard onBack={goDashboard} onOpenStudent={openStudent} />
+          <WeeklyLeaderboard
+            onBack={goDashboard}
+            onOpenStudent={openStudent}
+            onOpenMessageLog={(focus) => navigate('messageLog', focus)}
+          />
         )}
         {view === 'freestyle' && (
           <FreestyleRandomizer thumuns={thumuns} loading={loading} theme={theme} onBack={goDashboard} />
@@ -251,6 +276,20 @@ export default function App() {
         {view === 'attendanceLog' && (
           <AttendanceOverview onBack={goDashboard} thumuns={thumuns} />
         )}
+        {view === 'messageLog' && (
+          <MessageLog
+            onBack={goDashboard}
+            initialFocus={messageLogFocus}
+            onFocusConsumed={() => setMessageLogFocus(null)}
+            onNavigate={(target, opts) => {
+              if (target === 'students' && opts?.studentId) {
+                openStudentById(opts.studentId)
+                return
+              }
+              navigate(target)
+            }}
+          />
+        )}
         {view === 'qrcodes' && (
           <QRPrint user={user} onBack={goDashboard} />
         )}
@@ -265,7 +304,9 @@ export default function App() {
             onNavigate={navigate}
           />
         )}
-        {view === 'broadcast' && <Broadcast onBack={goDashboard} />}
+        {view === 'broadcast' && (
+          <Broadcast onBack={goDashboard} onOpenMessageLog={(focus) => navigate('messageLog', focus)} />
+        )}
       </div>
     )
   }

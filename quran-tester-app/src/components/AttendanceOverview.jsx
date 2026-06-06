@@ -6,6 +6,7 @@ import DateRangePanel from './ui/DateRangePanel.jsx'
 import StatTile from './ui/StatTile.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import Toast from './ui/Toast.jsx'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
 
 function pad2(n) { return String(n).padStart(2, '0') }
 
@@ -186,7 +187,7 @@ function hasMemorization(student) {
     || Boolean(student?.memorization_surah)
 }
 
-function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumuns }) {
+function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumuns, onRemoveAttendance, removingId }) {
   if (!students.length) {
     return (
       <EmptyState
@@ -226,6 +227,21 @@ function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumu
                       {isToday && <em className="attendance-mobile-day__tag">اليوم</em>}
                     </span>
                     <span className="attendance-mobile-day__state">{statusAriaLabel(status)}</span>
+                    {status.status === 'present' && status.recordId && onRemoveAttendance && (
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--icon attendance-mobile-day__remove"
+                        aria-label={`إزالة حضور ${student.name} — ${dateLabel(status.date, true)}`}
+                        disabled={removingId === status.recordId}
+                        onClick={() => onRemoveAttendance({
+                          recordId: status.recordId,
+                          studentName: student.name,
+                          date: status.date,
+                        })}
+                      >
+                        <i className="fa-solid fa-xmark" aria-hidden />
+                      </button>
+                    )}
                   </li>
                 )
               })}
@@ -236,7 +252,7 @@ function AttendanceMobileList({ students, today, emptyTitle, emptyMessage, thumu
   )
 }
 
-function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage, thumuns }) {
+function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage, thumuns, onRemoveAttendance, removingId }) {
   if (!students.length) {
     return (
       <EmptyState
@@ -251,6 +267,8 @@ function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage, 
     <section className="attendance-grid-wrap attendance-grid-wrap--desktop" aria-label="جدول الحضور">
       <p className="attendance-grid-scroll-hint meta">
         <i className="fa-solid fa-arrows-left-right" aria-hidden /> مرّر الجدول أفقيًا لعرض كل الأيام
+        {' · '}
+        <i className="fa-solid fa-xmark" aria-hidden /> اضغط ✓ لإزالة حضور مسجّل بالخطأ
       </p>
       <table className="attendance-grid">
         <thead>
@@ -285,10 +303,26 @@ function AttendanceGridTable({ students, days, today, emptyTitle, emptyMessage, 
                 return (
                   <td
                     key={`${student.id}:${status.date}`}
-                    className={`attendance-grid__status attendance-grid__status--${status.status}${isToday ? ' attendance-grid__status--today-col' : ''}`}
-                    aria-label={statusAriaLabel(status)}
+                    className={`attendance-grid__status attendance-grid__status--${status.status}${isToday ? ' attendance-grid__status--today-col' : ''}${status.status === 'present' && status.recordId ? ' attendance-grid__status--action' : ''}`}
                   >
-                    <span aria-hidden>{statusCellLabel(status)}</span>
+                    {status.status === 'present' && status.recordId && onRemoveAttendance ? (
+                      <button
+                        type="button"
+                        className="attendance-grid__status-btn"
+                        aria-label={`إزالة حضور ${student.name} — ${dateLabel(status.date)}`}
+                        title="إزالة الحضور"
+                        disabled={removingId === status.recordId}
+                        onClick={() => onRemoveAttendance({
+                          recordId: status.recordId,
+                          studentName: student.name,
+                          date: status.date,
+                        })}
+                      >
+                        <span aria-hidden>{statusCellLabel(status)}</span>
+                      </button>
+                    ) : (
+                      <span aria-hidden aria-label={statusAriaLabel(status)}>{statusCellLabel(status)}</span>
+                    )}
                   </td>
                 )
               })}
@@ -319,6 +353,7 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
   const [query, setQuery] = useState('')
   const [listFilter, setListFilter] = useState('all')
   const [activeSection, setActiveSection] = useState('grid')
+  const [removingId, setRemovingId] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -375,6 +410,26 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
       setToast(e.message || 'تعذر إرسال ملخص الحضور')
     } finally {
       setSendingWeekly(false)
+    }
+  }
+
+  async function removeAttendanceRecord({ recordId, studentName, date: attendanceDate }) {
+    const when = dateLabel(attendanceDate)
+    const ok = await confirmDialog(
+      'إزالة الحضور',
+      `إزالة تسجيل حضور ${studentName} يوم ${when}؟`,
+      { confirmLabel: 'إزالة', cancelLabel: 'إلغاء' }
+    )
+    if (!ok) return
+    setRemovingId(recordId)
+    try {
+      await attendance.remove(recordId)
+      setToast(`تم إزالة حضور ${studentName}`)
+      await load()
+    } catch (e) {
+      setToast(e.message || 'تعذر إزالة الحضور')
+    } finally {
+      setRemovingId(null)
     }
   }
 
@@ -514,6 +569,8 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
                 emptyTitle={gridEmptyTitle}
                 emptyMessage={gridEmptyMessage}
                 thumuns={thumuns}
+                onRemoveAttendance={removeAttendanceRecord}
+                removingId={removingId}
               />
             </div>
             <AttendanceGridTable
@@ -523,6 +580,8 @@ export default function AttendanceOverview({ onBack, thumuns = [] }) {
               emptyTitle={gridEmptyTitle}
               emptyMessage={gridEmptyMessage}
               thumuns={thumuns}
+              onRemoveAttendance={removeAttendanceRecord}
+              removingId={removingId}
             />
           </>
         )}
