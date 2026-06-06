@@ -58,7 +58,7 @@ function Sticker({ student, codeUrl, user, compact }) {
       <div className="qr-sticker__text">
         <strong>{student.name}</strong>
         <span>رقم {student.number}</span>
-        {user?.masjid_name && <small>{user.masjid_name}</small>}
+        {user?.masjid_name && !compact && <small>{user.masjid_name}</small>}
       </div>
     </article>
   )

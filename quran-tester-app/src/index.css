@@ -6646,7 +6646,9 @@ select.input { appearance: none; }
   aspect-ratio: 210 / 297;
   grid-template-columns: repeat(var(--qr-cols, 3), 1fr);
   grid-template-rows: repeat(var(--qr-rows, 4), 1fr);
-  padding: 10px;
+  align-content: stretch;
+  gap: 4px;
+  padding: 8px;
   background: #fff;
   border: 1px solid #94a3b8;
   border-radius: 4px;
@@ -6654,20 +6656,22 @@ select.input { appearance: none; }
 }
 
 .qr-sticker {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  justify-items: center;
-  align-content: center;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  height: 100%;
   min-height: 0;
-  padding: 4px 3px;
+  padding: 3px 2px 4px;
   border: 1px dashed #94a3b8;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #fff;
   color: #0f172a;
   break-inside: avoid;
   text-align: center;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .qr-sticker--empty {
@@ -6678,41 +6682,49 @@ select.input { appearance: none; }
 }
 
 .qr-sticker--compact {
-  padding: 2px 2px 3px;
-  gap: 2px;
+  padding: 2px 1px 3px;
+  gap: 1px;
 }
 
 .qr-sticker__code {
+  flex: 1 1 0;
+  min-height: 0;
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 1;
   object-fit: contain;
   display: block;
 }
 
 .qr-sticker__code--loading {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
   background: #f1f5f9;
   border-radius: 2px;
   opacity: 0.7;
 }
 
 .qr-sticker__text {
+  flex: 0 0 auto;
   display: grid;
-  gap: 1px;
+  gap: 0;
   min-width: 0;
   width: 100%;
-  line-height: 1.2;
+  line-height: 1.15;
+  padding-top: 1px;
 }
 
 .qr-sticker__text strong {
   font-size: 8px;
   overflow-wrap: anywhere;
+  line-height: 1.2;
 }
 
 .qr-sticker__text span,
 .qr-sticker__text small {
   font-size: 7px;
   color: #475569;
+  line-height: 1.15;
 }
 
 /* Preview: scale text up for less-dense layouts */
@@ -9168,8 +9180,9 @@ select.input { appearance: none; }
     box-sizing: border-box;
     grid-template-columns: repeat(var(--qr-cols, 3), 1fr);
     grid-template-rows: repeat(var(--qr-rows, 4), 1fr);
-    gap: 4mm;
-    padding: 8mm;
+    align-content: stretch;
+    gap: 3mm;
+    padding: 7mm;
     border: 0;
     border-radius: 0;
     background: #fff;
@@ -9183,36 +9196,45 @@ select.input { appearance: none; }
   }
 
   .qr-sticker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1mm;
+    height: 100%;
     min-height: 0;
-    grid-template-rows: 1fr auto;
-    justify-items: center;
-    align-content: center;
-    padding: 2mm 1.5mm;
+    padding: 1.5mm 1mm 2mm;
     border: 0.25mm solid #bbb;
     border-radius: 1mm;
     box-shadow: none;
     text-align: center;
     overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .qr-sticker--compact {
+    gap: 0.5mm;
+    padding: 1mm 0.8mm 1.5mm;
   }
 
   .qr-sticker--empty { display: none; }
 
   .qr-sticker__code {
+    flex: 1 1 0;
+    min-height: 0;
     width: 100%;
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0;
     object-fit: contain;
     image-rendering: auto;
   }
 
-  /* Per-layout QR code sizes on paper */
-  .qr-sheet[data-layout="g5x4"] .qr-sticker__code { max-height: 26mm; }
-  .qr-sheet[data-layout="g4x3"] .qr-sticker__code { max-height: 34mm; }
-  .qr-sheet[data-layout="g3x2"] .qr-sticker__code { max-height: 48mm; }
-  .qr-sheet[data-layout="g2x2"] .qr-sticker__code { max-height: 68mm; }
-  .qr-sheet[data-layout="l2x3"] .qr-sticker__code { max-height: 52mm; }
-  .qr-sheet[data-layout="l1x2"] .qr-sticker__code { max-height: 88mm; }
-  .qr-sheet[data-layout="s1x1"] .qr-sticker__code { max-height: 100mm; }
+  .qr-sticker__text {
+    flex: 0 0 auto;
+    gap: 0;
+    line-height: 1.15;
+    padding-top: 0.3mm;
+  }
 
   .qr-sheet[data-layout="g5x4"] .qr-sticker__text strong { font-size: 7pt; }
   .qr-sheet[data-layout="g5x4"] .qr-sticker__text span,
