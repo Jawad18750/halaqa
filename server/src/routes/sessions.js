@@ -43,8 +43,9 @@ async function applyNaqzaProgression(studentId, userId) {
 router.post('/', async (req, res) => {
   try {
     console.log('[sessions] incoming body', req.body)
-    const { studentId, mode, selectedNaqza, selectedJuz, thumunId, selectedFiveHizb, selectedQuranQuarter, selectedQuranHalf, teacherNotes } = req.body || {}
+    const { studentId, mode, selectedNaqza, selectedJuz, thumunId, selectedFiveHizb, selectedQuranQuarter, selectedQuranHalf, teacherNotes, testTryNumber } = req.body || {}
     let { fathaPrompts, taradudCount } = req.body || {}
+    const testTry = Math.max(1, Math.min(9, Number(testTryNumber) || 1))
     const notesTrimmed = String(teacherNotes ?? '').trim().slice(0, 500) || null
     if (!studentId || !mode || !thumunId) {
       return res.status(400).json({ error: 'missing required fields' })
@@ -131,11 +132,13 @@ router.post('/', async (req, res) => {
     } catch (e) {
       const msg = e?.message || ''
       console.error('[sessions] insert failed', msg)
-      // Map common constraint errors to 400 for better client feedback
       if (/check constraint/i.test(msg) || /violates check constraint/i.test(msg)) {
         return res.status(400).json({ error: 'invalid session data', details: msg })
       }
-      return res.status(504).json({ error: 'session save timeout or failed', details: msg })
+      if (/timeout:/i.test(msg)) {
+        return res.status(504).json({ error: 'session save timeout or failed', details: msg })
+      }
+      return res.status(500).json({ error: 'failed to save session', details: msg })
     }
 
   // Progression: advance current_naqza on every pass, any mode
@@ -155,8 +158,8 @@ router.post('/', async (req, res) => {
     }
 
     const sessionRow = rows[0]
-    const studentForNotify = updatedStudent || (await pool.query(
-      'select id, name, current_naqza, memorization_thumun_id, memorization_surah from students where id=$1 and user_id=$2',
+    const studentForNotify = (await pool.query(
+      'select id, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count from students where id=$1 and user_id=$2',
       [studentId, req.user.id]
     )).rows[0]
 

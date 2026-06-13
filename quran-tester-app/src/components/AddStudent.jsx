@@ -38,7 +38,7 @@ function toDateOnly(v) {
   try {
     const d = new Date(v)
     if (!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-  } catch {}
+  } catch { /* ignore */ }
   return ''
 }
 
@@ -64,7 +64,7 @@ function PreviewCard({ number, name, naqza, photoPreview, naqzaLabels }) {
   )
 }
 
-export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate, onDone }) {
+export default function AddStudent({ thumuns, onBack, onOpenStudent, onDone }) {
   const [step, setStep] = useState(1)
   const [created, setCreated] = useState(null)
   const [savedGuardians, setSavedGuardians] = useState([])
@@ -144,7 +144,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
     setDobAdd('')
     setAddNaqza(20)
     setPhotoFile(null)
-    if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
+    if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch { /* ignore */ } }
     setPhotoPreview('')
     setError('')
     if (!keepGuardians) setGuardianRows([])
@@ -203,7 +203,7 @@ export default function AddStudent({ thumuns, onBack, onOpenStudent, onNavigate,
 
   function onCropped(file) {
     setPhotoFile(file)
-    if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch {} }
+    if (photoPreview) { try { URL.revokeObjectURL(photoPreview) } catch { /* ignore */ } }
     setPhotoPreview(URL.createObjectURL(file))
     setShowCropper(false)
     setPendingFile(null)

@@ -12,14 +12,12 @@ import {
   emptyFilterHint,
   resultLabel,
   gradeLabel,
-  formatQalamOrdinal,
 } from '../lib/labels.js'
 import PageHeader from './ui/PageHeader.jsx'
 import StatTile from './ui/StatTile.jsx'
 import SectionCard from './ui/SectionCard.jsx'
 import Badge from './ui/Badge.jsx'
-import MemorizationFields from './ui/MemorizationFields.jsx'
-import Toast from './ui/Toast.jsx'
+import MemorizationQuickPick from './ui/MemorizationQuickPick.jsx'
 import TestResultModal from './ui/TestResultModal.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import { pickNextThumun, resetPickDeck, consumeFromPickDeck } from '../lib/thumunPick.js'
@@ -86,11 +84,11 @@ function readTestDraft(studentId) {
 function writeTestDraft(studentId, draft) {
   try {
     sessionStorage.setItem(testDraftKey(studentId), JSON.stringify({ ...draft, savedAt: Date.now() }))
-  } catch {}
+  } catch { /* storage full */ }
 }
 
 function clearTestDraft(studentId) {
-  try { sessionStorage.removeItem(testDraftKey(studentId)) } catch {}
+  try { sessionStorage.removeItem(testDraftKey(studentId)) } catch { /* ignore */ }
 }
 
 export default function TestView({
@@ -102,7 +100,6 @@ export default function TestView({
   onHistory,
   onBack,
   onStudentUpdated,
-  onViewMessage,
 }) {
   const initialDraft = useMemo(() => readTestDraft(student.id), [student.id])
   const [mode, setMode] = useState(() => initialDraft?.mode || 'naqza')
@@ -125,8 +122,7 @@ export default function TestView({
   const [teacherNotes, setTeacherNotes] = useState('')
   const [memorizationThumunId, setMemorizationThumunId] = useState(student?.memorization_thumun_id ?? null)
   const [memorizationSurah, setMemorizationSurah] = useState(student?.memorization_surah ?? null)
-  const [memSaving, setMemSaving] = useState(false)
-  const [memToast, setMemToast] = useState('')
+  const [qalamCount, setQalamCount] = useState(Number(student?.qalam_count) || 1)
   const pickDeckRef = useRef([])
 
   const naqzaLabels = useMemo(() => buildNaqzaLabels(thumuns), [thumuns])
@@ -138,17 +134,23 @@ export default function TestView({
   useEffect(() => {
     setMemorizationThumunId(student?.memorization_thumun_id ?? null)
     setMemorizationSurah(student?.memorization_surah ?? null)
-  }, [student?.id, student?.memorization_thumun_id, student?.memorization_surah])
+    setQalamCount(Number(student?.qalam_count) || 1)
+  }, [student?.id, student?.memorization_thumun_id, student?.memorization_surah, student?.qalam_count])
 
   const memValue = v => (v == null || v === '' ? null : Number(v))
   const memSurahValue = v => (v == null || v === '' ? null : String(v))
   const memDirty =
     memValue(memorizationThumunId) !== memValue(student?.memorization_thumun_id)
     || memSurahValue(memorizationSurah) !== memSurahValue(student?.memorization_surah)
+    || (Number(qalamCount) || 1) !== (Number(student?.qalam_count) || 1)
 
   function onMemorizationChange(patch) {
     if (patch.memorization_thumun_id !== undefined) setMemorizationThumunId(patch.memorization_thumun_id)
     if (patch.memorization_surah !== undefined) setMemorizationSurah(patch.memorization_surah)
+  }
+
+  function onQalamChange(newCount) {
+    setQalamCount(newCount)
   }
 
   const filtered = useMemo(() => {
@@ -250,23 +252,6 @@ export default function TestView({
     return null
   }, [student.id, onStudentUpdated])
 
-  async function saveMemorization() {
-    setMemSaving(true)
-    setError('')
-    try {
-      const { student: updated } = await students.update(student.id, {
-        memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
-        memorization_surah: memorizationSurah || null,
-      })
-      onStudentUpdated?.(updated)
-      setMemToast('تم حفظ مستوى الحفظ')
-    } catch (e) {
-      setError(e?.message || 'تعذر حفظ مستوى الحفظ')
-    } finally {
-      setMemSaving(false)
-    }
-  }
-
   async function handleNaqzaChange(nextRaw) {
     const next = Number(nextRaw)
     if (!next || next === testNaqza) return
@@ -297,6 +282,14 @@ export default function TestView({
     setSaving(true)
     setError('')
     try {
+      if (memDirty) {
+        const { student: memUpdated } = await students.update(student.id, {
+          memorization_thumun_id: memorizationThumunId == null ? null : Number(memorizationThumunId),
+          memorization_surah: memorizationSurah || null,
+          qalam_count: Number(qalamCount) || 1,
+        })
+        onStudentUpdated?.(memUpdated)
+      }
       const res = await sessions.create({
         studentId: student.id,
         mode,
@@ -371,26 +364,17 @@ export default function TestView({
         </div>
       </div>
 
-      {memToast && <Toast message={memToast} onDone={() => setMemToast('')} />}
-
-      <SectionCard title="مستوى الحفظ (التسميع)" className="test-memorization-section">
-        <MemorizationFields
+      <SectionCard title="مستوى الحفظ (التسميع)">
+        <MemorizationQuickPick
           thumuns={thumuns}
-          value={memorizationThumunId}
-          onChange={setMemorizationThumunId}
-          disabled={memSaving || saving}
+          thumunId={memorizationThumunId}
+          surah={memorizationSurah}
+          qalamCount={qalamCount}
+          onChange={onMemorizationChange}
+          onQalamChange={onQalamChange}
+          disabled={saving}
           idPrefix="test-mem"
-          embedded
         />
-        <button
-          type="button"
-          className="btn btn--primary"
-          style={{ marginTop: 12 }}
-          disabled={memSaving || saving || !memDirty}
-          onClick={saveMemorization}
-        >
-          {memSaving ? 'جاري الحفظ…' : 'حفظ مستوى الحفظ'}
-        </button>
       </SectionCard>
 
       <SectionCard title="1. اختيار الوضع">
@@ -580,9 +564,9 @@ export default function TestView({
 
           <div className="test-performance__qalam">
             <div className="test-performance__qalam-copy">
-              <span className="test-performance__qalam-label" id="test-metric-qalam">القلم</span>
+              <span className="test-performance__qalam-label" id="test-metric-qalam">المحاولة</span>
               <span className="test-performance__qalam-sub meta">
-                المحاولة {formatQalamOrdinal(testTryNumber)}
+                رقم المحاولة في هذا الاختبار
               </span>
             </div>
             <PerformanceStepper

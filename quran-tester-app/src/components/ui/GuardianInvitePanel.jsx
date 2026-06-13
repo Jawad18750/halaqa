@@ -4,7 +4,6 @@ import {
   INVITE_CHANNELS,
   needsInvite,
   isTelegramActive,
-  buildTelegramInviteMessage,
   buildInviteMessageForChannel,
   openGuardianInvite,
   inviteChannelToast,

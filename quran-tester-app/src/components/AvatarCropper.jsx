@@ -48,7 +48,7 @@ export default function AvatarCropper({ file, onCancel, onCropped }) {
           setPreviewSrc(dataUrl)
           setScale({ x: img.naturalWidth / targetW, y: img.naturalHeight / targetH })
         }
-      } catch {}
+      } catch { /* ignore */ }
     })()
     return () => { cancelled = true }
   }, [file])

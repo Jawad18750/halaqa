@@ -119,6 +119,7 @@ async function sendToGuardian({
 }
 
 export async function notifySessionResult({ userId, sessionRow, studentRow }) {
+  const stats = { sent: 0, failed: 0, noLink: 0, optOut: 0, skippedNoRecipient: false, total: 0 }
   try {
     const studentId = sessionRow.student_id
     const studentName = studentRow?.name || 'الطالب'
@@ -141,7 +142,10 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
       masjidName: settings?.masjid_name,
     })
 
+    stats.total = recipients.length
+
     if (!recipients.length) {
+      stats.skippedNoRecipient = true
       await logNotification({
         userId,
         studentId,
@@ -150,11 +154,12 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
         messageBody: text,
         notificationType: 'session_result',
       })
-      return
+      return stats
     }
 
     for (const r of recipients) {
       if (!r.telegram_chat_id) {
+        stats.noLink++
         await logNotification({
           userId,
           guardianId: r.guardian_id,
@@ -167,6 +172,7 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
         continue
       }
       if (r.opt_out) {
+        stats.optOut++
         await logNotification({
           userId,
           guardianId: r.guardian_id,
@@ -178,7 +184,7 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
         })
         continue
       }
-      await sendToGuardian({
+      const status = await sendToGuardian({
         userId,
         guardianId: r.guardian_id,
         studentId,
@@ -187,10 +193,42 @@ export async function notifySessionResult({ userId, sessionRow, studentRow }) {
         text,
         notificationType: 'session_result',
       })
+      if (status === 'sent') stats.sent++
+      else stats.failed++
     }
+    return stats
   } catch (e) {
     console.error('[notification] notifySessionResult failed', e.message)
+    return stats
   }
+}
+
+export async function resendSessionResultNotification(userId, sessionId) {
+  const { rows: sessionRows } = await pool.query(
+    `select s.*
+     from sessions s
+     join students st on st.id = s.student_id
+     where s.id = $1 and st.user_id = $2`,
+    [sessionId, userId]
+  )
+  if (!sessionRows.length) {
+    throw Object.assign(new Error('المحاولة غير موجودة'), { status: 404 })
+  }
+  const sessionRow = sessionRows[0]
+  const { rows: studentRows } = await pool.query(
+    `select id, name, current_naqza, memorization_thumun_id, memorization_surah, qalam_count
+     from students where id = $1 and user_id = $2`,
+    [sessionRow.student_id, userId]
+  )
+  if (!studentRows.length) {
+    throw Object.assign(new Error('الطالب غير موجود'), { status: 404 })
+  }
+  const stats = await notifySessionResult({
+    userId,
+    sessionRow,
+    studentRow: studentRows[0],
+  })
+  return { sessionId, stats }
 }
 
 function buildSessionAttendanceFooter({ sheikhName, masjidName }) {
@@ -621,4 +659,75 @@ export async function logTelegramLinkActivity({
     messageBody: preview,
     notificationType: 'telegram_linked',
   })
+}
+
+function pad2(n) { return String(n).padStart(2, '0') }
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
+}
+
+export async function getTodaySessions(userId, date = null) {
+  const targetDate = date || localDateStr()
+  const { rows } = await pool.query(
+    `select distinct on (s.student_id)
+       s.id, s.student_id, s.passed, s.score, s.mode, s.attempt_at,
+       st.name as student_name, st.number as student_number,
+       st.memorization_thumun_id, st.memorization_surah, st.qalam_count
+     from sessions s
+     join students st on st.id = s.student_id
+     where st.user_id = $1
+       and s.attempt_at >= $2::date
+       and s.attempt_at < ($2::date + interval '1 day')
+     order by s.student_id, s.attempt_at desc`,
+    [userId, targetDate]
+  )
+  return { date: targetDate, sessions: rows }
+}
+
+export async function sendTodayResultsNotifications(userId, { studentIds = null, date = null } = {}) {
+  const targetDate = date || localDateStr()
+
+  let query = `
+    select distinct on (s.student_id)
+      s.*,
+      st.name as student_name,
+      st.memorization_thumun_id, st.memorization_surah, st.qalam_count
+    from sessions s
+    join students st on st.id = s.student_id
+    where st.user_id = $1
+      and s.attempt_at >= $2::date
+      and s.attempt_at < ($2::date + interval '1 day')`
+
+  const params = [userId, targetDate]
+  if (Array.isArray(studentIds) && studentIds.length) {
+    query += ` and s.student_id = any($3::int[])`
+    params.push(studentIds)
+  }
+  query += ` order by s.student_id, s.attempt_at desc`
+
+  const { rows: sessionRows } = await pool.query(query, params)
+
+  const results = []
+  for (const row of sessionRows) {
+    const studentRow = {
+      id: row.student_id,
+      name: row.student_name,
+      memorization_thumun_id: row.memorization_thumun_id,
+      memorization_surah: row.memorization_surah,
+      qalam_count: row.qalam_count,
+    }
+    const stats = await notifySessionResult({ userId, sessionRow: row, studentRow })
+    results.push({ studentId: row.student_id, studentName: row.student_name, sessionId: row.id, stats })
+  }
+
+  const summary = { sent: 0, failed: 0, noLink: 0, optOut: 0, skippedNoRecipient: 0, total: sessionRows.length }
+  for (const r of results) {
+    summary.sent += r.stats.sent || 0
+    summary.failed += r.stats.failed || 0
+    summary.noLink += r.stats.noLink || 0
+    summary.optOut += r.stats.optOut || 0
+    if (r.stats.skippedNoRecipient) summary.skippedNoRecipient++
+  }
+
+  return { date: targetDate, results, summary }
 }

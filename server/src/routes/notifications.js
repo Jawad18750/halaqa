@@ -7,6 +7,9 @@ import {
   getNotificationLogStats,
   sendWeeklyAttendanceNotifications,
   sendAttendanceOverviewReport,
+  resendSessionResultNotification,
+  getTodaySessions,
+  sendTodayResultsNotifications,
 } from '../lib/notificationService.js'
 import { pool } from '../lib/db.js'
 
@@ -58,11 +61,76 @@ router.post('/attendance-overview-report', async (req, res) => {
   }
 })
 
+router.post('/session-result', async (req, res) => {
+  try {
+    const { sessionId } = req.body || {}
+    if (!sessionId) return res.status(400).json({ error: 'sessionId مطلوب' })
+    const result = await resendSessionResultNotification(req.user.id, sessionId)
+    res.json(result)
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.get('/today-sessions', async (req, res) => {
+  try {
+    const date = req.query.date || null
+    const result = await getTodaySessions(req.user.id, date)
+    res.json(result)
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.post('/today-results', async (req, res) => {
+  try {
+    const { studentIds = null, date = null } = req.body || {}
+    const result = await sendTodayResultsNotifications(req.user.id, { studentIds, date })
+    res.json(result)
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.get('/log/stats', async (req, res) => {
+  try {
+    const { from, to } = req.query
+    const stats = await getNotificationLogStats(req.user.id, { from, to })
+    res.json({ stats })
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'internal error' })
+  }
+})
+
+router.get('/log/:id', async (req, res) => {
+  try {
+    const entry = await getNotificationLogEntry(req.user.id, req.params.id)
+    if (!entry) return res.status(404).json({ error: 'السجل غير موجود' })
+    res.json({ entry })
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'internal error' })
+  }
+})
+
 router.get('/log', async (req, res) => {
   try {
-    const limit = req.query.limit
-    const studentId = req.query.studentId || null
-    const entries = await getNotificationLog(req.user.id, { limit, studentId })
+    const {
+      limit, offset, studentId, guardianId, sessionId, broadcastId,
+      type, status, from, to, search,
+    } = req.query
+    const entries = await getNotificationLog(req.user.id, {
+      limit,
+      offset,
+      studentId: studentId || null,
+      guardianId: guardianId || null,
+      sessionId: sessionId || null,
+      broadcastId: broadcastId || null,
+      type: type || null,
+      status: status || null,
+      from: from || null,
+      to: to || null,
+      search: search || null,
+    })
     res.json({ entries })
   } catch (e) {
     res.status(500).json({ error: e.message || 'internal error' })

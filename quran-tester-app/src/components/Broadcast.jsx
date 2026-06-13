@@ -36,8 +36,6 @@ export default function Broadcast({ onBack, onOpenMessageLog }) {
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
-  const [logEntries, setLogEntries] = useState([])
-  const [logLoading, setLogLoading] = useState(true)
   const [familyName, setFamilyName] = useState('')
   const [familyStudentIds, setFamilyStudentIds] = useState([])
   const [showFamilyCreate, setShowFamilyCreate] = useState(false)
@@ -96,20 +94,6 @@ export default function Broadcast({ onBack, onOpenMessageLog }) {
     }
     return base
   }, [linkedGuardians, guardianQuery])
-
-  async function loadLog() {
-    setLogLoading(true)
-    try {
-      const { entries } = await notifications.log(30)
-      setLogEntries(entries || [])
-    } catch {
-      setLogEntries([])
-    } finally {
-      setLogLoading(false)
-    }
-  }
-
-  useEffect(() => { loadLog() }, [])
 
   function toggleGuardianId(id) {
     setTargetIds(prev => {
@@ -177,7 +161,6 @@ export default function Broadcast({ onBack, onOpenMessageLog }) {
         setToast(`تم الإرسال إلى ${sent} من أولياء الأمور`)
       }
       if (targetType === 'guardians') setTargetIds(new Set())
-      await loadLog()
     } catch (e) {
       setError(e.message)
     } finally {

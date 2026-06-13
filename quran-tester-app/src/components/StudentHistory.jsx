@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { sessions, getApiUrl } from '../api'
+import { sessions, notifications, getApiUrl } from '../api'
 import { formatNaqza, buildNaqzaLabels } from '../lib/labels.js'
+import { formatSessionNotifyResult } from '../lib/notificationLog.js'
 import PageHeader from './ui/PageHeader.jsx'
 import EmptyState from './ui/EmptyState.jsx'
 import SessionCard from './ui/SessionCard.jsx'
 import StudentHubHeader, { computeStudentStats } from './ui/StudentHubHeader.jsx'
+import { confirmDialog } from './ui/ConfirmDialog.jsx'
+import Toast from './ui/Toast.jsx'
 
 const FILTERS = [
   { id: 'all', label: 'الكل' },
@@ -17,6 +20,8 @@ export default function StudentHistory({ student, thumuns = [], onBack, onTest, 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
+  const [toast, setToast] = useState('')
+  const [notifySessionId, setNotifySessionId] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -43,6 +48,35 @@ export default function StudentHistory({ student, thumuns = [], onBack, onTest, 
     if (filter === 'fail') return list.filter(s => !s.passed)
     return list
   }, [list, filter])
+
+  async function deleteSession(id) {
+    if (!await confirmDialog('حذف المحاولة', 'هل تريد حذف هذه المحاولة؟')) return
+    setError('')
+    try {
+      await sessions.remove(id)
+      setList(prev => prev.filter(s => s.id !== id))
+    } catch (e) {
+      setError(String(e.message || e))
+    }
+  }
+
+  async function sendResultToGuardian(session) {
+    const ok = await confirmDialog(
+      'إرسال النتيجة لولي الأمر',
+      `إرسال نتيجة اختبار ${student.name} عبر Telegram؟\n\nسيتم إرسال نفس رسالة النتيجة التلقائية لهذه المحاولة.`
+    )
+    if (!ok) return
+    setNotifySessionId(session.id)
+    setError('')
+    try {
+      const { stats } = await notifications.resendSessionResult(session.id)
+      setToast(formatSessionNotifyResult(stats))
+    } catch (e) {
+      setError(e?.message || 'تعذّر إرسال النتيجة')
+    } finally {
+      setNotifySessionId(null)
+    }
+  }
 
   const apiBase = getApiUrl()
   const placeholder = '/profile-placeholder.svg'
@@ -115,10 +149,19 @@ export default function StudentHistory({ student, thumuns = [], onBack, onTest, 
       ) : (
         <div className="session-list">
           {filtered.map(item => (
-            <SessionCard key={item.id} session={item} thumuns={thumuns} />
+            <SessionCard
+              key={item.id}
+              session={item}
+              thumuns={thumuns}
+              onDelete={() => deleteSession(item.id)}
+              onNotify={() => sendResultToGuardian(item)}
+              notifyBusy={notifySessionId === item.id}
+            />
           ))}
         </div>
       )}
+
+      <Toast message={toast} onDone={() => setToast('')} />
     </div>
   )
 }

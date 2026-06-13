@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { sessions, students, getApiUrl } from '../api'
+import { sessions, students, notifications, getApiUrl } from '../api'
 import AvatarCropper from './AvatarCropper'
 import {
   modeLabel,
@@ -21,6 +21,7 @@ import GuardianSection from './GuardianSection.jsx'
 import { confirmDialog } from './ui/ConfirmDialog.jsx'
 import Toast from './ui/Toast.jsx'
 import StudentMessageLogSection from './ui/StudentMessageLogSection.jsx'
+import { formatSessionNotifyResult } from '../lib/notificationLog.js'
 
 export default function StudentProfile({
   student,
@@ -36,6 +37,7 @@ export default function StudentProfile({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
+  const [notifySessionId, setNotifySessionId] = useState(null)
 
   function showToast(msg) { setToast(msg) }
 
@@ -218,6 +220,24 @@ export default function StudentProfile({
     } catch (e) { setError(String(e.message || e)) }
   }
 
+  async function sendResultToGuardian(session) {
+    const ok = await confirmDialog(
+      'إرسال النتيجة لولي الأمر',
+      `إرسال نتيجة اختبار ${student.name} عبر Telegram؟\n\nسيتم إرسال نفس رسالة النتيجة التلقائية لهذه المحاولة.`
+    )
+    if (!ok) return
+    setNotifySessionId(session.id)
+    setError('')
+    try {
+      const { stats } = await notifications.resendSessionResult(session.id)
+      showToast(formatSessionNotifyResult(stats))
+    } catch (e) {
+      setError(e?.message || 'تعذّر إرسال النتيجة')
+    } finally {
+      setNotifySessionId(null)
+    }
+  }
+
   return (
     <div className="stack">
       <PageHeader title="ملف الطالب" onBack={onBack} />
@@ -255,8 +275,9 @@ export default function StudentProfile({
         <SectionCard title="مستوى الحفظ (التسميع)" className="profile-sections__memorization">
           <MemorizationFields
             thumuns={thumuns}
-            value={memorizationThumunId}
-            onChange={setMemorizationThumunId}
+            thumunId={memorizationThumunId}
+            surah={memorizationSurah}
+            onChange={onMemorizationChange}
             disabled={memSaving}
             idPrefix="profile-mem"
             embedded
@@ -307,6 +328,8 @@ export default function StudentProfile({
                   session={r}
                   thumuns={thumuns}
                   onDelete={() => deleteSession(r.id)}
+                  onNotify={() => sendResultToGuardian(r)}
+                  notifyBusy={notifySessionId === r.id}
                 />
               ))}
             </div>
@@ -319,7 +342,7 @@ export default function StudentProfile({
               <table className="responsive-table profile-table">
                 <thead>
                   <tr>
-                    <th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>النتيجة</th><th>الدرجة</th>
+                    <th>التاريخ</th><th>الثمن</th><th>الوضع</th><th>النتيجة</th><th>الدرجة</th><th aria-label="إجراءات" />
                   </tr>
                 </thead>
                 <tbody>
@@ -330,6 +353,27 @@ export default function StudentProfile({
                       <td>{modeLabel(r.mode)}</td>
                       <td>{resultLabel(r.passed)}</td>
                       <td>{r.score}</td>
+                      <td>
+                        <div className="session-row-actions">
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            aria-label="إرسال النتيجة لولي الأمر"
+                            disabled={notifySessionId === r.id}
+                            onClick={() => sendResultToGuardian(r)}
+                          >
+                            <i className="fa-brands fa-telegram" aria-hidden />
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            aria-label="حذف المحاولة"
+                            onClick={() => deleteSession(r.id)}
+                          >
+                            <i className="fa-solid fa-trash" aria-hidden />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

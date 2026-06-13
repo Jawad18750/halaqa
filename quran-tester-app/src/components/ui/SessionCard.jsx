@@ -18,6 +18,8 @@ export default function SessionCard({
   thumuns,
   className = '',
   onDelete,
+  onNotify,
+  notifyBusy = false,
   studentNumber,
   studentName,
   allowTimeEdit = false,
@@ -88,12 +90,26 @@ export default function SessionCard({
       </div>
 
       <footer className="session-card__foot meta">
-        {dayName(session.attempt_day)}
-        {onDelete && (
-          <button type="button" className="btn btn--ghost btn--sm session-card__delete" aria-label="حذف المحاولة" onClick={onDelete}>
-            <i className="fa-solid fa-trash" />
-          </button>
-        )}
+        <span>{dayName(session.attempt_day)}</span>
+        <div className="session-card__actions">
+          {onNotify && (
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm session-card__notify"
+              aria-label="إرسال النتيجة لولي الأمر"
+              disabled={notifyBusy}
+              onClick={onNotify}
+            >
+              <i className="fa-brands fa-telegram" aria-hidden />
+              {notifyBusy ? 'جاري الإرسال…' : 'إرسال للولي'}
+            </button>
+          )}
+          {onDelete && (
+            <button type="button" className="btn btn--ghost btn--sm session-card__delete" aria-label="حذف المحاولة" onClick={onDelete}>
+              <i className="fa-solid fa-trash" />
+            </button>
+          )}
+        </div>
       </footer>
     </article>
   )

@@ -53,6 +53,21 @@ export function statusLabel(status) {
   return NOTIFICATION_STATUS_LABELS[status] || status || '—'
 }
 
+/** User-facing toast after manual session-result resend */
+export function formatSessionNotifyResult(stats) {
+  if (!stats) return 'تعذّر الإرسال'
+  if (stats.skippedNoRecipient) return 'لا يوجد ولي أمر مرتبط بهذا الطالب'
+  if (stats.sent > 0) {
+    return stats.sent === 1
+      ? 'تم إرسال النتيجة إلى ولي الأمر'
+      : `تم إرسال النتيجة إلى ${stats.sent} من أولياء الأمور`
+  }
+  if (stats.optOut > 0) return 'ولي الأمر أوقف الإشعارات — اطلب منه إرسال /resume للبوت'
+  if (stats.noLink > 0) return 'ولي الأمر غير مربوط على Telegram'
+  if (stats.failed > 0) return 'تعذّر الإرسال — تحقق من الربط'
+  return 'لم يتم الإرسال'
+}
+
 export function entryPreview(entry) {
   return entry?.message_preview || entry?.message_body || '—'
 }

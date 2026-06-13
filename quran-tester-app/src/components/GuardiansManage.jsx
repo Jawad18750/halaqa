@@ -15,7 +15,6 @@ import {
   isTelegramActive,
   INVITE_CHANNELS,
   openGuardianInvite,
-  inviteChannelToast,
 } from '../lib/guardianUi.js'
 import { useMessageSettings } from '../lib/MessageSettingsContext.jsx'
 
@@ -216,7 +215,7 @@ export default function GuardiansManage({ onBack, onOpenStudent }) {
           inviteParams,
         })
         if (opened.ok && !opened.error) sent++
-      } catch {}
+      } catch { /* invite failed */ }
     }
     setBulkSending(false)
     setShowBulk(false)

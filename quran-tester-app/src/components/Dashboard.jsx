@@ -193,11 +193,6 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
     [guardianList, list]
   )
 
-  const guardianLinkPercent = useMemo(() => {
-    if (!guardianMetrics.total) return 0
-    return Math.min(100, Math.round((guardianMetrics.linked / guardianMetrics.total) * 100))
-  }, [guardianMetrics.linked, guardianMetrics.total])
-
   const quickAccessItems = useMemo(() => [
     {
       id: 'attendance',
@@ -244,6 +239,15 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
       icon: 'fa-brands fa-telegram',
       tone: 'telegram-soft',
       onClick: () => onNavigate?.('broadcast'),
+    },
+    {
+      id: 'today-results',
+      label: 'نتائج اليوم',
+      hint: 'إرسال للأولياء',
+      icon: 'fa-paper-plane',
+      tone: 'telegram',
+      featured: true,
+      onClick: () => onNavigate?.('todayResults'),
     },
     {
       id: 'qrcodes',
@@ -578,129 +582,65 @@ export default function Dashboard({ onNavigate, onOpenStudent, onAddStudent, onS
           )}
         >
           <div className="dash-guardians">
-            <div className="dash-guardians__hero">
-              <div className="dash-guardians__ring" aria-hidden="true">
-                <svg viewBox="0 0 44 44" className="dash-guardians__ring-svg">
-                  <circle className="dash-guardians__ring-track" cx="22" cy="22" r="18" />
-                  <circle
-                    className="dash-guardians__ring-fill"
-                    cx="22"
-                    cy="22"
-                    r="18"
-                    style={{ strokeDashoffset: `${113 - (113 * guardianLinkPercent) / 100}` }}
-                  />
-                </svg>
-                <span className="dash-guardians__ring-label">{guardianLinkPercent}%</span>
+            <div className="dash-guardians__stats">
+              <div className="dash-guardians__stat">
+                <span className="dash-guardians__stat-value">{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__stat-label">أولياء</span>
               </div>
-              <div className="dash-guardians__hero-text">
-                <p className="dash-guardians__headline">
-                  <strong>{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</strong>
-                  <span> من </span>
-                  <strong>{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</strong>
-                  <span> ولي أمر مربوط عبر Telegram</span>
-                </p>
-                <p className="meta dash-guardians__sub">
-                  {guardianMetrics.needsInvite > 0
-                    ? `${guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')} ولي أمر بحاجة دعوة`
-                    : guardianMetrics.total === 0
-                      ? 'أضف أولياء الأمور عند إنشاء الطلاب'
-                      : 'جميع أولياء الأمور مربوطون'}
-                </p>
+              <div className={`dash-guardians__stat ${guardianMetrics.linked > 0 ? 'dash-guardians__stat--ok' : ''}`}>
+                <span className="dash-guardians__stat-value">{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__stat-label">مربوط Telegram</span>
               </div>
+              <div className={`dash-guardians__stat ${guardianMetrics.needsInvite > 0 ? 'dash-guardians__stat--warn' : ''}`}>
+                <span className="dash-guardians__stat-value">{guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')}</span>
+                <span className="dash-guardians__stat-label">بحاجة دعوة</span>
+              </div>
+              {guardianMetrics.studentsWithoutGuardian > 0 && (
+                <div className="dash-guardians__stat dash-guardians__stat--info">
+                  <span className="dash-guardians__stat-value">{guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')}</span>
+                  <span className="dash-guardians__stat-label">بدون ولي</span>
+                </div>
+              )}
             </div>
 
-            <div className="dash-guardians__kpis">
-              <div className="dash-guardians__kpi">
-                <span className="dash-guardians__kpi-value">{guardianMetrics.total.toLocaleString('ar-EG-u-nu-latn')}</span>
-                <span className="dash-guardians__kpi-label">أولياء</span>
-              </div>
-              <div className="dash-guardians__kpi dash-guardians__kpi--ok">
-                <span className="dash-guardians__kpi-value">{guardianMetrics.linked.toLocaleString('ar-EG-u-nu-latn')}</span>
-                <span className="dash-guardians__kpi-label">مربوط</span>
-              </div>
-              <div className={`dash-guardians__kpi ${guardianMetrics.needsInvite > 0 ? 'dash-guardians__kpi--warn' : ''}`}>
-                <span className="dash-guardians__kpi-value">{guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')}</span>
-                <span className="dash-guardians__kpi-label">بحاجة دعوة</span>
-              </div>
-              <div className={`dash-guardians__kpi ${guardianMetrics.studentsWithoutGuardian > 0 ? 'dash-guardians__kpi--info' : ''}`}>
-                <span className="dash-guardians__kpi-value">{guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')}</span>
-                <span className="dash-guardians__kpi-label">طلاب بدون ولي أمر</span>
-              </div>
-            </div>
-
-            <ol className="dash-guardians__flow">
-              <li className="dash-guardians__flow-step">
-                <span className="dash-guardians__flow-num">1</span>
-                <span>اربط ولي الأمر</span>
-              </li>
-              <li className="dash-guardians__flow-step">
-                <span className="dash-guardians__flow-num">2</span>
-                <span>أرسل الدعوة</span>
-              </li>
-              <li className="dash-guardians__flow-step">
-                <span className="dash-guardians__flow-num">3</span>
-                <span>Start في البوت</span>
-              </li>
-            </ol>
-
-            {telegramLinkActivity.length > 0 && (
-              <div className="dash-guardians__activity">
-                <p className="dash-guardians__activity-title">آخر عمليات الربط</p>
-                <ul className="dash-guardians__activity-list">
-                  {telegramLinkActivity.map(entry => (
-                    <li key={entry.id} className="dash-guardians__activity-item">
-                      <i className="fa-brands fa-telegram" aria-hidden />
-                      <span>{entry.message_preview}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {recentSentMessages.length > 0 && (
-              <div className="dash-guardians__activity">
-                <p className="dash-guardians__activity-title">آخر الرسائل المرسلة</p>
-                <ul className="dash-guardians__activity-list">
-                  {recentSentMessages.map(entry => (
-                    <li key={entry.id} className="dash-guardians__activity-item">
-                      <i className="fa-solid fa-paper-plane" aria-hidden />
-                      <span>
-                        {entry.student_name ? `${entry.student_name} · ` : ''}
-                        {entry.message_preview || entry.message_body || '—'}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--sm dash-guardians__action"
-                  onClick={() => onNavigate?.('messageLog')}
-                >
-                  سجل الرسائل الكامل
-                </button>
+            {(telegramLinkActivity.length > 0 || recentSentMessages.length > 0) && (
+              <div className="dash-guardians__recent">
+                {[...telegramLinkActivity.slice(0, 1), ...recentSentMessages.slice(0, 2)].map(entry => (
+                  <div key={entry.id} className="dash-guardians__recent-item">
+                    <i className={`fa-brands fa-telegram`} aria-hidden />
+                    <span>
+                      {entry.student_name ? `${entry.student_name} · ` : ''}
+                      {entry.message_preview || entry.message_body || '—'}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
 
             <div className="dash-guardians__actions">
+              <button type="button" className="btn btn--primary dash-guardians__action" onClick={() => onNavigate?.('todayResults')}>
+                <i className="fa-solid fa-paper-plane" />
+                إرسال نتائج اليوم
+              </button>
               {guardianMetrics.needsInvite > 0 ? (
-                <button type="button" className="btn btn--primary btn--sm dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
+                <button type="button" className="btn btn--ghost dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
                   <i className="fa-brands fa-telegram" />
-                  إرسال دعوات ({guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')})
+                  دعوات ({guardianMetrics.needsInvite.toLocaleString('ar-EG-u-nu-latn')})
                 </button>
               ) : (
-                <button type="button" className="btn btn--primary btn--sm dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
+                <button type="button" className="btn btn--ghost dash-guardians__action" onClick={() => onNavigate?.('guardians')}>
                   <i className="fa-solid fa-user-group" />
-                  إدارة أولياء الأمور
+                  أولياء الأمور
                 </button>
               )}
-              <button type="button" className="btn btn--ghost btn--sm dash-guardians__action" onClick={() => onNavigate?.('broadcast')}>
+              <button type="button" className="btn btn--ghost dash-guardians__action" onClick={() => onNavigate?.('broadcast')}>
                 <i className="fa-brands fa-telegram" />
-                رسائل Telegram
+                بث جماعي
               </button>
               {guardianMetrics.studentsWithoutGuardian > 0 && (
-                <button type="button" className="btn btn--ghost btn--sm dash-guardians__action dash-guardians__action--wide" onClick={() => onStudentsWithoutGuardian?.()}>
+                <button type="button" className="btn btn--ghost dash-guardians__action dash-guardians__action--wide" onClick={() => onStudentsWithoutGuardian?.()}>
                   <i className="fa-solid fa-user-shield" />
-                  إكمال بيانات أولياء الأمور ({guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')})
+                  إكمال بيانات الأولياء ({guardianMetrics.studentsWithoutGuardian.toLocaleString('ar-EG-u-nu-latn')})
                 </button>
               )}
             </div>

@@ -5,7 +5,6 @@ export default function LeaderboardRankRow({
   thumuns,
   modeLabel,
   formatThumunId,
-  formatLocaleDateTime,
   onOpenStudent,
   onNotifyParent,
   notifying,

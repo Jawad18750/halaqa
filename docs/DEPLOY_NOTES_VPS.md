@@ -65,9 +65,9 @@
   npm run attendance:weekly -- --username=sheikh
   npm run attendance:weekly -- --from=YYYY-MM-DD --to=YYYY-MM-DD
   ```
-- Cron example (server timezone should be Africa/Tripoli, or adjust the hour):
+- Cron example (this VPS runs in UTC; Tripoli is UTC+2, so use 18:00 UTC for 20:00 Tripoli):
   ```
-  0 20 * * 6 cd /home/deploy/halaqa_src_current/server && /usr/bin/npm run attendance:weekly >> /var/log/halaqa-attendance-weekly.log 2>&1
+  0 18 * * 6 cd /home/deploy/halaqa_src_current/server && /usr/bin/npm run attendance:weekly >> /var/log/halaqa-attendance-weekly.log 2>&1
   ```
 - Messages are sent only for student/guardian links with `notify_weekly_attendance = true`, and still respect Telegram opt-out.
 

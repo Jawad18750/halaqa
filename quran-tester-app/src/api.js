@@ -36,9 +36,17 @@ async function request(path, options = {}, timeoutMs = 15000) {
     const isJson = (res.headers.get('content-type') || '').includes('application/json')
     const body = isJson ? await res.json() : null
     if (!res.ok) {
-      let msg = body?.error || res.statusText || 'Request failed'
-      if (res.status === 401 && !body?.error) msg = 'غير مصرح'
+      let msg = body?.error || body?.details || body?.message || null
+      if (!msg) {
+        if (res.status === 401) msg = 'غير مصرح — سجّل الدخول مرة أخرى'
+        else if (res.status === 404) msg = 'المسار غير موجود على الخادم'
+        else if (res.status === 504) msg = 'انتهت مهلة الخادم'
+        else if (res.status >= 500) msg = 'خطأ في الخادم'
+        else msg = res.statusText || 'تعذّر إتمام الطلب'
+      }
       if (/Network timeout/i.test(String(msg))) msg = 'انتهت مهلة الشبكة'
+      if (/session save timeout/i.test(String(msg))) msg = 'تعذّر حفظ المحاولة — حاول مرة أخرى'
+      if (/Request failed/i.test(String(msg))) msg = 'تعذّر إتمام الطلب'
       const err = new Error(msg)
       err.status = res.status
       if (body?.existingGuardianId) err.existingGuardianId = body.existingGuardianId
@@ -235,6 +243,22 @@ export const notifications = {
     return await request('/notifications/attendance-overview-report', {
       method: 'POST',
       body: JSON.stringify({ from: from || null, to: to || null }),
+    })
+  },
+  async resendSessionResult(sessionId) {
+    return await request('/notifications/session-result', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId }),
+    })
+  },
+  async todaySessions(date = null) {
+    const qs = date ? `?date=${encodeURIComponent(date)}` : ''
+    return await request(`/notifications/today-sessions${qs}`)
+  },
+  async sendTodayResults({ studentIds = null, date = null } = {}) {
+    return await request('/notifications/today-results', {
+      method: 'POST',
+      body: JSON.stringify({ studentIds, date }),
     })
   },
   async listFamilies() { return await request('/notifications/families') },

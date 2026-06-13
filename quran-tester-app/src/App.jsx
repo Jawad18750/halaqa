@@ -19,6 +19,7 @@ import Attendance from './components/Attendance'
 import QRPrint from './components/QRPrint'
 import AttendanceOverview from './components/AttendanceOverview'
 import MessageLog from './components/MessageLog'
+import TodayResults from './components/TodayResults'
 import { students as studentsApi } from './api'
 import AppShell from './components/layout/AppShell'
 import { MessageSettingsProvider } from './lib/MessageSettingsContext.jsx'
@@ -306,6 +307,9 @@ export default function App() {
         )}
         {view === 'broadcast' && (
           <Broadcast onBack={goDashboard} onOpenMessageLog={(focus) => navigate('messageLog', focus)} />
+        )}
+        {view === 'todayResults' && (
+          <TodayResults onBack={goDashboard} />
         )}
       </div>
     )

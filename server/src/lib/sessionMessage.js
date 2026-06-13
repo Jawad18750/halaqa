@@ -94,9 +94,9 @@ export function buildSessionResultMessage({
   const resultStatus = passed ? 'ناجح' : 'لم ينجح'
   const headerLines = [
     `الطالب: ${studentName}`,
+    ...(qalamLine ? [qalamLine] : []),
     ...memorizationLines,
   ]
-  if (qalamLine) headerLines.push(qalamLine)
 
   const resultBlock = [
     'نتيجة الحلقة:',

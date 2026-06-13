@@ -223,7 +223,7 @@ export function toDateOnly(v) {
       const dd = String(d.getDate()).padStart(2, '0')
       return `${yyyy}-${mm}-${dd}`
     }
-  } catch {}
+  } catch { /* invalid date */ }
   return ''
 }
 
