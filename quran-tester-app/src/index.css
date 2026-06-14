@@ -2784,6 +2784,12 @@ select.input { appearance: none; }
   align-items: flex-start;
 }
 
+.students-guardian-strip__text {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 .students-guardian-strip__icon {
   width: 44px;
   height: 44px;
@@ -2805,12 +2811,12 @@ select.input { appearance: none; }
 .students-guardian-strip__text .meta { margin: 0; line-height: 1.45; }
 
 .students-guardian-strip__actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
-.students-guardian-strip__actions .btn { min-height: 40px; flex: 1; min-width: 0; }
+.students-guardian-strip__actions .btn { min-height: 40px; width: 100%; }
 
 @media (min-width: 640px) {
   .students-guardian-strip {
@@ -2819,9 +2825,13 @@ select.input { appearance: none; }
     justify-content: space-between;
   }
 
-  .students-guardian-strip__actions { flex: 0 0 auto; }
+  .students-guardian-strip__actions {
+    flex: 0 0 auto;
+    display: flex;
+    grid-template-columns: unset;
+  }
 
-  .students-guardian-strip__actions .btn { flex: 0 1 auto; min-width: auto; }
+  .students-guardian-strip__actions .btn { flex: 0 1 auto; width: auto; min-width: auto; }
 }
 
 .students-guardian-focus {
